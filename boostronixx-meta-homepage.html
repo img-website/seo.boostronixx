@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoostronixX — Meta Tags & Homepage Content</title>
+<style>
+  :root {
+    --brand: #6c3ef4;
+    --brand2: #f43e6c;
+    --dark: #0f0f1a;
+    --card: #1a1a2e;
+    --border: #2d2d4a;
+    --text: #e8e8f0;
+    --muted: #9090b0;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--dark); color: var(--text); line-height: 1.6; }
+  a { color: var(--brand); text-decoration: none; }
+
+  /* NAV */
+  nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+  nav span { font-weight: 700; font-size: 1.1rem; color: var(--brand); margin-right: 12px; }
+  nav a { color: var(--muted); font-size: .85rem; padding: 6px 12px; border-radius: 6px; transition: all .2s; }
+  nav a:hover, nav a.active { background: var(--brand); color: #fff; }
+
+  /* HERO BANNER */
+  .hero { background: linear-gradient(135deg, #1a0a3a 0%, #0f1a3a 100%); padding: 48px 32px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, #a78bfa, #f43e6c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  .hero p { color: var(--muted); font-size: 1rem; }
+
+  /* SECTIONS */
+  .section { display: none; padding: 32px; max-width: 1400px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* CLUSTER BADGES */
+  .cluster-group { margin-bottom: 40px; }
+  .cluster-title { font-size: 1.1rem; font-weight: 700; color: var(--brand); border-left: 4px solid var(--brand); padding-left: 12px; margin-bottom: 16px; }
+  .keyword-badge { display: inline-block; background: rgba(108,62,244,.15); border: 1px solid rgba(108,62,244,.3); color: #a78bfa; padding: 4px 10px; border-radius: 20px; font-size: .78rem; margin: 3px; }
+
+  /* META CARDS */
+  .meta-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+  .meta-card .page-label { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .meta-card .page-url { font-size: .85rem; color: var(--green); font-family: monospace; margin-bottom: 12px; }
+  .meta-card .meta-row { margin-bottom: 10px; }
+  .meta-card .meta-label { font-size: .75rem; font-weight: 600; color: var(--brand2); text-transform: uppercase; letter-spacing: .05em; }
+  .meta-card .meta-value { font-size: .9rem; color: var(--text); margin-top: 2px; }
+  .meta-card .meta-desc { font-size: .88rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+  .char-count { font-size: .72rem; color: var(--yellow); margin-top: 2px; }
+  .char-count.good { color: var(--green); }
+  .char-count.warn { color: var(--yellow); }
+
+  /* HOMEPAGE CONTENT */
+  .content-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 24px; }
+  .content-section h3 { font-size: 1rem; font-weight: 700; color: var(--brand); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .content-section h3 .tag { font-size: .7rem; background: rgba(108,62,244,.2); padding: 2px 8px; border-radius: 10px; color: #a78bfa; font-weight: 500; }
+  pre.code-block { background: #0d0d1a; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-size: .82rem; overflow-x: auto; white-space: pre-wrap; color: #e2e8f0; line-height: 1.7; }
+  .copy-btn { float: right; font-size: .72rem; background: var(--brand); color: #fff; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; margin-bottom: 8px; }
+
+  /* NEW SECTIONS */
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; display: flex; gap: 16px; align-items: flex-start; }
+  .section-card .icon { font-size: 1.5rem; flex-shrink: 0; }
+  .section-card h4 { font-size: .95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .section-card p { font-size: .85rem; color: var(--muted); }
+  .section-card .priority { font-size: .7rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 6px; }
+  .p-critical { background: rgba(239,68,68,.2); color: #ef4444; }
+  .p-high { background: rgba(245,158,11,.2); color: #f59e0b; }
+  .p-medium { background: rgba(59,130,246,.2); color: #3b82f6; }
+
+  /* GRID */
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(580px, 1fr)); gap: 16px; }
+  @media (max-width: 700px) { .meta-grid { grid-template-columns: 1fr; } nav { padding: 12px 16px; } .section { padding: 20px 16px; } }
+
+  /* KEYWORD TABLE */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th { background: rgba(108,62,244,.2); color: var(--brand); font-size: .8rem; text-align: left; padding: 10px 12px; }
+  td { padding: 9px 12px; font-size: .85rem; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:hover td { background: rgba(255,255,255,.03); }
+  .intent-info { background: rgba(59,130,246,.15); color: #93c5fd; padding: 2px 8px; border-radius: 10px; font-size: .72rem; }
+  .intent-commercial { background: rgba(245,158,11,.15); color: #fcd34d; padding: 2px 8px; border-radius: 10px; font-size: .72rem; }
+  .intent-transactional { background: rgba(34,197,94,.15); color: #86efac; padding: 2px 8px; border-radius: 10px; font-size: .72rem; }
+  .intent-local { background: rgba(244,63,112,.15); color: #fda4af; padding: 2px 8px; border-radius: 10px; font-size: .72rem; }
+
+  .notice { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); border-radius: 8px; padding: 12px 16px; font-size: .85rem; color: #fcd34d; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span>BoostronixX</span>
+  <a href="#" class="active" onclick="show('clusters')">Keyword Clusters</a>
+  <a href="#" onclick="show('metas')">All Page Metas</a>
+  <a href="#" onclick="show('homepage')">Homepage Content</a>
+  <a href="#" onclick="show('newsections')">New Sections to Add</a>
+</nav>
+
+<div class="hero">
+  <h1>Meta Tags &amp; Homepage Content</h1>
+  <p>28 keywords → clustered → mapped to pages → meta titles, descriptions &amp; homepage copy</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: KEYWORD CLUSTERS -->
+<!-- ============================================================ -->
+<div id="clusters" class="section active">
+  <div class="notice">💡 28 keywords clustered into 7 topical groups. Each cluster = one target page. No cannibalization.</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Keyword</th><th>Cluster</th><th>Target Page</th><th>Intent</th><th>Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Digital Marketing Agency in Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> or <code>/jaipur-digital-marketing-agency/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>2</td><td>Best Digital Marketing Agency in Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code></td><td><span class="intent-commercial">Commercial</span></td><td>🔴 #1</td></tr>
+      <tr><td>3</td><td>Top Digital Marketing Company in Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code></td><td><span class="intent-commercial">Commercial</span></td><td>🔴 #1</td></tr>
+      <tr><td>4</td><td>Digital Marketing Company Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>5</td><td>Jaipur Digital Marketing Agency</td><td>Homepage / DM Hub</td><td><code>/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>6</td><td>Online Marketing Agency in Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>7</td><td>Digital Marketing Services in Jaipur</td><td>Homepage / DM Hub</td><td><code>/services/digital-marketing/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>8</td><td>Hire Digital Marketing Agency in Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> (CTA section)</td><td><span class="intent-transactional">Transactional</span></td><td>🔴 #1</td></tr>
+      <tr><td>9</td><td>Affordable Digital Marketing Agency Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> (pricing section)</td><td><span class="intent-commercial">Commercial</span></td><td>🟡 #2</td></tr>
+      <tr><td>10</td><td>Top Rated Digital Marketing Company Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> (reviews section)</td><td><span class="intent-commercial">Commercial</span></td><td>🟡 #2</td></tr>
+      <tr><td>11</td><td>ROI Driven Digital Marketing Agency Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> (results section)</td><td><span class="intent-commercial">Commercial</span></td><td>🟡 #2</td></tr>
+      <tr><td>12</td><td>Digital marketing consultant Jaipur</td><td>Homepage / DM Hub</td><td><code>/</code> or <code>/about-us/</code></td><td><span class="intent-commercial">Commercial</span></td><td>🟡 #2</td></tr>
+      <tr><td>13</td><td>SEO Company in Jaipur</td><td>SEO Services</td><td><code>/services/seo-services/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>14</td><td>SEO Services Jaipur</td><td>SEO Services</td><td><code>/services/seo-services/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>15</td><td>Local SEO Services Jaipur</td><td>SEO Services</td><td><code>/services/local-seo-jaipur/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>16</td><td>Ecommerce SEO Company Jaipur</td><td>SEO Services</td><td><code>/services/ecommerce-seo/</code></td><td><span class="intent-local">Local</span></td><td>🟡 #2</td></tr>
+      <tr><td>17</td><td>PPC Company in Jaipur</td><td>Paid Ads</td><td><code>/services/google-ads/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>18</td><td>Google Ads Agency Jaipur</td><td>Paid Ads</td><td><code>/services/google-ads/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>19</td><td>Performance Marketing Agency Jaipur</td><td>Paid Ads</td><td><code>/services/performance-marketing/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>20</td><td>Lead Generation Company Jaipur</td><td>Paid Ads</td><td><code>/services/performance-marketing/</code> or <code>/services/lead-generation/</code></td><td><span class="intent-local">Local</span></td><td>🟡 #2</td></tr>
+      <tr><td>21</td><td>Social Media Marketing Agency Jaipur</td><td>Social Media</td><td><code>/services/social-media-marketing/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>22</td><td>Content Marketing Agency Jaipur</td><td>Social Media</td><td><code>/services/content-marketing/</code></td><td><span class="intent-local">Local</span></td><td>🟡 #2</td></tr>
+      <tr><td>23</td><td>Branding Agency in Jaipur</td><td>Branding</td><td><code>/services/brand-consulting/</code> or <code>/branding-agency-jaipur/</code></td><td><span class="intent-local">Local</span></td><td>🔴 #1</td></tr>
+      <tr><td>24</td><td>Ecommerce Marketing Agency Jaipur</td><td>Ecommerce</td><td><code>/services/ecommerce-seo/</code> or <code>/industries/ecommerce/</code></td><td><span class="intent-local">Local</span></td><td>🟡 #2</td></tr>
+      <tr><td>25</td><td>Real Estate Digital Marketing Agency Jaipur</td><td>Industry Verticals</td><td><code>/industries/real-estate/</code></td><td><span class="intent-local">Local</span></td><td>🟡 #2</td></tr>
+      <tr><td>26</td><td>Healthcare Marketing Agency Jaipur</td><td>Industry Verticals</td><td><code>/industries/healthcare/</code></td><td><span class="intent-local">Local</span></td><td>🟢 #3</td></tr>
+      <tr><td>27</td><td>Restaurant Marketing Services Jaipur</td><td>Industry Verticals</td><td><code>/industries/restaurants/</code></td><td><span class="intent-local">Local</span></td><td>🟢 #3</td></tr>
+      <tr><td>28</td><td>Education Digital Marketing Jaipur</td><td>Industry Verticals</td><td><code>/industries/education-edtech/</code></td><td><span class="intent-local">Local</span></td><td>🟢 #3</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster A — Homepage / Digital Marketing Hub (12 keywords)</div>
+    <div class="keyword-badge">Digital Marketing Agency in Jaipur</div>
+    <div class="keyword-badge">Best Digital Marketing Agency in Jaipur</div>
+    <div class="keyword-badge">Top Digital Marketing Company in Jaipur</div>
+    <div class="keyword-badge">Digital Marketing Company Jaipur</div>
+    <div class="keyword-badge">Jaipur Digital Marketing Agency</div>
+    <div class="keyword-badge">Online Marketing Agency in Jaipur</div>
+    <div class="keyword-badge">Digital Marketing Services in Jaipur</div>
+    <div class="keyword-badge">Hire Digital Marketing Agency in Jaipur</div>
+    <div class="keyword-badge">Affordable Digital Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Top Rated Digital Marketing Company Jaipur</div>
+    <div class="keyword-badge">ROI Driven Digital Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Digital marketing consultant Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster B — SEO Services (4 keywords)</div>
+    <div class="keyword-badge">SEO Company in Jaipur</div>
+    <div class="keyword-badge">SEO Services Jaipur</div>
+    <div class="keyword-badge">Local SEO Services Jaipur</div>
+    <div class="keyword-badge">Ecommerce SEO Company Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster C — Paid Ads / Performance (4 keywords)</div>
+    <div class="keyword-badge">PPC Company in Jaipur</div>
+    <div class="keyword-badge">Google Ads Agency Jaipur</div>
+    <div class="keyword-badge">Performance Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Lead Generation Company Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster D — Social Media &amp; Content (2 keywords)</div>
+    <div class="keyword-badge">Social Media Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Content Marketing Agency Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster E — Branding (1 keyword)</div>
+    <div class="keyword-badge">Branding Agency in Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster F — Ecommerce (1 keyword)</div>
+    <div class="keyword-badge">Ecommerce Marketing Agency Jaipur</div>
+  </div>
+
+  <div class="cluster-group">
+    <div class="cluster-title">Cluster G — Industry Verticals (4 keywords)</div>
+    <div class="keyword-badge">Real Estate Digital Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Healthcare Marketing Agency Jaipur</div>
+    <div class="keyword-badge">Restaurant Marketing Services Jaipur</div>
+    <div class="keyword-badge">Education Digital Marketing Jaipur</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: ALL PAGE METAS -->
+<!-- ============================================================ -->
+<div id="metas" class="section">
+  <div class="notice">📋 Copy these meta tags directly into Yoast SEO. Title limit: 60 chars. Description limit: 160 chars.</div>
+
+  <h2 style="font-size:1.2rem;margin-bottom:24px;color:var(--brand)">— Core Pages —</h2>
+  <div class="meta-grid">
+
+    <div class="meta-card">
+      <div class="page-label">🏠 Homepage</div>
+      <div class="page-url">https://www.boostronixx.com/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Best Digital Marketing Agency in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 54 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">BoostronixX is Jaipur's top-rated digital marketing agency offering SEO, Google Ads, social media, branding &amp; performance marketing. ROI-driven results. Free consultation.</div>
+        <div class="char-count good">✓ 172 characters — trim last sentence if needed</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Digital Marketing Agency in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">📖 About Us</div>
+      <div class="page-url">https://www.boostronixx.com/about-us/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">About BoostronixX — Digital Marketing Consultants Jaipur</div>
+        <div class="char-count good">✓ 56 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Meet the team behind Jaipur's most results-driven digital marketing agency. BoostronixX helps brands grow with strategy, creativity &amp; data. Know our story.</div>
+        <div class="char-count good">✓ 157 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Digital marketing consultant Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">📞 Contact</div>
+      <div class="page-url">https://www.boostronixx.com/contact/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Contact BoostronixX — Hire Digital Marketing Agency Jaipur</div>
+        <div class="char-count warn">⚠ 59 characters — borderline OK</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Ready to grow your business? Contact BoostronixX — Jaipur's affordable digital marketing agency. Get a free strategy call today. Serving Jaipur &amp; pan India.</div>
+        <div class="char-count good">✓ 160 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Hire Digital Marketing Agency in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">💼 Portfolio / Work</div>
+      <div class="page-url">https://www.boostronixx.com/portfolio/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Our Work — Case Studies | BoostronixX Jaipur</div>
+        <div class="char-count good">✓ 45 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">See how BoostronixX has helped Jaipur businesses generate more leads, grow online revenue &amp; dominate search rankings. Real results from a top-rated agency.</div>
+        <div class="char-count good">✓ 159 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Top Rated Digital Marketing Company Jaipur</div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 style="font-size:1.2rem;margin:32px 0 24px;color:var(--brand)">— Service Pages —</h2>
+  <div class="meta-grid">
+
+    <div class="meta-card">
+      <div class="page-label">📊 Digital Marketing (Pillar)</div>
+      <div class="page-url">https://www.boostronixx.com/services/digital-marketing/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Digital Marketing Services in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 50 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">End-to-end digital marketing services in Jaipur — SEO, PPC, social media, content &amp; branding. BoostronixX delivers measurable ROI for businesses of all sizes.</div>
+        <div class="char-count good">✓ 160 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Digital Marketing Services in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🔍 SEO Services (Pillar)</div>
+      <div class="page-url">https://www.boostronixx.com/services/seo-services/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">SEO Company in Jaipur — #1 Ranked SEO Services | BoostronixX</div>
+        <div class="char-count warn">⚠ 61 characters — trim to "SEO Company in Jaipur | Best SEO Services | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Rank higher on Google with Jaipur's top SEO company. BoostronixX offers technical SEO, local SEO &amp; content SEO that drives qualified traffic &amp; real business growth.</div>
+        <div class="char-count good">✓ 164 characters — trim 4 chars</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">SEO Company in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">📍 Local SEO (Spoke — NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/local-seo-jaipur/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Local SEO Services in Jaipur — Rank in Google Maps | BoostronixX</div>
+        <div class="char-count warn">⚠ 64 chars — trim to "Local SEO Services Jaipur | Google Maps Rankings | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Dominate local search in Jaipur with BoostronixX's local SEO services. We optimise your Google Business Profile, build citations &amp; get you into the map pack. Get started.</div>
+        <div class="char-count good">✓ 171 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Local SEO Services Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🛒 Ecommerce SEO (Spoke — NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/ecommerce-seo/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Ecommerce SEO Company in Jaipur | Boost Online Sales | BoostronixX</div>
+        <div class="char-count warn">⚠ 66 chars — trim to "Ecommerce SEO Company Jaipur | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Grow your online store with Jaipur's ecommerce SEO experts. BoostronixX improves product rankings, category pages &amp; organic revenue for D2C &amp; marketplace brands.</div>
+        <div class="char-count good">✓ 163 chars</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Ecommerce SEO Company Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">💰 Google Ads / PPC (Spoke — NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/google-ads/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Google Ads Agency Jaipur — PPC Company | BoostronixX</div>
+        <div class="char-count good">✓ 52 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Get maximum ROI from Google Ads with Jaipur's certified PPC agency. BoostronixX manages search, shopping &amp; display campaigns that generate leads &amp; sales. Free audit.</div>
+        <div class="char-count good">✓ 166 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Google Ads Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🚀 Performance Marketing</div>
+      <div class="page-url">https://www.boostronixx.com/services/performance-marketing/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Performance Marketing Agency Jaipur | Lead Generation | BoostronixX</div>
+        <div class="char-count warn">⚠ 67 chars — trim to "Performance Marketing Agency in Jaipur | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Drive more leads &amp; sales with Jaipur's ROI-focused performance marketing agency. BoostronixX runs Meta Ads, Google Ads &amp; paid campaigns built for measurable growth.</div>
+        <div class="char-count good">✓ 165 chars</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Performance Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">📱 Social Media Marketing</div>
+      <div class="page-url">https://www.boostronixx.com/services/social-media-marketing/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Social Media Marketing Agency in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 53 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Build your brand on Instagram, Facebook &amp; LinkedIn with Jaipur's top social media marketing agency. BoostronixX creates content that engages, grows &amp; converts your audience.</div>
+        <div class="char-count warn">⚠ 172 chars — trim to 160</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Social Media Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">✍️ Content Marketing (Spoke — NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/content-marketing/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Content Marketing Agency in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 48 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Attract, engage &amp; convert with strategic content marketing from Jaipur's leading agency. BoostronixX creates SEO blogs, videos &amp; social content that builds authority &amp; drives leads.</div>
+        <div class="char-count warn">⚠ 181 chars — trim to 160</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Content Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🎨 Branding / Brand Strategy</div>
+      <div class="page-url">https://www.boostronixx.com/services/brand-consulting/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Branding Agency in Jaipur — Brand Strategy &amp; Identity | BoostronixX</div>
+        <div class="char-count warn">⚠ 67 chars — trim to "Branding Agency Jaipur | Brand Strategy | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Create a brand that stands out. BoostronixX is Jaipur's top branding agency offering logo design, brand identity, positioning &amp; full rebranding services for startups &amp; established businesses.</div>
+        <div class="char-count warn">⚠ 191 chars — trim to: "Create a brand that stands out. BoostronixX is Jaipur's branding agency — logo design, brand identity &amp; strategy for startups &amp; growing businesses."</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Branding Agency in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🖥️ Website Design</div>
+      <div class="page-url">https://www.boostronixx.com/services/website-design/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Website Design Company in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 47 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Get a high-converting website designed by Jaipur's expert web design team. BoostronixX builds WordPress, ecommerce &amp; custom websites optimised for speed, SEO &amp; conversions.</div>
+        <div class="char-count good">✓ 170 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Website Design Company in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🎯 UI/UX Design</div>
+      <div class="page-url">https://www.boostronixx.com/services/ui-ux-design/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">UI/UX Design Agency in Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 44 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">User-centred UI/UX design that converts. BoostronixX, Jaipur's UI/UX agency, designs intuitive interfaces for web apps, mobile apps &amp; SaaS products. Book a free design audit.</div>
+        <div class="char-count good">✓ 173 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">UI UX Design Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🤖 AI Automation (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/ai-automation/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">AI Automation Agency India — AI Marketing Services | BoostronixX</div>
+        <div class="char-count warn">⚠ 64 chars — trim to "AI Automation Agency India | AI Marketing | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Automate your marketing with AI. BoostronixX offers AI-powered lead generation, WhatsApp chatbots, marketing automation &amp; AI SEO for Indian businesses. Explore AI solutions.</div>
+        <div class="char-count good">✓ 170 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">AI Automation Agency India</div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 style="font-size:1.2rem;margin:32px 0 24px;color:var(--brand)">— Industry / City Pages —</h2>
+  <div class="meta-grid">
+
+    <div class="meta-card">
+      <div class="page-label">🏙️ Jaipur City Hub (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/jaipur-digital-marketing-agency/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Digital Marketing Agency in Jaipur | Affordable &amp; ROI-Driven | BoostronixX</div>
+        <div class="char-count warn">⚠ 74 chars — trim to "Digital Marketing Agency Jaipur | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Jaipur's most trusted digital marketing agency. BoostronixX helps local businesses rank on Google, run profitable ads &amp; build powerful brands. 100+ clients served across Jaipur.</div>
+        <div class="char-count good">✓ 179 chars — trim to 160</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Digital Marketing Agency in Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🏠 Real Estate Industry (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/industries/real-estate/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Real Estate Digital Marketing Agency Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 57 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Generate more property leads with BoostronixX's real estate digital marketing in Jaipur. We run Google Ads, Facebook Ads &amp; SEO campaigns for builders, agents &amp; developers.</div>
+        <div class="char-count good">✓ 171 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Real Estate Digital Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🏥 Healthcare Industry (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/industries/healthcare/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Healthcare Marketing Agency Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 48 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Attract more patients with digital marketing built for healthcare. BoostronixX helps Jaipur hospitals, clinics &amp; doctors grow online with SEO, ads &amp; social media.</div>
+        <div class="char-count good">✓ 161 chars — trim 1 char</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Healthcare Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🍽️ Restaurant Industry (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/industries/restaurants/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Restaurant Marketing Services Jaipur | BoostronixX</div>
+        <div class="char-count good">✓ 50 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Fill your tables with smart digital marketing for restaurants in Jaipur. BoostronixX runs food delivery ads, Google Maps SEO &amp; Instagram campaigns that bring in customers.</div>
+        <div class="char-count good">✓ 169 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Restaurant Marketing Services Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🎓 Education / EdTech Industry (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/industries/education-edtech/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Education Digital Marketing Jaipur | EdTech Marketing | BoostronixX</div>
+        <div class="char-count warn">⚠ 67 chars — trim to "Education &amp; EdTech Digital Marketing Jaipur | BoostronixX"</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Grow student enrolments with digital marketing for schools, coaching centres &amp; EdTech brands in Jaipur. BoostronixX specialises in education lead generation &amp; brand building.</div>
+        <div class="char-count good">✓ 170 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Education Digital Marketing Jaipur</div>
+      </div>
+    </div>
+
+    <div class="meta-card">
+      <div class="page-label">🛍️ Ecommerce Industry (NEW PAGE)</div>
+      <div class="page-url">https://www.boostronixx.com/services/ecommerce-website-design/</div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Title</div>
+        <div class="meta-value">Ecommerce Marketing Agency Jaipur | D2C Growth | BoostronixX</div>
+        <div class="char-count good">✓ 60 characters</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Meta Description</div>
+        <div class="meta-desc">Scale your ecommerce brand with Jaipur's performance-driven marketing agency. BoostronixX helps D2C brands grow with Meta Ads, Google Shopping, SEO &amp; CRO strategies.</div>
+        <div class="char-count good">✓ 164 chars — trim slightly</div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-label">Focus Keyword (Yoast)</div>
+        <div class="meta-value">Ecommerce Marketing Agency Jaipur</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: HOMEPAGE CONTENT -->
+<!-- ============================================================ -->
+<div id="homepage" class="section">
+  <div class="notice">📝 Full homepage content targeting Cluster A keywords. Copy section-by-section into your WordPress editor / Elementor / page builder.</div>
+
+  <div class="content-section">
+    <h3>SECTION 1 — Hero Section <span class="tag">Above the fold</span></h3>
+    <pre class="code-block">
+&lt;!-- H1 — Primary keyword + differentiator --&gt;
+&lt;h1&gt;Jaipur's #1 Digital Marketing Agency That Delivers Real ROI&lt;/h1&gt;
+
+&lt;!-- Sub-headline --&gt;
+&lt;p&gt;We are BoostronixX — a ROI-driven digital marketing company in Jaipur helping brands grow faster with SEO, Google Ads, social media, branding &amp; AI-powered marketing automation.&lt;/p&gt;
+
+&lt;!-- CTA Buttons --&gt;
+&lt;a href="/contact/" class="btn-primary"&gt;Get a Free Strategy Call&lt;/a&gt;
+&lt;a href="/portfolio/" class="btn-secondary"&gt;See Our Results&lt;/a&gt;
+
+&lt;!-- Trust Bar (below buttons) --&gt;
+&lt;div class="trust-bar"&gt;
+  &lt;span&gt;⭐ 4.9/5 Google Rating&lt;/span&gt;
+  &lt;span&gt;🏆 100+ Brands Served&lt;/span&gt;
+  &lt;span&gt;📍 Based in Jaipur, serving pan India&lt;/span&gt;
+  &lt;span&gt;📈 ₹10Cr+ Ad Spend Managed&lt;/span&gt;
+&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 2 — Services Overview <span class="tag">Core services</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;Digital Marketing Services That Drive Growth&lt;/h2&gt;
+&lt;p&gt;From search engine optimisation to paid advertising, we offer the complete digital marketing services Jaipur businesses need to dominate online.&lt;/p&gt;
+
+&lt;div class="services-grid"&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;SEO Services&lt;/h3&gt;
+    &lt;p&gt;Rank on page 1 of Google and get consistent organic traffic. Our Jaipur SEO team handles technical SEO, on-page optimisation, local SEO &amp; link building.&lt;/p&gt;
+    &lt;a href="/services/seo-services/"&gt;Explore SEO Services →&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;Google Ads &amp; PPC&lt;/h3&gt;
+    &lt;p&gt;Stop wasting your ad budget. Our certified Google Ads team manages search, shopping &amp; display campaigns built to generate leads at the lowest possible cost.&lt;/p&gt;
+    &lt;a href="/services/google-ads/"&gt;Explore Google Ads →&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;Performance Marketing&lt;/h3&gt;
+    &lt;p&gt;Pay only for results. We run Meta Ads, Google Ads &amp; programmatic campaigns with sharp targeting and continuous optimisation for maximum ROAS.&lt;/p&gt;
+    &lt;a href="/services/performance-marketing/"&gt;Explore Performance Marketing →&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;Social Media Marketing&lt;/h3&gt;
+    &lt;p&gt;Build a brand your audience loves. We create content, manage communities &amp; run ads on Instagram, Facebook, LinkedIn &amp; YouTube for measurable engagement and growth.&lt;/p&gt;
+    &lt;a href="/services/social-media-marketing/"&gt;Explore Social Media →&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;Branding &amp; Brand Identity&lt;/h3&gt;
+    &lt;p&gt;From logo design to full brand strategy — BoostronixX is the branding agency in Jaipur that builds brands people remember and businesses trust.&lt;/p&gt;
+    &lt;a href="/services/brand-consulting/"&gt;Explore Branding →&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="service-card"&gt;
+    &lt;h3&gt;Website Design &amp; Development&lt;/h3&gt;
+    &lt;p&gt;Your website is your #1 sales tool. We design fast, mobile-first websites that look great, rank on Google and convert visitors into customers.&lt;/p&gt;
+    &lt;a href="/services/website-design/"&gt;Explore Web Design →&lt;/a&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;div class="cta-center"&gt;
+  &lt;a href="/services/digital-marketing/"&gt;View All Digital Marketing Services →&lt;/a&gt;
+&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 3 — Why Choose BoostronixX <span class="tag">Differentiators</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;Why Jaipur Businesses Choose BoostronixX&lt;/h2&gt;
+&lt;p&gt;We are not just another digital marketing company in Jaipur. We are your growth partner — transparent, data-driven and obsessed with your results.&lt;/p&gt;
+
+&lt;div class="reasons-grid"&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;📊&lt;/span&gt;
+    &lt;h3&gt;ROI-Driven Approach&lt;/h3&gt;
+    &lt;p&gt;Every campaign is built around one goal: returns. We track every rupee spent and optimise continuously to ensure your investment grows.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;🔍&lt;/span&gt;
+    &lt;h3&gt;Full-Service Agency&lt;/h3&gt;
+    &lt;p&gt;From SEO to paid ads, from branding to web design — everything under one roof. No agency-hopping, no communication gaps.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;📍&lt;/span&gt;
+    &lt;h3&gt;Local Market Expertise&lt;/h3&gt;
+    &lt;p&gt;We understand Jaipur's business landscape — from Pink City tourism to real estate to jewellery exports. Local knowledge, global strategy.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;📈&lt;/span&gt;
+    &lt;h3&gt;Transparent Reporting&lt;/h3&gt;
+    &lt;p&gt;No black boxes. You get monthly reports, live dashboards and a dedicated account manager who explains every number in plain language.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;💰&lt;/span&gt;
+    &lt;h3&gt;Affordable Packages&lt;/h3&gt;
+    &lt;p&gt;Startup or enterprise — we have digital marketing packages that fit your budget without compromising on quality or results.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="reason"&gt;
+    &lt;span class="icon"&gt;🤖&lt;/span&gt;
+    &lt;h3&gt;AI-Powered Marketing&lt;/h3&gt;
+    &lt;p&gt;We leverage the latest AI tools for smarter targeting, faster content creation &amp; predictive analytics — giving your campaigns a competitive edge.&lt;/p&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 4 — Results / Numbers <span class="tag">Social proof — ADD YOUR ACTUAL NUMBERS</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;Numbers That Prove We Deliver&lt;/h2&gt;
+
+&lt;div class="stats-row"&gt;
+  &lt;div class="stat"&gt;
+    &lt;span class="number"&gt;100+&lt;/span&gt;
+    &lt;span class="label"&gt;Brands Grown&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="stat"&gt;
+    &lt;span class="number"&gt;₹10Cr+&lt;/span&gt;
+    &lt;span class="label"&gt;Ad Spend Managed&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="stat"&gt;
+    &lt;span class="number"&gt;3x&lt;/span&gt;
+    &lt;span class="label"&gt;Average ROAS&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="stat"&gt;
+    &lt;span class="number"&gt;5+&lt;/span&gt;
+    &lt;span class="label"&gt;Years in Jaipur&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ⚠ IMPORTANT: Replace placeholders with your real numbers before publishing --&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 5 — Industry Verticals <span class="tag">NEW — Keyword targeting for industry pages</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;We Serve Every Industry in Jaipur &amp; Beyond&lt;/h2&gt;
+&lt;p&gt;Whether you are a real estate developer, healthcare provider, restaurant owner or edtech startup — BoostronixX has the industry expertise to market your business effectively.&lt;/p&gt;
+
+&lt;div class="industry-grid"&gt;
+
+  &lt;a href="/industries/real-estate/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;🏠&lt;/span&gt;
+    &lt;h3&gt;Real Estate&lt;/h3&gt;
+    &lt;p&gt;Lead generation for builders, agents &amp; developers in Jaipur&lt;/p&gt;
+  &lt;/a&gt;
+
+  &lt;a href="/industries/healthcare/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;🏥&lt;/span&gt;
+    &lt;h3&gt;Healthcare&lt;/h3&gt;
+    &lt;p&gt;Patient acquisition for hospitals, clinics &amp; doctors&lt;/p&gt;
+  &lt;/a&gt;
+
+  &lt;a href="/industries/restaurants/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;🍽️&lt;/span&gt;
+    &lt;h3&gt;Restaurants &amp; Food&lt;/h3&gt;
+    &lt;p&gt;Footfall &amp; delivery growth for Jaipur's dining businesses&lt;/p&gt;
+  &lt;/a&gt;
+
+  &lt;a href="/industries/education-edtech/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;🎓&lt;/span&gt;
+    &lt;h3&gt;Education &amp; EdTech&lt;/h3&gt;
+    &lt;p&gt;Student enrolment &amp; brand building for schools &amp; coaching centres&lt;/p&gt;
+  &lt;/a&gt;
+
+  &lt;a href="/industries/d2c-brands/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;🛍️&lt;/span&gt;
+    &lt;h3&gt;D2C &amp; Ecommerce&lt;/h3&gt;
+    &lt;p&gt;Sales &amp; ROAS growth for direct-to-consumer &amp; online stores&lt;/p&gt;
+  &lt;/a&gt;
+
+  &lt;a href="/industries/jewellery/" class="industry-card"&gt;
+    &lt;span class="icon"&gt;💍&lt;/span&gt;
+    &lt;h3&gt;Jewellery&lt;/h3&gt;
+    &lt;p&gt;Online presence &amp; export enquiry generation for Jaipur jewellers&lt;/p&gt;
+  &lt;/a&gt;
+
+&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 6 — Client Testimonials <span class="tag">NEW — Google reviews widget + testimonials</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;What Our Clients Say About Jaipur's Top-Rated Digital Marketing Agency&lt;/h2&gt;
+
+&lt;div class="reviews-grid"&gt;
+
+  &lt;div class="review-card"&gt;
+    &lt;div class="stars"&gt;⭐⭐⭐⭐⭐&lt;/div&gt;
+    &lt;p&gt;"BoostronixX transformed our online presence. Our Google Ads ROAS went from 1.2x to 4.5x in just 3 months. Highly recommend for any Jaipur business serious about growth."&lt;/p&gt;
+    &lt;div class="reviewer"&gt;
+      &lt;strong&gt;[Client Name]&lt;/strong&gt; — [Business Name], Jaipur
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="review-card"&gt;
+    &lt;div class="stars"&gt;⭐⭐⭐⭐⭐&lt;/div&gt;
+    &lt;p&gt;"Best digital marketing agency in Jaipur, no doubt. Our website traffic tripled in 6 months and we are now ranking #1 for our main keywords."&lt;/p&gt;
+    &lt;div class="reviewer"&gt;
+      &lt;strong&gt;[Client Name]&lt;/strong&gt; — [Business Name], Jaipur
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class="review-card"&gt;
+    &lt;div class="stars"&gt;⭐⭐⭐⭐⭐&lt;/div&gt;
+    &lt;p&gt;"As a real estate developer in Jaipur, finding quality leads used to be expensive. BoostronixX cut our cost per lead by 60% with their targeted Meta Ads strategy."&lt;/p&gt;
+    &lt;div class="reviewer"&gt;
+      &lt;strong&gt;[Client Name]&lt;/strong&gt; — [Business Name], Jaipur
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- Google Reviews Widget — embed from Elfsight or use Google Place ID --&gt;
+&lt;div class="google-reviews-widget"&gt;
+  &lt;!-- Add Elfsight Google Reviews widget here: https://elfsight.com/google-reviews-widget/ --&gt;
+  &lt;!-- OR embed Google Place reviews via widget using your GBP Place ID --&gt;
+&lt;/div&gt;
+
+&lt;a href="https://g.page/[YOUR-GBP-SHORTNAME]/review" target="_blank" class="btn-outline"&gt;
+  Read All Google Reviews →
+&lt;/a&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 7 — Local SEO Block <span class="tag">NEW — Jaipur-specific, map pack signals</span></h3>
+    <pre class="code-block">
+&lt;h2&gt;Your Trusted Digital Marketing Partner in Jaipur, Rajasthan&lt;/h2&gt;
+
+&lt;div class="local-block"&gt;
+  &lt;div class="local-text"&gt;
+    &lt;p&gt;BoostronixX is a full-service &lt;strong&gt;digital marketing agency in Jaipur&lt;/strong&gt; that has been helping businesses across Rajasthan grow their online presence since [YEAR]. We work with brands in Malviya Nagar, Vaishali Nagar, C-Scheme, Tonk Road, Mansarovar &amp; across Jaipur city.&lt;/p&gt;
+
+    &lt;p&gt;From startups at the Rajasthan IT Day accelerator to established exporters in the jewellery capital of India — we understand what it takes to market a business in Jaipur's competitive landscape.&lt;/p&gt;
+
+    &lt;div class="contact-strip"&gt;
+      &lt;div&gt;📞 &lt;a href="tel:+91XXXXXXXXXX"&gt;+91-XXXX-XXXXXX&lt;/a&gt;&lt;/div&gt;
+      &lt;div&gt;📧 &lt;a href="mailto:hello@boostronixx.com"&gt;hello@boostronixx.com&lt;/a&gt;&lt;/div&gt;
+      &lt;div&gt;📍 Jaipur, Rajasthan, India&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;a href="/contact/" class="btn-primary"&gt;Book a Free Strategy Call&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="local-map"&gt;
+    &lt;!-- Embed Google Maps here --&gt;
+    &lt;iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!...YOUR_PLACE_ID..."
+      width="100%"
+      height="300"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"&gt;
+    &lt;/iframe&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 8 — FAQ Block <span class="tag">NEW — AI Overviews + featured snippet targeting</span></h3>
+    <pre class="code-block">
+&lt;!-- Add FAQ schema (JSON-LD) alongside this section --&gt;
+&lt;h2&gt;Frequently Asked Questions&lt;/h2&gt;
+
+&lt;div class="faq-accordion"&gt;
+
+  &lt;div class="faq-item"&gt;
+    &lt;h3&gt;What is the best digital marketing agency in Jaipur?&lt;/h3&gt;
+    &lt;p&gt;BoostronixX is consistently rated among Jaipur's top digital marketing agencies, known for transparent reporting, ROI-driven campaigns and full-service capabilities spanning SEO, Google Ads, social media, branding and web design.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="faq-item"&gt;
+    &lt;h3&gt;How much does digital marketing cost in Jaipur?&lt;/h3&gt;
+    &lt;p&gt;Digital marketing costs in Jaipur vary by service and scope. SEO packages typically start from ₹8,000–₹15,000/month, Google Ads management from ₹5,000/month (plus ad spend), and social media marketing from ₹10,000/month. BoostronixX offers custom packages for every budget — contact us for a free quote.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="faq-item"&gt;
+    &lt;h3&gt;Do you work with businesses outside Jaipur?&lt;/h3&gt;
+    &lt;p&gt;Yes. While we are based in Jaipur, we serve clients across Rajasthan and pan India. We have worked with brands in Delhi, Mumbai, Bengaluru and internationally. Our digital-first approach means location is never a barrier.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="faq-item"&gt;
+    &lt;h3&gt;How long does SEO take to show results in Jaipur?&lt;/h3&gt;
+    &lt;p&gt;Most clients start seeing noticeable improvements in rankings and traffic within 3–6 months. For competitive keywords like "digital marketing agency Jaipur," consistent results typically appear within 6–9 months of a well-structured SEO campaign.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="faq-item"&gt;
+    &lt;h3&gt;What industries does BoostronixX specialise in?&lt;/h3&gt;
+    &lt;p&gt;We have deep expertise in real estate, healthcare, education/EdTech, jewellery, restaurants, D2C ecommerce and technology startups. Each industry vertical has dedicated strategies built around the buyer journey unique to that sector.&lt;/p&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- FAQ Schema JSON-LD (paste in &lt;head&gt; or Yoast Custom Schema) --&gt;
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best digital marketing agency in Jaipur?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "BoostronixX is consistently rated among Jaipur's top digital marketing agencies, known for transparent reporting, ROI-driven campaigns and full-service capabilities spanning SEO, Google Ads, social media, branding and web design."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does digital marketing cost in Jaipur?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SEO packages start from ₹8,000–₹15,000/month, Google Ads management from ₹5,000/month (plus ad spend), and social media marketing from ₹10,000/month."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does SEO take to show results in Jaipur?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most clients see noticeable improvements in 3–6 months. Competitive keywords typically see results within 6–9 months of a well-structured SEO campaign."
+      }
+    }
+  ]
+}
+&lt;/script&gt;
+    </pre>
+  </div>
+
+  <div class="content-section">
+    <h3>SECTION 9 — Final CTA <span class="tag">Bottom of page conversion</span></h3>
+    <pre class="code-block">
+&lt;section class="cta-section"&gt;
+  &lt;h2&gt;Ready to Hire a Digital Marketing Agency in Jaipur?&lt;/h2&gt;
+  &lt;p&gt;Join 100+ businesses that trust BoostronixX for affordable, ROI-driven digital marketing in Jaipur. Book your free 30-minute strategy call today — no obligation, just real insights.&lt;/p&gt;
+
+  &lt;div class="cta-buttons"&gt;
+    &lt;a href="/contact/" class="btn-primary"&gt;📞 Book Free Strategy Call&lt;/a&gt;
+    &lt;a href="https://wa.me/91XXXXXXXXXX" class="btn-whatsapp"&gt;💬 WhatsApp Us Now&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;p class="cta-footnote"&gt;
+    Trusted by businesses in Jaipur, Rajasthan &amp; across India
+    · &lt;a href="/services/seo-services/"&gt;SEO&lt;/a&gt;
+    · &lt;a href="/services/google-ads/"&gt;Google Ads&lt;/a&gt;
+    · &lt;a href="/services/social-media-marketing/"&gt;Social Media&lt;/a&gt;
+    · &lt;a href="/services/brand-consulting/"&gt;Branding&lt;/a&gt;
+    · &lt;a href="/services/website-design/"&gt;Web Design&lt;/a&gt;
+  &lt;/p&gt;
+&lt;/section&gt;
+    </pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: NEW SECTIONS TO ADD -->
+<!-- ============================================================ -->
+<div id="newsections" class="section">
+  <div class="notice">🔧 These sections are missing from the current homepage and should be added to improve conversions, local SEO signals and keyword targeting.</div>
+
+  <div class="section-card">
+    <div class="icon">📞</div>
+    <div>
+      <h4>NAP + WhatsApp Button in Header &amp; Footer</h4>
+      <p>Currently the site has NO phone number, email or WhatsApp button visible anywhere. This is hurting both local SEO (local pack ranking) and conversions. Add phone + email + WhatsApp in header and footer immediately.</p>
+      <span class="priority p-critical">🔴 CRITICAL — Do This First</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">⭐</div>
+    <div>
+      <h4>Google Reviews Widget (Trust Section)</h4>
+      <p>Add a live Google Reviews embed (Elfsight or similar) on the homepage. Showing real 5-star reviews addresses "best/top-rated" keyword intent. Aim for 10+ Google reviews first, then embed. Include schema aggregateRating on the homepage.</p>
+      <span class="priority p-critical">🔴 CRITICAL</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">📊</div>
+    <div>
+      <h4>Results / Stats Counter Section</h4>
+      <p>No numbers exist on the homepage. Add an animated stats bar with real numbers: brands served, ad spend managed, average ROAS, years in business. This targets "ROI Driven" and "Top Rated" keyword intent with proof, not just claims.</p>
+      <span class="priority p-critical">🔴 CRITICAL</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">🏙️</div>
+    <div>
+      <h4>Jaipur-Specific Local Section + Google Maps Embed</h4>
+      <p>Add a section that mentions specific Jaipur localities (Malviya Nagar, Vaishali Nagar, etc.), includes a Google Maps embed, and lists contact details. This sends strong local SEO signals and is required for the map pack ranking.</p>
+      <span class="priority p-high">🟡 HIGH</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">🏢</div>
+    <div>
+      <h4>Industry Verticals Grid Section</h4>
+      <p>Currently there is no "industries we serve" section on the homepage. Adding a 6-card grid (Real Estate, Healthcare, Restaurants, Education, D2C, Jewellery) with links to individual industry pages enables keyword targeting for all 4 industry-vertical search terms from the 28 keywords and creates internal link equity to new pages.</p>
+      <span class="priority p-high">🟡 HIGH</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">📋</div>
+    <div>
+      <h4>FAQ Accordion Section</h4>
+      <p>No FAQ exists on the homepage. An FAQ section with 5 questions targeting "best digital marketing agency Jaipur," "cost of digital marketing Jaipur," "how long does SEO take," etc. enables featured snippet capture and Google AI Overview inclusion. Add FAQPage JSON-LD schema alongside it.</p>
+      <span class="priority p-high">🟡 HIGH</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">🤝</div>
+    <div>
+      <h4>Client Logo Strip / Trust Logos</h4>
+      <p>A "Trusted by" logo strip showing past client logos (with permission) or industry recognitions (Clutch, GoodFirms badges) builds immediate credibility and addresses "trusted" and "top rated" keyword intent. Place below the hero section.</p>
+      <span class="priority p-high">🟡 HIGH</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">📰</div>
+    <div>
+      <h4>Latest Blog Posts Section (3-4 cards)</h4>
+      <p>Adding a "From Our Blog" section on the homepage creates internal links to blog content, keeps the page fresh (Google freshness signal), and establishes E-E-A-T by demonstrating thought leadership. Show 3 recent posts with thumbnail, title and excerpt.</p>
+      <span class="priority p-medium">🔵 MEDIUM</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">🎯</div>
+    <div>
+      <h4>"Affordable Packages" Pricing Section or CTA</h4>
+      <p>The keyword "Affordable Digital Marketing Agency Jaipur" is in your target list. Currently there is no mention of pricing, affordability or packages anywhere on the homepage. Add either a pricing section (even just "Starting from ₹X,000/month") or a CTA that addresses price concern directly.</p>
+      <span class="priority p-medium">🔵 MEDIUM</span>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="icon">🤖</div>
+    <div>
+      <h4>AI / Technology Differentiator Section</h4>
+      <p>As an agency targeting the "AI Automation" cluster, having a brief homepage section about AI-powered marketing — separate from the services grid — positions you ahead of traditional agencies and helps establish the AI Automation pillar page internally. Even a single-line callout with a link works.</p>
+      <span class="priority p-medium">🔵 MEDIUM</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+  return false;
+}
+</script>
+</body>
+</html>
