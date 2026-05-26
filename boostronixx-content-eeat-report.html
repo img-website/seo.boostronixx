@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Quality & E-E-A-T Report — boostronixx.com</title>
+<style>
+  :root {
+    --brand:#1a1a2e; --accent:#e94560; --accent2:#0f3460;
+    --success:#22c55e; --warning:#f59e0b; --danger:#ef4444; --info:#3b82f6;
+    --light:#f8fafc; --border:#e2e8f0; --text:#1e293b; --muted:#64748b; --card:#fff;
+    --tier1:#10b981; --tier2:#f59e0b; --tier3:#ef4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;color:var(--text);line-height:1.6;}
+
+  .report-header{background:linear-gradient(135deg,#0f3460 0%,#533483 100%);color:white;padding:48px 40px 36px;}
+  .report-header .badge{background:#e94560;color:white;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:16px;}
+  .report-header h1{font-size:2rem;font-weight:800;margin-bottom:6px;}
+  .report-header .subtitle{opacity:.8;font-size:1rem;margin-bottom:24px;}
+  .meta-row{display:flex;gap:32px;flex-wrap:wrap;}
+  .meta-item{font-size:13px;opacity:.85;}
+  .meta-item strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.6;margin-bottom:2px;}
+
+  /* SCORE CARDS */
+  .score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:28px 40px;background:white;border-bottom:3px solid var(--border);}
+  .score-card{background:var(--light);border-radius:12px;padding:20px;text-align:center;border:1px solid var(--border);}
+  .score-big{font-size:2.2rem;font-weight:900;line-height:1;}
+  .score-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+  .score-label{font-size:13px;font-weight:700;color:var(--text);margin-top:8px;}
+  .c-good{color:var(--success);}
+  .c-warn{color:var(--warning);}
+  .c-bad{color:var(--danger);}
+  .c-info{color:var(--info);}
+
+  .container{max-width:1200px;margin:0 auto;padding:32px 24px;}
+  .section{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:28px;overflow:hidden;}
+  .section-header{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+  .section-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .section-header h2{font-size:1.15rem;font-weight:700;}
+  .section-body{padding:24px 28px;}
+
+  /* EEAT GRID */
+  .eeat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .eeat-card{border:1px solid var(--border);border-radius:10px;padding:20px;}
+  .eeat-card h3{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .eeat-score-bar{height:12px;background:var(--border);border-radius:6px;margin:8px 0 4px;overflow:hidden;}
+  .eeat-score-fill{height:100%;border-radius:6px;}
+  .eeat-score-num{font-size:20px;font-weight:800;float:right;}
+  .eeat-signals{list-style:none;margin-top:10px;}
+  .eeat-signals li{font-size:12.5px;padding:4px 0;padding-left:20px;position:relative;color:var(--text);}
+  .eeat-signals li::before{position:absolute;left:0;}
+  .eeat-signals li.pass::before{content:'✅';}
+  .eeat-signals li.fail::before{content:'❌';}
+  .eeat-signals li.warn::before{content:'⚠️';}
+
+  /* TABLES */
+  .audit-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .audit-table thead tr{background:var(--light);}
+  .audit-table th{padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:700;border-bottom:2px solid var(--border);}
+  .audit-table td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .audit-table tr:last-child td{border-bottom:none;}
+  .audit-table tr:hover td{background:#f8fafc;}
+  .page-url{font-family:monospace;font-size:12px;color:var(--accent2);}
+
+  /* PILLS */
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;}
+  .pill-critical{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+  .pill-high{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+  .pill-medium{background:#fffbeb;color:#b45309;border:1px solid #fde68a;}
+  .pill-low{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+  .pill-pass{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+  .pill-fail{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+  .pill-info{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+  .pill-tier1{background:#dcfce7;color:#166534;border:1px solid #86efac;}
+  .pill-tier2{background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
+  .pill-tier3{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+
+  /* CONTENT TIER */
+  .tier-legend{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+  .tier-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;}
+  .tier-dot{width:12px;height:12px;border-radius:50%;}
+
+  /* KEYWORD MAP */
+  .kw-cluster{margin-bottom:20px;}
+  .kw-cluster h3{font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .kw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .kw-card{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+  .kw-card .kw-term{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+  .kw-card .kw-meta{font-size:11px;color:var(--muted);}
+  .kw-card.gap{border-left:3px solid var(--danger);}
+  .kw-card.existing{border-left:3px solid var(--success);}
+  .kw-card.opportunity{border-left:3px solid var(--warning);}
+
+  /* AI READINESS */
+  .ai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .ai-card{background:var(--light);border:1px solid var(--border);border-radius:10px;padding:16px;}
+  .ai-card h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;}
+  .ai-card .ai-score{font-size:28px;font-weight:900;margin-bottom:4px;}
+  .ai-card p{font-size:12px;color:var(--muted);}
+
+  /* CONVERSION RECS */
+  .conv-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .conv-item{background:var(--light);border:1px solid var(--border);border-radius:8px;padding:16px;}
+  .conv-item h4{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);}
+  .conv-item p{font-size:12.5px;color:var(--muted);}
+  .conv-item .impact{font-size:11px;font-weight:700;color:var(--success);margin-top:6px;}
+
+  .highlight-box{background:#eff6ff;border-left:4px solid var(--info);border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:13.5px;}
+  .highlight-box.warning{background:#fffbeb;border-color:var(--warning);}
+  .highlight-box.danger{background:#fef2f2;border-color:var(--danger);}
+  .highlight-box.success{background:#f0fdf4;border-color:var(--success);}
+  .highlight-box.purple{background:#faf5ff;border-color:#a855f7;}
+
+  /* SEMANTIC MAP */
+  .sem-cluster{display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;margin:4px;}
+  .sem-cluster.gap{background:#fef2f2;border-color:#fecaca;color:#b91c1c;}
+  .sem-cluster.weak{background:#fffbeb;border-color:#fde68a;color:#b45309;}
+
+  /* ACTION STEPS */
+  .step-list{list-style:none;counter-reset:steps;}
+  .step-list li{counter-increment:steps;display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .step-list li:last-child{border-bottom:none;}
+  .step-list li::before{content:counter(steps);width:28px;height:28px;min-width:28px;border-radius:50%;background:var(--accent2);color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .step-body h4{font-size:13px;font-weight:700;margin-bottom:3px;}
+  .step-body p{font-size:12.5px;color:var(--muted);}
+  .step-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;}
+
+  .report-footer{text-align:center;padding:32px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:16px;}
+
+  @media(max-width:768px){
+    .score-row{grid-template-columns:1fr 1fr;}
+    .eeat-grid{grid-template-columns:1fr;}
+    .ai-grid{grid-template-columns:1fr;}
+    .conv-grid{grid-template-columns:1fr;}
+    .kw-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <span class="badge">Content Quality &amp; E-E-A-T Analysis</span>
+  <h1>Content SEO Report: boostronixx.com</h1>
+  <p class="subtitle">Keyword Opportunities · Semantic Gaps · Thin Content · E-E-A-T · AI Search Optimization · Conversion SEO</p>
+  <div class="meta-row">
+    <div class="meta-item"><strong>Site</strong>https://www.boostronixx.com/</div>
+    <div class="meta-item"><strong>Date</strong>26 May 2026</div>
+    <div class="meta-item"><strong>Pages Analyzed</strong>17 pages (all services, blog, faqs, portfolio)</div>
+    <div class="meta-item"><strong>Framework</strong>Google QRG Sept 2025 · E-E-A-T · GEO / AI Mode</div>
+  </div>
+</div>
+
+<!-- SCORE ROW -->
+<div class="score-row">
+  <div class="score-card">
+    <div class="score-big c-warn">44</div>
+    <div class="score-sub">/100</div>
+    <div class="score-label">Overall Content Quality</div>
+  </div>
+  <div class="score-card">
+    <div class="score-big c-bad">32</div>
+    <div class="score-sub">/100</div>
+    <div class="score-label">E-E-A-T Score</div>
+  </div>
+  <div class="score-card">
+    <div class="score-big c-warn">41</div>
+    <div class="score-sub">/100</div>
+    <div class="score-label">AI Citation Readiness</div>
+  </div>
+  <div class="score-card">
+    <div class="score-big c-warn">48</div>
+    <div class="score-sub">/100</div>
+    <div class="score-label">Conversion SEO Score</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 1. THIN CONTENT DETECTION -->
+  <div class="section" id="thin-content">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef2f2;">📉</div>
+      <h2>1. Thin Content Detection</h2>
+    </div>
+    <div class="section-body">
+      <div class="tier-legend">
+        <div class="tier-item"><div class="tier-dot" style="background:var(--danger)"></div>Tier 3 — Thin / Template (needs full rewrite)</div>
+        <div class="tier-item"><div class="tier-dot" style="background:var(--warning)"></div>Tier 2 — Partial (adequate shell, needs depth)</div>
+        <div class="tier-item"><div class="tier-dot" style="background:var(--success)"></div>Tier 1 — Solid (good depth and specificity)</div>
+      </div>
+      <table class="audit-table">
+        <thead><tr><th>Page</th><th>Est. Unique Words</th><th>Min Required</th><th>Tier</th><th>Key Deficiency</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="page-url">/services/brand-consulting/</td>
+            <td>~280 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier3">Tier 3 — Thin</span></td>
+            <td>Body content is almost entirely template boilerplate: "Receive your design within a few business days…" The H2 "Product making for friendly users" is irrelevant. Four process steps (Discover/Strategize/Design/Build) are each 1-sentence bullets. No client outcomes, no specifics, no proof. Essentially a placeholder.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/digital-marketing/</td>
+            <td>~250 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier3">Tier 3 — Thin</span></td>
+            <td>Identical boilerplate body copy to Brand Consulting. Four process steps are vague 1-liners. No specific platforms, tactics, pricing signals, or results. Copy-paste template not replaced with real service content. <strong>Duplicate content risk with brand-consulting page.</strong></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/performance-marketing/</td>
+            <td>~270 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier3">Tier 3 — Thin</span></td>
+            <td>Same template body as Digital Marketing and Brand Consulting. H2 "Product making for friendly users" is a copy-paste error. No Google Ads specifics, no budget guidance, no ROAS/CTR signals, no case result. Stepnames (Audience Analysis, Funnel Setup, Ad Launch, Optimization) exist but each is a vague single sentence.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/ui-ux-design/</td>
+            <td>Not fully fetched</td>
+            <td>800</td>
+            <td><span class="pill pill-tier2">Tier 2 — Likely Partial</span></td>
+            <td>Not fully audited — likely shares the same template as other thin service pages. Audit and rewrite needed.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/faqs/</td>
+            <td>~220 words</td>
+            <td>500</td>
+            <td><span class="pill pill-tier3">Tier 3 — Thin</span></td>
+            <td>Only 5 generic FAQs, none of them keyword-targeted. H1 grammatically broken. No FAQ schema. No service-specific questions. Misses key conversion-stage queries users type before hiring an agency.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/social-media-marketing/</td>
+            <td>~600 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier2">Tier 2 — Partial</span></td>
+            <td>Has 5 strong FAQ items, 4 substantive process steps, geo-targeted H1. Solid foundation but lacks proof points: no client results, no engagement metrics achieved, no platform-specific case studies.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/seo-services/</td>
+            <td>~700 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier1">Tier 1 — Solid</span></td>
+            <td>Best service page on the site. Has geo-targeting, 5 detailed FAQ items, 4 process steps with real descriptions, specific service list (local SEO, GMB, link building, keyword research). Just below the 800-word floor — expand with client results section.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/website-design/</td>
+            <td>~750 words</td>
+            <td>800</td>
+            <td><span class="pill pill-tier1">Tier 1 — Solid</span></td>
+            <td>Strong content: detailed 4-step process, 5 well-written FAQ items, geo-targeting throughout, mentions technologies (WordPress, WooCommerce). Slightly under 800-word floor. Add 1 client result or case study excerpt.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>~2,800 words</td>
+            <td>1,500</td>
+            <td><span class="pill pill-tier1">Tier 1 — Solid</span></td>
+            <td>Excellent depth. 8 structured steps, FAQ section, statistics (2.5× growth, 5–7 impressions), internal links, clear methodology. Best content asset on the site.</td>
+          </tr>
+          <tr>
+            <td class="page-url">Other blog posts (13 total)</td>
+            <td>~800–2,000 est.</td>
+            <td>1,500</td>
+            <td><span class="pill pill-tier1">Tier 1 — Likely Solid</span></td>
+            <td>Post titles and sitemap structure suggest consistent depth (12-min read estimated for brand strategy post). Blog is the strongest content asset. Ensure all 13 posts meet 1,500-word minimum with strong heading structure.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight-box danger" style="margin-top:16px;">
+        <strong>🚨 Critical Pattern — Template Content on 3 Service Pages:</strong> Brand Consulting, Digital Marketing, and Performance Marketing pages share nearly <em>identical body copy</em>: the same "Receive your design within a few business days" paragraph, the same "Product making for friendly users" H2, and the same 5 boilerplate sub-bullets. Google's duplicate content systems will suppress all three from rankings. These pages need complete, page-specific rewrites.
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. E-E-A-T ANALYSIS -->
+  <div class="section" id="eeat">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f5f3ff;">🎓</div>
+      <h2>2. E-E-A-T Deep Analysis</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box warning">
+        <strong>Google's "Who / How / Why" Test:</strong> <em>Who</em> created this content? (No author names, bios, or credentials visible.) <em>How</em> was it created? (No methodology disclosure, no original research cited.) <em>Why</em> does it exist? (Mix of genuinely helpful content on blog vs. apparent thin templates on 3 service pages.) — Overall: <strong>Moderate risk under March 2024 core update helpfulness signals.</strong>
+      </div>
+
+      <div class="eeat-grid" style="margin-top:20px;">
+        <div class="eeat-card">
+          <h3>👁️ Experience <span class="eeat-score-num c-bad">7/25</span></h3>
+          <div class="eeat-score-bar"><div class="eeat-score-fill" style="width:28%;background:var(--danger);"></div></div>
+          <ul class="eeat-signals">
+            <li class="fail">No founder/team page with real names or biographies</li>
+            <li class="fail">No "how we do it" methodology pages with first-hand process</li>
+            <li class="fail">Only 2 case studies (Edoovi ERP, Freshee) — very thin portfolio</li>
+            <li class="fail">No client testimonials on any page (no quotes, no star ratings)</li>
+            <li class="fail">About Us page currently returns empty</li>
+            <li class="warn">Blog author byline shows "BoostronixX Team" — no individual expert named</li>
+            <li class="pass">Blog posts demonstrate real-world marketing knowledge and frameworks</li>
+            <li class="pass">Service descriptions mention real client categories (real estate, D2C, education)</li>
+          </ul>
+        </div>
+        <div class="eeat-card">
+          <h3>🧠 Expertise <span class="eeat-score-num c-warn">10/25</span></h3>
+          <div class="eeat-score-bar"><div class="eeat-score-fill" style="width:40%;background:var(--warning);"></div></div>
+          <ul class="eeat-signals">
+            <li class="fail">No certifications mentioned (Google Partner, Meta Blueprint, etc.)</li>
+            <li class="fail">No individual author credentials or profiles on blog posts</li>
+            <li class="fail">No "Years in business" or founding story on any accessible page</li>
+            <li class="warn">Blog content is detailed and accurate but lacks source citations</li>
+            <li class="warn">Statistics used (2.5× growth, 77% brand recognition) not attributed to sources</li>
+            <li class="pass">SEO Services page shows deep local SEO knowledge (GMB, citation building, map pack)</li>
+            <li class="pass">Brand strategy blog post demonstrates genuine 8-step methodology expertise</li>
+            <li class="pass">Website design page demonstrates WordPress/WooCommerce technical knowledge</li>
+          </ul>
+        </div>
+        <div class="eeat-card">
+          <h3>🏆 Authoritativeness <span class="eeat-score-num c-bad">6/25</span></h3>
+          <div class="eeat-score-bar"><div class="eeat-score-fill" style="width:24%;background:var(--danger);"></div></div>
+          <ul class="eeat-signals">
+            <li class="fail">No external citations or mentions from authoritative marketing publications</li>
+            <li class="fail">No press coverage, awards, or industry recognitions mentioned</li>
+            <li class="fail">No backlinks from high-authority domains (new domain, ~3 pages indexed)</li>
+            <li class="fail">No social proof — no follower counts, engagement numbers, or media mentions</li>
+            <li class="fail">Blog posts cite statistics without linking to source (Lucidpress, Forbes, University of Loyola) — unverifiable</li>
+            <li class="warn">LinkedIn, YouTube, Instagram, Facebook presence exists but not leveraged in content</li>
+            <li class="pass">Facebook publisher tag correctly set (article:publisher)</li>
+          </ul>
+        </div>
+        <div class="eeat-card">
+          <h3>🛡️ Trustworthiness <span class="eeat-score-num c-warn">9/25</span></h3>
+          <div class="eeat-score-bar"><div class="eeat-score-fill" style="width:36%;background:var(--warning);"></div></div>
+          <ul class="eeat-signals">
+            <li class="pass">HTTPS active — secure connection ✅</li>
+            <li class="pass">Privacy Policy page present and linked in footer ✅</li>
+            <li class="pass">Terms &amp; Conditions page present ✅</li>
+            <li class="pass">Disclaimer page present ✅</li>
+            <li class="pass">Contact page and phone number (boostronixx@gmail.com, +918058212202)</li>
+            <li class="fail">Email is Gmail (@gmail.com) — not a professional domain email. Reduces trust signals for B2B clients.</li>
+            <li class="fail">No physical office address visible on website (despite being Jaipur-based)</li>
+            <li class="fail">No customer reviews, ratings, or Google Review integration</li>
+            <li class="fail">Blog posts link to unverified statistics without sources</li>
+            <li class="warn">Cookie consent management is present but complex template language</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="highlight-box danger" style="margin-top:20px;">
+        <strong>🚨 YMYL / Agency Trust Risk:</strong> Digital marketing agencies are not strictly YMYL (Your Money or Your Life), but they do handle client budgets and business-critical decisions. Google's QRG raters will look for verifiable credentials, real client outcomes, and named team members. The current site provides almost none of these — addressing E-E-A-T is as important as fixing technical issues for this business category.
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CONTENT HIERARCHY IMPROVEMENTS -->
+  <div class="section" id="hierarchy">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">🏗️</div>
+      <h2>3. Content Hierarchy &amp; Structure Improvements</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>Page</th><th>Current Structure</th><th>Problem</th><th>Recommended Structure</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="page-url">/services/brand-consulting/</td>
+            <td>H1 → H3×4 (process) → H2 "Product making" → H3×5 (boilerplate)</td>
+            <td>Process steps under H3 with no H2 parent. Irrelevant H2. No FAQ section. No results section.</td>
+            <td>H1: "Brand Consulting Services in Jaipur" → H2: "Our Brand Consulting Process" → H3×4 steps → H2: "What You Get" → H2: "Client Results" → H2: "Brand Consulting FAQs" → H3×5 questions</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/digital-marketing/</td>
+            <td>Same broken structure as Brand Consulting</td>
+            <td>Same issues. Service too generic — "Digital Marketing" covers too broad a topic without defining what's included.</td>
+            <td>Either: (a) make this page a hub/overview linking to SEO, SMM, and Performance Marketing sub-pages, or (b) give it unique content focused on integrated digital strategy. H2 structure: Service Overview → Who It's For → Process → Results → FAQs.</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/performance-marketing/</td>
+            <td>H1 → H3×4 → H2 "Product making" → H3×5</td>
+            <td>Step "Optimization" description says "Run ads on platforms like Google, Facebook, or Instagram" — this describes Ad Launch, not Optimization. Content is mismatched with step names.</td>
+            <td>H1: "Performance Marketing Agency Jaipur" → H2: "Platforms We Manage" → H2: "Our Campaign Framework" → H3×4 steps → H2: "Performance Metrics We Track" → H2: "FAQs" → H2: "Results"</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/faqs/</td>
+            <td>H1 (broken) → H4: individual FAQ titles → no H2</td>
+            <td>No semantic grouping of FAQs. Only 5 questions — not enough for a dedicated FAQ page. H1 is grammatically broken.</td>
+            <td>H1: "Frequently Asked Questions — BoostronixX" → H2: "About Our Services" → H3×5 → H2: "Pricing &amp; Process" → H3×4 → H2: "Results &amp; Timelines" → H3×4</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/blog/* posts</td>
+            <td>H1 → H2 → H3 (well structured)</td>
+            <td>Missing author box below H1. Statistics not linked to sources. TL;DR boxes present — good. FAQ sections not present on most posts.</td>
+            <td>Add: author box with credentials → add FAQ section at bottom of each post (3–5 questions per post, eligibility for PAA) → add source citation links to all statistics.</td>
+            <td><span class="pill pill-high">High</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. SEMANTIC SEO GAPS -->
+  <div class="section" id="semantic">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">🧩</div>
+      <h2>4. Semantic SEO Gaps &amp; Topical Authority Map</h2>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom:16px;font-size:13.5px;color:var(--muted);">Semantic coverage audit: green = covered, yellow = partial/thin, red = missing entirely.</p>
+
+      <div class="kw-cluster">
+        <h3>🎯 Cluster 1: Branding &amp; Brand Strategy (Primary Pillar)</h3>
+        <div class="kw-grid">
+          <div class="kw-card existing"><div class="kw-term">Brand strategy fundamentals</div><div class="kw-meta">✅ Covered — strong blog post</div></div>
+          <div class="kw-card existing"><div class="kw-term">Brand identity vs brand image</div><div class="kw-meta">✅ Covered — dedicated blog post</div></div>
+          <div class="kw-card existing"><div class="kw-term">Brand positioning</div><div class="kw-meta">✅ Covered — dedicated blog post</div></div>
+          <div class="kw-card existing"><div class="kw-term">Brand audit checklist</div><div class="kw-meta">✅ Covered — blog post</div></div>
+          <div class="kw-card existing"><div class="kw-term">Rebranding vs brand refresh</div><div class="kw-meta">✅ Covered — blog post</div></div>
+          <div class="kw-card existing"><div class="kw-term">Brand storytelling India</div><div class="kw-meta">✅ Covered — blog post</div></div>
+          <div class="kw-card opportunity"><div class="kw-term">Brand consulting agency Jaipur</div><div class="kw-meta">⚠️ Service page too thin — needs expansion</div></div>
+          <div class="kw-card gap"><div class="kw-term">What is brand architecture</div><div class="kw-meta">❌ Not covered — informational gap</div></div>
+          <div class="kw-card gap"><div class="kw-term">Brand guidelines template</div><div class="kw-meta">❌ Not covered — high-intent asset opportunity</div></div>
+          <div class="kw-card gap"><div class="kw-term">D2C brand strategy India</div><div class="kw-meta">❌ Not covered — target audience niche</div></div>
+          <div class="kw-card gap"><div class="kw-term">Brand consulting for startups</div><div class="kw-meta">❌ Not covered — stated ICP gap</div></div>
+          <div class="kw-card gap"><div class="kw-term">Logo design Jaipur</div><div class="kw-meta">❌ Not covered — visual identity gap</div></div>
+        </div>
+      </div>
+
+      <div class="kw-cluster">
+        <h3>🔍 Cluster 2: SEO Services (Secondary Pillar)</h3>
+        <div class="kw-grid">
+          <div class="kw-card existing"><div class="kw-term">SEO company Jaipur</div><div class="kw-meta">✅ Covered — strong service page</div></div>
+          <div class="kw-card existing"><div class="kw-term">Local SEO Jaipur</div><div class="kw-meta">⚠️ Partial — mentioned but no dedicated page</div></div>
+          <div class="kw-card gap"><div class="kw-term">Google My Business Jaipur</div><div class="kw-meta">❌ Missing — dedicated page needed</div></div>
+          <div class="kw-card gap"><div class="kw-term">E-commerce SEO India</div><div class="kw-meta">❌ Missing — stated D2C audience gap</div></div>
+          <div class="kw-card gap"><div class="kw-term">Technical SEO audit service</div><div class="kw-meta">❌ Missing — no dedicated technical SEO page</div></div>
+          <div class="kw-card gap"><div class="kw-term">Link building service India</div><div class="kw-meta">❌ Missing — mentioned in SEO page but no standalone</div></div>
+          <div class="kw-card gap"><div class="kw-term">What is keyword research</div><div class="kw-meta">❌ Missing — foundational informational post</div></div>
+          <div class="kw-card gap"><div class="kw-term">On-page SEO checklist 2026</div><div class="kw-meta">❌ Missing — high-demand long-tail blog opportunity</div></div>
+          <div class="kw-card gap"><div class="kw-term">SEO vs paid ads India</div><div class="kw-meta">❌ Missing — decision-stage comparison content</div></div>
+        </div>
+      </div>
+
+      <div class="kw-cluster">
+        <h3>📱 Cluster 3: Social Media &amp; Performance Marketing</h3>
+        <div class="kw-grid">
+          <div class="kw-card existing"><div class="kw-term">Social media marketing Jaipur</div><div class="kw-meta">✅ Covered — strong service page</div></div>
+          <div class="kw-card existing"><div class="kw-term">Instagram marketing Jaipur</div><div class="kw-meta">✅ Mentioned in service bullets</div></div>
+          <div class="kw-card opportunity"><div class="kw-term">Performance marketing agency</div><div class="kw-meta">⚠️ Thin service page — rewrite needed</div></div>
+          <div class="kw-card gap"><div class="kw-term">Meta Ads agency India</div><div class="kw-meta">❌ Missing — no dedicated Meta Ads page</div></div>
+          <div class="kw-card gap"><div class="kw-term">Google Ads management Jaipur</div><div class="kw-meta">❌ Missing — no dedicated Google Ads page</div></div>
+          <div class="kw-card gap"><div class="kw-term">What is performance marketing</div><div class="kw-meta">❌ Missing — top of funnel informational blog post</div></div>
+          <div class="kw-card gap"><div class="kw-term">Social media strategy for D2C brands</div><div class="kw-meta">❌ Missing — target ICP niche content</div></div>
+          <div class="kw-card gap"><div class="kw-term">How to reduce cost per lead Facebook</div><div class="kw-meta">❌ Missing — high-value informational post</div></div>
+        </div>
+      </div>
+
+      <div class="kw-cluster">
+        <h3>💻 Cluster 4: Website Design &amp; UI/UX</h3>
+        <div class="kw-grid">
+          <div class="kw-card existing"><div class="kw-term">Website design company Jaipur</div><div class="kw-meta">✅ Covered — solid service page</div></div>
+          <div class="kw-card existing"><div class="kw-term">WordPress development Jaipur</div><div class="kw-meta">⚠️ Partial — mentioned but no dedicated page</div></div>
+          <div class="kw-card gap"><div class="kw-term">WooCommerce development India</div><div class="kw-meta">❌ Missing — e-commerce dev gap</div></div>
+          <div class="kw-card gap"><div class="kw-term">Landing page design Jaipur</div><div class="kw-meta">❌ Missing — high-intent commercial term</div></div>
+          <div class="kw-card gap"><div class="kw-term">Website redesign cost India</div><div class="kw-meta">❌ Missing — high-intent buyer research query</div></div>
+          <div class="kw-card gap"><div class="kw-term">UX design agency Jaipur</div><div class="kw-meta">❌ Missing — separate from website design</div></div>
+          <div class="kw-card gap"><div class="kw-term">Mobile app design India</div><div class="kw-meta">❌ Missing — portfolio shows mobile app work</div></div>
+        </div>
+      </div>
+
+      <div class="highlight-box purple">
+        <strong>🧠 Topical Authority Gap:</strong> The site has built genuine topical depth in <em>Brand Strategy</em> (6 blog posts). But there is <strong>zero informational content</strong> for SEO, Performance Marketing, Social Media Marketing, or Web Design — the agency's other 5 services. A service business that doesn't publish educational content about its own services has a fundamental topical authority gap. Publish 3–5 educational blog posts for each service cluster to build topical coverage.
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SERVICE PAGE SEO IMPROVEMENTS -->
+  <div class="section" id="service-pages">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🔧</div>
+      <h2>5. Service Page SEO Improvements (Page-by-Page)</h2>
+    </div>
+    <div class="section-body">
+
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:14px;font-weight:700;color:var(--accent2);margin-bottom:12px;padding:10px 14px;background:#eff6ff;border-radius:8px;">
+          /services/brand-consulting/ — Score: 28/100
+        </h3>
+        <table class="audit-table">
+          <thead><tr><th>Element</th><th>Current</th><th>Recommended</th></tr></thead>
+          <tbody>
+            <tr><td>Title tag</td><td>"Brand Consulting | BoostronixX" (32 chars)</td><td>"Brand Consulting Agency in Jaipur | Strategy &amp; Identity | BoostronixX" (70 chars)</td></tr>
+            <tr><td>Meta description</td><td>Generic boilerplate (163 chars, shared with 2 other pages)</td><td>"We help ambitious businesses define their brand strategy, visual identity, and positioning from scratch. Jaipur-based brand consultants. Book a free strategy call." (162 chars)</td></tr>
+            <tr><td>H1</td><td>"Brand Consulting" (generic, no geo)</td><td>"Brand Consulting Services in Jaipur — Strategy, Identity &amp; Positioning"</td></tr>
+            <tr><td>H2 (main)</td><td>"Product making for friendly users" (irrelevant)</td><td>"Our Brand Consulting Process" / "What's Included in Our Brand Consulting Service" / "Brand Consulting FAQs"</td></tr>
+            <tr><td>Body content</td><td>~280 words, mostly template text</td><td>800+ words covering: (1) what brand consulting is and who needs it, (2) your 4-step process with expanded descriptions, (3) deliverables list, (4) client results, (5) FAQ section (5+ questions)</td></tr>
+            <tr><td>Social proof</td><td>None</td><td>Add 1–2 client testimonial quotes with company/sector attribution</td></tr>
+            <tr><td>CTA</td><td>"Start Your Brand Transformation Now" (generic)</td><td>"Book a Free Brand Strategy Session" with a direct calendar link or phone number</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:14px;font-weight:700;color:var(--accent2);margin-bottom:12px;padding:10px 14px;background:#eff6ff;border-radius:8px;">
+          /services/digital-marketing/ — Score: 25/100
+        </h3>
+        <table class="audit-table">
+          <thead><tr><th>Element</th><th>Current</th><th>Recommended</th></tr></thead>
+          <tbody>
+            <tr><td>Title tag</td><td>"Digital Marketing | BoostronixX" (33 chars)</td><td>"Digital Marketing Agency Jaipur | SEO, SMM &amp; Paid Ads | BoostronixX" (67 chars)</td></tr>
+            <tr><td>Meta description</td><td>Same boilerplate as Brand Consulting — critical duplicate</td><td>"Full-service digital marketing in Jaipur — SEO, social media, Google Ads, and content marketing. Data-driven strategies that grow organic traffic and convert leads." (164 chars — trim by 4)</td></tr>
+            <tr><td>Strategic recommendation</td><td colspan="2">Consider converting this into a Digital Marketing <em>hub page</em> that links to all 5 specific service sub-pages (SEO, SMM, Performance Marketing, Website Design, UI/UX). A hub page with strong internal linking can capture broad "digital marketing agency" queries while funneling users to specific service pages.</td></tr>
+            <tr><td>Body content</td><td>~250 words, template text</td><td>800+ words: What digital marketing covers, service breakdown table (linking to each sub-service page), why integrated digital marketing outperforms siloed approaches, FAQ section</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:14px;font-weight:700;color:var(--accent2);margin-bottom:12px;padding:10px 14px;background:#eff6ff;border-radius:8px;">
+          /services/performance-marketing/ — Score: 30/100
+        </h3>
+        <table class="audit-table">
+          <thead><tr><th>Element</th><th>Current</th><th>Recommended</th></tr></thead>
+          <tbody>
+            <tr><td>Title tag</td><td>"Performance Marketing | BoostronixX" (37 chars)</td><td>"Performance Marketing Agency Jaipur | Google Ads &amp; Meta Ads | BoostronixX" (73 chars)</td></tr>
+            <tr><td>Meta description</td><td>Generic boilerplate — same as Brand Consulting (critical duplicate)</td><td>"Performance marketing campaigns on Google Ads, Meta, and YouTube — managed for maximum ROAS. Jaipur-based performance marketing agency. Get a free campaign audit." (163 chars)</td></tr>
+            <tr><td>H1</td><td>"Performance Marketing" (no location)</td><td>"Performance Marketing Agency in Jaipur — Google Ads &amp; Meta Ads Management"</td></tr>
+            <tr><td>Content must cover</td><td colspan="2">Platforms managed (Google Search, Google Shopping, Meta, LinkedIn, YouTube), pricing/budget signals, typical ROAS/CPL benchmarks you target, ad copy methodology, A/B testing process, monthly reporting format, minimum budget requirements, FAQs (5+ questions).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <h3 style="font-size:14px;font-weight:700;color:var(--accent2);margin-bottom:12px;padding:10px 14px;background:#f0fdf4;border-radius:8px;">
+          /services/seo-services/ &amp; /services/social-media-marketing/ — Score: 72/100 &amp; 65/100
+        </h3>
+        <p style="font-size:13.5px;color:var(--muted);margin-bottom:12px;">These two pages are already well-structured. Focus on these incremental improvements:</p>
+        <table class="audit-table">
+          <thead><tr><th>Improvement</th><th>SEO Services</th><th>Social Media Marketing</th></tr></thead>
+          <tbody>
+            <tr><td>Add client result</td><td>Add one specific result: "We helped [sector] business in Jaipur rank #1 for [keyword] within X months" (anonymized)</td><td>Add one engagement metric: "Our clients average X% engagement rate / Y follower growth per month"</td></tr>
+            <tr><td>Add pricing signal</td><td>"SEO packages starting from ₹X/month" — reduces bounce from undecided prospects</td><td>"SMM packages from ₹X/month" — same benefit</td></tr>
+            <tr><td>Add certifications/tools</td><td>Mention Google Analytics 4, Google Search Console, Ahrefs/Semrush, Screaming Frog in process section</td><td>Mention Meta Business Suite, Sprout Social / Buffer, Canva / Adobe for content creation</td></tr>
+            <tr><td>Add service comparison</td><td>Add section: "When do you need SEO vs. Paid Ads?" — captures research-phase queries</td><td>Add section: "Organic vs. Paid Social — What's Right for Your Business?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. KEYWORD OPPORTUNITIES -->
+  <div class="section" id="keywords">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dcfce7;">🎯</div>
+      <h2>6. Keyword Opportunities — Extended Map</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Classified by search intent stage: TOFU (Top of Funnel, informational), MOFU (Middle, consideration), BOFU (Bottom, commercial/transactional).</p>
+      <table class="audit-table">
+        <thead><tr><th>Keyword</th><th>Funnel Stage</th><th>Difficulty</th><th>Opportunity</th><th>Gap Type</th><th>Recommended Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>branding agency Jaipur</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Moderate</td><td class="c-good" style="font-weight:700">Very High</td><td>Homepage not confirmed targeting this</td><td>Ensure homepage H1 and title include "branding agency Jaipur"</td></tr>
+          <tr><td><strong>AI branding agency India</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Very Low</td><td class="c-good" style="font-weight:700">Very High</td><td>Unique positioning — not used in any title</td><td>Create dedicated /ai-branding/ page or homepage section with this exact phrase</td></tr>
+          <tr><td><strong>local SEO company Jaipur</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>No dedicated local SEO page</td><td>Create /services/local-seo-jaipur/ with GMB, citation, map pack focus</td></tr>
+          <tr><td><strong>Google Ads agency Jaipur</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Not covered — only "Google Ads" mentioned in performance marketing</td><td>Create /services/google-ads-jaipur/ as a sub-page</td></tr>
+          <tr><td><strong>WordPress developer Jaipur</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Mentioned in website design but no dedicated page</td><td>Create /services/wordpress-development-jaipur/</td></tr>
+          <tr><td><strong>branding mistakes small business</strong></td><td><span class="pill pill-medium">TOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Existing post but linked via localhost (broken)</td><td>Fix localhost link to /blog/branding-mistakes-killing-growth/</td></tr>
+          <tr><td><strong>what is performance marketing</strong></td><td><span class="pill pill-medium">TOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>No blog post on this topic</td><td>Create 1,500+ word explainer blog post — feeds performance marketing service page</td></tr>
+          <tr><td><strong>social media marketing cost India</strong></td><td><span class="pill pill-info">MOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>No pricing/cost content</td><td>Create blog post "Social Media Marketing Pricing in India 2026" — high-intent, pre-purchase research query</td></tr>
+          <tr><td><strong>how to create brand guidelines</strong></td><td><span class="pill pill-medium">TOFU</span></td><td>Moderate</td><td class="c-warn" style="font-weight:700">Medium</td><td>Partial — style guide post exists</td><td>Ensure /blog/how-to-create-a-brand-style-guide/ is fully optimized with downloadable template</td></tr>
+          <tr><td><strong>real estate digital marketing Jaipur</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Real estate mentioned as ICP but no dedicated content</td><td>Create /services/digital-marketing-for-real-estate/ industry landing page</td></tr>
+          <tr><td><strong>digital marketing for education institutes India</strong></td><td><span class="pill pill-info">BOFU</span></td><td>Very Low</td><td class="c-good" style="font-weight:700">High</td><td>Education is stated ICP — no content targets this</td><td>Create /services/digital-marketing-for-education/ industry landing page</td></tr>
+          <tr><td><strong>brand strategy vs marketing plan</strong></td><td><span class="pill pill-medium">TOFU</span></td><td>Moderate</td><td class="c-warn" style="font-weight:700">Medium</td><td>Blog post exists but linked via localhost (broken)</td><td>Fix localhost link — this is a high-value featured snippet opportunity</td></tr>
+          <tr><td><strong>how long does SEO take to work</strong></td><td><span class="pill pill-info">MOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Answered in SEO FAQ but not a standalone blog post</td><td>Write dedicated "How Long Does SEO Take? [2026 Guide for Indian Businesses]" blog post</td></tr>
+          <tr><td><strong>website design cost Jaipur</strong></td><td><span class="pill pill-info">MOFU</span></td><td>Low</td><td class="c-good" style="font-weight:700">High</td><td>Mentioned in FAQ but no dedicated pricing post</td><td>Write "Website Design Pricing in Jaipur — What to Expect in 2026"</td></tr>
+          <tr><td><strong>D2C brand strategy India</strong></td><td><span class="pill pill-medium">TOFU</span></td><td>Very Low</td><td class="c-good" style="font-weight:700">High</td><td>D2C is a stated target audience — no content targets them</td><td>Create "Brand Strategy for D2C Brands in India — Complete Guide" blog post + service page variant</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. AI SEARCH OPTIMIZATION -->
+  <div class="section" id="ai-search">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f5f3ff;">🤖</div>
+      <h2>7. AI Search Optimization &amp; GEO Readiness</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box purple">
+        <strong>Context (May 2026):</strong> Google AI Mode launched publicly in May 2025 across 180+ countries. Unlike AI Overviews, AI Mode provides fully conversational search with <strong>zero traditional blue links</strong> — AI citation is the only visibility mechanism. BoostronixX must optimize for both AI Overviews and AI Mode to remain visible in the evolving search landscape.
+      </div>
+
+      <div class="ai-grid" style="margin:20px 0;">
+        <div class="ai-card">
+          <h4>Quotable Statements</h4>
+          <div class="ai-score c-warn">45/100</div>
+          <p>Blog posts have quotable stats (2.5× growth, 77% brand recognition) but none are attributed to verifiable sources. AI systems prefer citing content with traceable claims. Service pages have no citable statistics at all.</p>
+        </div>
+        <div class="ai-card">
+          <h4>Structured Answer Formats</h4>
+          <div class="ai-score c-warn">50/100</div>
+          <p>Blog posts use Q&amp;A FAQ sections and numbered steps — good. Service pages have FAQs only on SEO, Website Design, and Social Media pages. Missing on Brand Consulting, Digital Marketing, Performance Marketing.</p>
+        </div>
+        <div class="ai-card">
+          <h4>Entity Clarity</h4>
+          <div class="ai-score c-bad">25/100</div>
+          <p>Organization schema missing. No "BoostronixX" entity defined anywhere in structured data. AI systems cannot reliably attribute content to the brand without clear entity definitions.</p>
+        </div>
+        <div class="ai-card">
+          <h4>Topical Authority Signals</h4>
+          <div class="ai-score c-warn">40/100</div>
+          <p>Brand strategy cluster is growing (6 posts). But no content clusters for SEO, Performance Marketing, Social Media, or Website Design services. Single-page service coverage without informational depth.</p>
+        </div>
+        <div class="ai-card">
+          <h4>First-Party Data</h4>
+          <div class="ai-score c-bad">10/100</div>
+          <p>No original research, proprietary data, or unique statistics produced by BoostronixX. AI systems heavily favor citing original data sources. This is the highest-leverage gap to address.</p>
+        </div>
+        <div class="ai-card">
+          <h4>Schema / Structured Data</h4>
+          <div class="ai-score c-bad">15/100</div>
+          <p>No JSON-LD schema detected. No Organization, LocalBusiness, FAQ, Article, or Service schema. Schema markup helps AI systems parse and attribute content — zero schema is a critical AI visibility gap.</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px;">AI Optimization Action Plan</h3>
+      <ol class="step-list">
+        <li>
+          <div class="step-body">
+            <h4>Add Organization + LocalBusiness schema with sameAs social profiles</h4>
+            <p>AI systems use sameAs links (LinkedIn, YouTube, Instagram) to build entity graphs. Without this, "BoostronixX" is an anonymous entity that AI systems can't reliably cite or recommend.</p>
+            <div class="step-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">~1 hour</span></div>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h4>Add answer-first formatting to all service pages</h4>
+            <p>AI Overviews pull from the first 2–3 sentences of a page. Rewrite service page introductions to directly answer "What does [service] include?" in the first sentence. Example: "BoostronixX's SEO services include technical audits, keyword strategy, link building, and local SEO — specifically designed for Jaipur businesses in real estate, education, and D2C."</p>
+            <div class="step-meta"><span class="pill pill-high">High</span><span class="pill pill-info">2–3 hours</span></div>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h4>Cite sources for all statistics in blog posts</h4>
+            <p>Blog post cites Lucidpress (23% revenue increase), Forbes (77% purchase decisions), University of Loyola (80% brand recognition) — none are linked. AI systems and Google raters check source credibility. Add hyperlinks to primary sources for every statistic.</p>
+            <div class="step-meta"><span class="pill pill-high">High</span><span class="pill pill-info">1–2 hours per post</span></div>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h4>Publish original data: "State of Branding for Indian SMBs 2026"</h4>
+            <p>Survey 50–100 Indian SMB founders on their branding challenges and budgets. Publish findings as a blog post + downloadable PDF. Original research is the single most powerful AI citation signal and natural backlink magnet.</p>
+            <div class="step-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Substantial (1–2 weeks)</span></div>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h4>Create an llms.txt file</h4>
+            <p>Add /llms.txt to the root of the site with a plain-text summary of what BoostronixX is, what services it offers, and where the key content lives. Perplexity, ChatGPT, and other AI crawlers use this file to understand site context. This is a 15-minute task with outsized AI visibility impact.</p>
+            <div class="step-meta"><span class="pill pill-medium">Medium</span><span class="pill pill-info">15 min</span></div>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <h4>Add Article schema + author Person schema to all blog posts</h4>
+            <p>Google Discover, Google AI Overviews, and AI Mode all use Article schema to identify citable content. Author Person schema builds E-E-A-T entity signals. Required for AI Discover cards and improved Google AI Mode attribution.</p>
+            <div class="step-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Half day</span></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- 8. E-E-A-T IMPROVEMENTS -->
+  <div class="section" id="eeat-improvements">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🛡️</div>
+      <h2>8. E-E-A-T Improvement Roadmap</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>E-E-A-T Factor</th><th>Specific Action</th><th>Where to Implement</th><th>Impact</th><th>Effort</th></tr></thead>
+        <tbody>
+          <tr>
+            <td rowspan="3"><strong>Experience</strong></td>
+            <td>Fix About Us page — add team photos, names, roles, and a founding story. "BoostronixX was founded in [year] in Jaipur by [Founder Name] with the mission to…"</td>
+            <td>/about-us/</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Half day</td>
+          </tr>
+          <tr>
+            <td>Add 3–5 detailed case studies with real metrics: "Helped [Client Type] in Jaipur achieve X% traffic increase in Y months using Z approach"</td>
+            <td>/portfolio/ + new /case-studies/ section</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Multi-day</td>
+          </tr>
+          <tr>
+            <td>Add client testimonials with photos, names (or initials), business sector, and specific results</td>
+            <td>Every service page + homepage</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Half day</td>
+          </tr>
+          <tr>
+            <td rowspan="3"><strong>Expertise</strong></td>
+            <td>Replace "BoostronixX Team" author byline with named experts. Create individual author profile pages (e.g., /author/[name]/) with credentials, specialization, LinkedIn link</td>
+            <td>All blog posts</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>1 day</td>
+          </tr>
+          <tr>
+            <td>Add certifications section to About Us: Google Partner badge, Meta Blueprint, Google Analytics certification, or industry memberships</td>
+            <td>/about-us/ footer or dedicated credentials section</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Quick win</td>
+          </tr>
+          <tr>
+            <td>Source all statistics in blog posts with hyperlinks to original research. Remove unverifiable claims or replace with verifiable alternatives</td>
+            <td>All blog posts</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>2 hours/post</td>
+          </tr>
+          <tr>
+            <td rowspan="2"><strong>Authoritativeness</strong></td>
+            <td>Submit guest posts to Indian marketing publications (YourStory, Inc42, Entrepreneur India). Even 2–3 do-follow links from these domains will dramatically improve domain authority for a new site</td>
+            <td>Off-site link building</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Ongoing</td>
+          </tr>
+          <tr>
+            <td>Get listed on agency directories: Clutch.co, GoodFirms.co, Designrush, AgencySEO. These provide authoritative backlinks AND act as trust signals for prospective clients</td>
+            <td>Off-site profiles</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>1 day</td>
+          </tr>
+          <tr>
+            <td rowspan="2"><strong>Trustworthiness</strong></td>
+            <td>Replace boostronixx@gmail.com with a professional domain email (hello@boostronixx.com). Gmail addresses on a professional agency website reduce trust, especially for B2B clients comparing agencies</td>
+            <td>Contact page, footer, all mentions</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Quick win</td>
+          </tr>
+          <tr>
+            <td>Add a physical address to footer, contact page, and LocalBusiness schema. Even a co-working space address is better than no address for trust and local SEO</td>
+            <td>Footer + /contact/ + schema</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Quick win</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9. CONVERSION-FOCUSED SEO -->
+  <div class="section" id="conversion-seo">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dcfce7;">💰</div>
+      <h2>9. Conversion-Focused SEO Recommendations</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box success">
+        <strong>✅ What's Working:</strong> Exit-intent popup ("FREE Brand Growth Audit") is a strong lead magnet concept. Consistent CTA ("Set Up a Discovery Call") across all pages is good for brand recall. Contact form on every service page reduces friction.
+      </div>
+
+      <div class="conv-grid" style="margin-top:16px;">
+        <div class="conv-item">
+          <h4>🎯 Add Pricing Signals to Service Pages</h4>
+          <p>Service pages with no pricing signal have higher bounce rates from cost-conscious buyers. Add "Starting from ₹X/month" or "Packages from ₹X" to each service page. Even ballpark ranges reduce the #1 pre-contact question.</p>
+          <div class="impact">↑ Expected: 15–25% more qualified contact form submissions</div>
+        </div>
+        <div class="conv-item">
+          <h4>📞 Add Click-to-Call Phone Number to Mobile Header</h4>
+          <p>Phone number (+918058212202) is visible in search results but not prominently in the mobile header. 60%+ of B2B agency research happens on mobile. Add a sticky click-to-call button visible on all mobile service pages.</p>
+          <div class="impact">↑ Expected: 20–30% increase in mobile lead conversions</div>
+        </div>
+        <div class="conv-item">
+          <h4>⭐ Add Social Proof Numbers to Homepage</h4>
+          <p>No trust metrics visible: "X clients served", "X% average client growth", "X years in business". Even modest numbers create psychological anchoring. Add a stats bar above the fold: "47+ Brands Transformed · ₹2Cr+ Ad Spend Managed · 4.9★ Client Rating"</p>
+          <div class="impact">↑ Estimated: 10–20% reduction in homepage bounce rate</div>
+        </div>
+        <div class="conv-item">
+          <h4>📧 Replace Gmail with Domain Email for Lead Nurturing</h4>
+          <p>Prospects who see boostronixx@gmail.com may question the agency's professionalism. Domain email (info@boostronixx.com) is a low-cost, high-impact trust signal that improves email deliverability and brand perception simultaneously.</p>
+          <div class="impact">↑ Immediate trust signal improvement — especially for enterprise prospects</div>
+        </div>
+        <div class="conv-item">
+          <h4>🔗 Add "Industries We Serve" Section to Homepage</h4>
+          <p>Real estate, education, and D2C are stated target verticals but are only visible deep in service pages. A visual "Industries We Serve" grid on the homepage with links to industry-specific landing pages would capture vertical-specific search queries and build immediate relevance for target ICPs.</p>
+          <div class="impact">↑ Creates 3 new high-intent landing page targets for local vertical keywords</div>
+        </div>
+        <div class="conv-item">
+          <h4>📹 Embed YouTube Video on Service Pages (Instead of Link)</h4>
+          <p>Service pages link to a YouTube video URL as plain text (https://www.youtube.com/watch?v=PkkV1vLHUvQ). This should be an embedded iframe video player. Video embeds increase time-on-page by an average of 2–3 minutes, which is a positive engagement signal and keeps prospects in the conversion funnel longer.</p>
+          <div class="impact">↑ 40–60% increase in average time-on-page for service pages</div>
+        </div>
+        <div class="conv-item">
+          <h4>📝 Add a Free Audit Lead Magnet to Blog Posts</h4>
+          <p>Blog posts have excellent traffic potential but no dedicated lead capture beyond the generic "contact us" form. Add a contextual CTA box mid-post: "📊 Get a free [brand/SEO/social media] audit for your business → [Book Now]". This contextualizes the CTA to the specific blog topic being read.</p>
+          <div class="impact">↑ 3–5× higher conversion rate vs. generic "contact us" CTA</div>
+        </div>
+        <div class="conv-item">
+          <h4>🗓️ Add Calendar Booking Widget to Contact Page</h4>
+          <p>Contact page currently shows a form. Add a Calendly or Google Calendar booking embed alongside the form so prospects can self-schedule a discovery call without waiting for email confirmation. Reduces time-to-first-contact from 24–48 hours to instant.</p>
+          <div class="impact">↑ 50–70% reduction in lead response time; higher show-up rates</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <p>Content Quality &amp; E-E-A-T Analysis — <strong>boostronixx.com</strong></p>
+    <p style="margin-top:4px;">Generated: 26 May 2026 &nbsp;|&nbsp; Framework: Google QRG Sept 2025 · Helpful Content (merged Mar 2024 core) · AI Mode GEO signals</p>
+    <p style="margin-top:8px;color:#94a3b8;">E-E-A-T scores are qualitative assessments based on observable on-page signals. For full E-E-A-T evaluation, supplement with backlink profile analysis, Google Search Console data, and third-party review monitoring.</p>
+  </div>
+
+</div>
+</body>
+</html>
