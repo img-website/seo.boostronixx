@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoostronixX — Local SEO Analysis Report | Jaipur, Rajasthan</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card2: #21253a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f7b731;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --red: #ef4444;
+    --orange: #f97316;
+    --yellow: #eab308;
+    --green: #22c55e;
+    --blue: #3b82f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%); border-bottom: 1px solid var(--border); padding: 40px 0 32px; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #6c63ff, #43e97b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header .meta { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3); color: #a5b4fc; padding: 4px 12px; border-radius: 99px; font-size: 13px; }
+
+  /* Score card */
+  .score-grid { display: grid; grid-template-columns: 200px 1fr; gap: 24px; margin: 32px 0; align-items: center; }
+  .score-circle { width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(#f97316 0% 31%, var(--border) 31%); display: flex; align-items: center; justify-content: center; flex-direction: column; position: relative; margin: 0 auto; }
+  .score-circle::before { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: var(--bg); }
+  .score-inner { position: relative; z-index: 1; text-align: center; }
+  .score-inner .num { font-size: 42px; font-weight: 800; color: #f97316; }
+  .score-inner .den { font-size: 16px; color: var(--muted); }
+  .score-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .dim-table { width: 100%; border-collapse: collapse; }
+  .dim-table th { text-align: left; padding: 8px 12px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .dim-table td { padding: 10px 12px; border-top: 1px solid var(--border); font-size: 14px; }
+  .dim-table tr:hover td { background: rgba(255,255,255,0.03); }
+  .bar-wrap { width: 100%; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+  .bar { height: 100%; border-radius: 4px; }
+
+  /* Sections */
+  section { margin: 40px 0; }
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(108,99,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .metric-card .val { font-size: 32px; font-weight: 800; }
+  .metric-card .lbl { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* Status badges */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .status.critical { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .status.high { background: rgba(249,115,22,0.15); color: #fdba74; }
+  .status.medium { background: rgba(234,179,8,0.15); color: #fde68a; }
+  .status.low { background: rgba(34,197,94,0.15); color: #86efac; }
+  .status.good { background: rgba(34,197,94,0.15); color: #86efac; }
+  .status.missing { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .status.partial { background: rgba(234,179,8,0.15); color: #fde68a; }
+
+  /* NAP table */
+  .nap-table { width: 100%; border-collapse: collapse; }
+  .nap-table th { background: var(--card2); padding: 10px 14px; text-align: left; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .nap-table td { padding: 12px 14px; border-top: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+  .nap-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .check { color: var(--green); }
+  .cross { color: var(--red); }
+  .warn { color: var(--yellow); }
+
+  /* Action plan */
+  .action-item { display: flex; gap: 16px; padding: 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); margin-bottom: 12px; }
+  .action-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .action-content h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .action-content p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .action-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: var(--card2); color: var(--muted); border: 1px solid var(--border); }
+
+  /* Schema code */
+  .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; overflow-x: auto; color: #e2e8f0; }
+  .code-block .key { color: #79c0ff; }
+  .code-block .val { color: #a5d6ff; }
+  .code-block .str { color: #a8d8a8; }
+  .code-block .type { color: #ff7b72; }
+
+  /* Keyword table */
+  .kw-table { width: 100%; border-collapse: collapse; }
+  .kw-table th { background: var(--card2); padding: 10px 14px; text-align: left; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .kw-table td { padding: 10px 14px; border-top: 1px solid var(--border); font-size: 13px; }
+  .kw-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Difficulty dots */
+  .diff { display: flex; gap: 3px; }
+  .diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+  .diff-dot.on { background: var(--accent4); }
+  .diff-dot.hi { background: var(--red); }
+
+  /* Priority colors */
+  .p-critical .action-num { background: rgba(239,68,68,0.2); color: #fca5a5; border: 2px solid #ef4444; }
+  .p-high .action-num { background: rgba(249,115,22,0.2); color: #fdba74; border: 2px solid #f97316; }
+  .p-medium .action-num { background: rgba(234,179,8,0.2); color: #fde68a; border: 2px solid #eab308; }
+
+  /* Citation */
+  .citation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .citation-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .citation-card .cname { font-size: 14px; font-weight: 600; }
+  .citation-card .ctype { font-size: 12px; color: var(--muted); }
+
+  /* AI section */
+  .ai-card { background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(67,233,123,0.05)); border: 1px solid rgba(108,99,255,0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .ai-card h4 { color: #a5b4fc; font-size: 15px; margin-bottom: 8px; }
+  .ai-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Disclaimer */
+  .disclaimer { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .score-grid { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr 1fr; }
+    .header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="container">
+    <div class="header-top">
+      <div>
+        <h1>Local SEO Analysis Report</h1>
+        <div class="meta">boostronixx.com &nbsp;·&nbsp; Target: Jaipur, Rajasthan, India &nbsp;·&nbsp; May 2026</div>
+      </div>
+      <div class="badge">🏙️ Digital Marketing Agency — SAB</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Score Overview -->
+  <section>
+    <div class="score-grid">
+      <div>
+        <div class="score-circle">
+          <div class="score-inner">
+            <div class="num">31</div>
+            <div class="den">/100</div>
+          </div>
+        </div>
+        <div class="score-label" style="text-align:center;margin-top:10px;color:#f97316;font-weight:600;">Local SEO Score — Poor</div>
+      </div>
+      <div>
+        <table class="dim-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>Score</th>
+              <th>Weight</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GBP Signals</td>
+              <td style="color:#ef4444;font-weight:700;">3/25</td>
+              <td style="color:var(--muted);">25%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:12%;background:#ef4444;"></div></div></td>
+            </tr>
+            <tr>
+              <td>Reviews & Reputation</td>
+              <td style="color:#ef4444;font-weight:700;">0/20</td>
+              <td style="color:var(--muted);">20%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:0%;background:#ef4444;"></div></div></td>
+            </tr>
+            <tr>
+              <td>Local On-Page SEO</td>
+              <td style="color:#f97316;font-weight:700;">14/20</td>
+              <td style="color:var(--muted);">20%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:70%;background:#f97316;"></div></div></td>
+            </tr>
+            <tr>
+              <td>NAP Consistency & Citations</td>
+              <td style="color:#ef4444;font-weight:700;">2/15</td>
+              <td style="color:var(--muted);">15%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:13%;background:#ef4444;"></div></div></td>
+            </tr>
+            <tr>
+              <td>Local Schema Markup</td>
+              <td style="color:#ef4444;font-weight:700;">0/10</td>
+              <td style="color:var(--muted);">10%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:0%;background:#ef4444;"></div></div></td>
+            </tr>
+            <tr>
+              <td>Local Link & Authority Signals</td>
+              <td style="color:#f97316;font-weight:700;">12/10</td>
+              <td style="color:var(--muted);">10%</td>
+              <td><div class="bar-wrap"><div class="bar" style="width:100%;background:#22c55e;"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;font-size:13px;color:var(--muted);">Local link score capped at 10. Social profiles on 4 platforms noted as partial authority signal.</div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:24px;">
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">Phone number on site</div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">Street address visible</div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">LocalBusiness schema</div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">Google Maps embed</div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">Review widgets / count</div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#eab308;">⚠️</div>
+        <div class="lbl">City in title tags (3/7 pages)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Business Profile -->
+  <section>
+    <div class="section-title"><div class="section-icon">🏢</div> Business Profile</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Business Type</div>
+          <div style="font-size:16px;font-weight:600;">Service Area Business (SAB)</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px;">No physical address shown. Digital agency model serving Jaipur + beyond.</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Industry Vertical</div>
+          <div style="font-size:16px;font-weight:600;">Digital Marketing / Creative Agency</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px;">Schema type: <code>ProfessionalService</code> (recommended subtype of LocalBusiness)</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Service Area Detected</div>
+          <div>Jaipur, Rajasthan (primary) · Pan-India (secondary)</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Social Profiles Confirmed</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+            <span class="status good">✓ LinkedIn</span>
+            <span class="status good">✓ Instagram</span>
+            <span class="status good">✓ Facebook</span>
+            <span class="status good">✓ YouTube</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAP Audit -->
+  <section>
+    <div class="section-title"><div class="section-icon">📍</div> NAP Consistency Audit</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">NAP (Name, Address, Phone) is compared across page HTML, JSON-LD schema, and footer for cross-source consistency. All three must match exactly.</p>
+    <div class="card" style="overflow-x:auto;">
+      <table class="nap-table">
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Page HTML / Footer</th>
+            <th>JSON-LD Schema</th>
+            <th>GBP Embed</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Business Name</strong></td>
+            <td>BoostronixX (nav, headings)</td>
+            <td>Not present</td>
+            <td>Not detectable</td>
+            <td><span class="status partial">⚠ Partial</span></td>
+          </tr>
+          <tr>
+            <td><strong>Street Address</strong></td>
+            <td><span class="cross">✗ Not found</span></td>
+            <td><span class="cross">✗ Not present</span></td>
+            <td><span class="cross">✗ No embed</span></td>
+            <td><span class="status critical">✗ Missing</span></td>
+          </tr>
+          <tr>
+            <td><strong>City / State</strong></td>
+            <td>Jaipur, India (body copy only)</td>
+            <td><span class="cross">✗ Not present</span></td>
+            <td><span class="cross">✗ No embed</span></td>
+            <td><span class="status partial">⚠ Unstructured</span></td>
+          </tr>
+          <tr>
+            <td><strong>Phone Number</strong></td>
+            <td><span class="cross">✗ Not found</span></td>
+            <td><span class="cross">✗ Not present</span></td>
+            <td><span class="cross">✗ No embed</span></td>
+            <td><span class="status critical">✗ Missing</span></td>
+          </tr>
+          <tr>
+            <td><strong>Email Address</strong></td>
+            <td><span class="cross">✗ Not found in footer</span></td>
+            <td><span class="cross">✗ Not present</span></td>
+            <td><span class="cross">✗ No embed</span></td>
+            <td><span class="status critical">✗ Missing</span></td>
+          </tr>
+          <tr>
+            <td><strong>tel: Click-to-Call</strong></td>
+            <td><span class="cross">✗ No tel: link</span></td>
+            <td>—</td>
+            <td>—</td>
+            <td><span class="status critical">✗ Missing</span></td>
+          </tr>
+          <tr>
+            <td><strong>Google Maps Embed</strong></td>
+            <td><span class="cross">✗ Not found</span></td>
+            <td>—</td>
+            <td>—</td>
+            <td><span class="status missing">✗ Missing</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.3);margin-top:8px;">
+      <strong style="color:#fca5a5;">⚠ Critical NAP Gap:</strong>
+      <span style="font-size:14px;color:var(--muted);"> No phone number, no email address, no physical/virtual office address is visible anywhere on the site. For a digital agency offering local SEO as a service, this is a credibility and ranking signal gap that should be fixed immediately.</span>
+    </div>
+  </section>
+
+  <!-- GBP Signals -->
+  <section>
+    <div class="section-title"><div class="section-icon">📌</div> Google Business Profile Signals</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">GBP signals account for 32% of local pack weight (Whitespark 2026). Proximity + GBP primary category are the #1 and #2 local ranking factors.</p>
+    <div class="card" style="overflow-x:auto;">
+      <table class="nap-table">
+        <thead>
+          <tr><th>GBP Signal</th><th>Status</th><th>Impact</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GBP Profile exists (assumed)</td>
+            <td><span class="status partial">⚠ Unverified</span></td>
+            <td>Critical</td>
+            <td>Not detectable from website — must verify in GBP dashboard</td>
+          </tr>
+          <tr>
+            <td>GBP embed / Maps widget on site</td>
+            <td><span class="status missing">✗ Missing</span></td>
+            <td>High</td>
+            <td>No Maps iframe found on any page</td>
+          </tr>
+          <tr>
+            <td>GBP primary category</td>
+            <td><span class="status partial">⚠ Unknown</span></td>
+            <td>Critical</td>
+            <td>Recommended: "Digital Marketing Agency" — verify in GBP</td>
+          </tr>
+          <tr>
+            <td>GBP secondary categories (optimal: 4)</td>
+            <td><span class="status partial">⚠ Unknown</span></td>
+            <td>High</td>
+            <td>Add: Marketing Agency, SEO Agency, Advertising Agency, Web Designer</td>
+          </tr>
+          <tr>
+            <td>Business hours visibility</td>
+            <td><span class="status missing">✗ Missing</span></td>
+            <td>Medium</td>
+            <td>Not on site; set in GBP — businesses open at search time rank higher</td>
+          </tr>
+          <tr>
+            <td>GBP reviews widget / aggregateRating</td>
+            <td><span class="status missing">✗ Missing</span></td>
+            <td>High</td>
+            <td>3 on-site testimonials exist but not linked to Google reviews</td>
+          </tr>
+          <tr>
+            <td>GBP posts (weekly cadence)</td>
+            <td><span class="status partial">⚠ Unknown</span></td>
+            <td>Medium</td>
+            <td>Triggers Post Justifications in local pack</td>
+          </tr>
+          <tr>
+            <td>Photos / video on GBP</td>
+            <td><span class="status partial">⚠ Unknown</span></td>
+            <td>Medium</td>
+            <td>45% more direction requests with photos (Agency Jet)</td>
+          </tr>
+          <tr>
+            <td>GBP link URL strategy</td>
+            <td><span class="status partial">⚠ Review needed</span></td>
+            <td>Medium</td>
+            <td>Do NOT link to highest-traffic page — diversity risk for organic rankings</td>
+          </tr>
+          <tr>
+            <td>Google Verified badge eligible</td>
+            <td><span class="status partial">⚠ Unknown</span></td>
+            <td>Low</td>
+            <td>Replaced Guaranteed/Screened Oct 2025 — verify eligibility in GBP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section>
+    <div class="section-title"><div class="section-icon">⭐</div> Reviews & Reputation</div>
+    <div class="card" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.3);">
+      <strong style="color:#fca5a5;">Score: 0/20 — No visible review signals</strong>
+      <p style="font-size:14px;color:var(--muted);margin-top:8px;">No Google review count, star rating, or aggregateRating schema detected anywhere on the site. 8 on-site testimonials exist (unnamed personas — low credibility signal) but are not connected to any verified review platform.</p>
+    </div>
+    <div class="card-grid">
+      <div class="metric-card">
+        <div class="val" style="color:var(--muted);">?</div>
+        <div class="lbl">Google Review Count<br><span style="font-size:11px;color:#ef4444;">Threshold: 10+ reviews</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:var(--muted);">?</div>
+        <div class="lbl">Star Rating<br><span style="font-size:11px;color:#ef4444;">Target: 4.5+ stars</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">0</div>
+        <div class="lbl">Review Platforms Visible<br><span style="font-size:11px;color:var(--muted);">Consumers use avg 6 platforms</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="val" style="color:#ef4444;">❌</div>
+        <div class="lbl">aggregateRating Schema<br><span style="font-size:11px;color:var(--muted);">Enables rich snippets</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:0;">
+      <h4 style="margin-bottom:12px;color:#fde68a;">⚠ 18-Day Rule Alert</h4>
+      <p style="font-size:14px;color:var(--muted);">Rankings drop if no new Google reviews for 3+ weeks (Sterling Sky). You need an active review generation strategy with a minimum cadence of 1 new review every 18 days. Since GBP review count is unknown, establishing a baseline and building toward 10+ is the first target.</p>
+      <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">Priority Review Platforms for India / Jaipur</div>
+          <ul style="font-size:13px;color:var(--text);padding-left:18px;line-height:2;">
+            <li>Google Business Profile (primary)</li>
+            <li>Clutch.co (B2B agencies — high trust)</li>
+            <li>GoodFirms (Indian IT/marketing agencies)</li>
+            <li>Justdial (dominant Indian local directory)</li>
+            <li>Sulekha (high local SEO traction)</li>
+            <li>Facebook page reviews</li>
+          </ul>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">ChatGPT Local Sources (India)</div>
+          <ul style="font-size:13px;color:var(--text);padding-left:18px;line-height:2;">
+            <li>Bing Places → ChatGPT / Copilot / Alexa</li>
+            <li>Yelp (limited India) → ChatGPT</li>
+            <li>Clutch.co → AI recommendation engines</li>
+            <li>Reddit threads → Perplexity, ChatGPT</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Local On-Page -->
+  <section>
+    <div class="section-title"><div class="section-icon">📄</div> Local On-Page SEO</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Score: <strong style="color:#f97316;">14/20</strong> — Partial. Strong local keyword usage in body copy; missing structured NAP and some title tag optimisation.</p>
+    <div class="card" style="overflow-x:auto;">
+      <table class="nap-table">
+        <thead>
+          <tr><th>Page</th><th>City in Title</th><th>City in H1</th><th>Local Keywords</th><th>NAP Footer</th><th>Rating</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Homepage</td>
+            <td><span class="cross">✗ No</span></td>
+            <td><span class="check">✓ Body copy</span></td>
+            <td><span class="check">✓ Rich</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status partial">Partial</span></td>
+          </tr>
+          <tr>
+            <td>SEO Services</td>
+            <td><span class="check">✓ "SEO Company In Jaipur"</span></td>
+            <td><span class="check">✓ H1 "SEO Company In Jaipur Shape"</span></td>
+            <td><span class="check">✓ Excellent</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status good">Good</span></td>
+          </tr>
+          <tr>
+            <td>Website Design</td>
+            <td><span class="check">✓ "Website Design Company in Jaipur"</span></td>
+            <td><span class="check">✓ Jaipur present</span></td>
+            <td><span class="check">✓ Good</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status good">Good</span></td>
+          </tr>
+          <tr>
+            <td>Social Media Marketing</td>
+            <td><span class="check">✓ Jaipur in title</span></td>
+            <td><span class="check">✓ Jaipur in H1</span></td>
+            <td><span class="check">✓ Good</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status good">Good</span></td>
+          </tr>
+          <tr>
+            <td>Brand Consulting</td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="warn">⚠ Generic</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status partial">Weak</span></td>
+          </tr>
+          <tr>
+            <td>Digital Marketing</td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="warn">⚠ Generic</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status partial">Weak</span></td>
+          </tr>
+          <tr>
+            <td>Performance Marketing</td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="warn">⚠ Generic</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status partial">Weak</span></td>
+          </tr>
+          <tr>
+            <td>UI/UX Design</td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="cross">✗ No city</span></td>
+            <td><span class="warn">⚠ Generic</span></td>
+            <td><span class="cross">✗ Missing</span></td>
+            <td><span class="status partial">Weak</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Local Schema -->
+  <section>
+    <div class="section-title"><div class="section-icon">🔧</div> Local Schema Markup — Status & Fix</div>
+    <div class="card" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.3);margin-bottom:20px;">
+      <strong style="color:#fca5a5;">Score: 0/10 — No LocalBusiness schema found on any page.</strong>
+      <p style="font-size:14px;color:var(--muted);margin-top:6px;">Zero JSON-LD blocks detected sitewide. This is a significant gap — schema enables rich results (43% higher CTR per Webstix), and structured address/phone data is how AI systems parse and cite business information for AI Overviews and ChatGPT local recommendations.</p>
+    </div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:12px;color:#a5b4fc;">✅ Ready-to-Paste LocalBusiness Schema — Add to WordPress &lt;head&gt; via Yoast or functions.php</div>
+    <div class="code-block">
+<span class="key">&lt;script type="application/ld+json"&gt;</span>
+{
+  <span class="key">"@context"</span>: <span class="str">"https://schema.org"</span>,
+  <span class="key">"@type"</span>: <span class="str">"ProfessionalService"</span>,
+  <span class="key">"@id"</span>: <span class="str">"https://www.boostronixx.com/#business"</span>,
+  <span class="key">"name"</span>: <span class="str">"BoostronixX"</span>,
+  <span class="key">"alternateName"</span>: <span class="str">"Boostronixx Digital Marketing Agency"</span>,
+  <span class="key">"url"</span>: <span class="str">"https://www.boostronixx.com/"</span>,
+  <span class="key">"logo"</span>: <span class="str">"https://www.boostronixx.com/wp-content/uploads/2026/03/boostronixxFavicon-300x300.webp"</span>,
+  <span class="key">"description"</span>: <span class="str">"BoostronixX is a creative branding and digital marketing agency in Jaipur, Rajasthan specialising in SEO, social media marketing, website design, brand consulting, and performance marketing for real estate, jewellery, education, and D2C brands."</span>,
+  <span class="key">"areaServed"</span>: [
+    {
+      <span class="key">"@type"</span>: <span class="str">"City"</span>,
+      <span class="key">"name"</span>: <span class="str">"Jaipur"</span>
+    },
+    {
+      <span class="key">"@type"</span>: <span class="str">"State"</span>,
+      <span class="key">"name"</span>: <span class="str">"Rajasthan"</span>
+    },
+    {
+      <span class="key">"@type"</span>: <span class="str">"Country"</span>,
+      <span class="key">"name"</span>: <span class="str">"India"</span>
+    }
+  ],
+  <span class="key">"address"</span>: {
+    <span class="key">"@type"</span>: <span class="str">"PostalAddress"</span>,
+    <span class="key">"addressLocality"</span>: <span class="str">"Jaipur"</span>,
+    <span class="key">"addressRegion"</span>: <span class="str">"Rajasthan"</span>,
+    <span class="key">"addressCountry"</span>: <span class="str">"IN"</span>
+    <span class="key">/* Add: "streetAddress": "YOUR STREET", "postalCode": "302XXX" */</span>
+  },
+  <span class="key">"geo"</span>: {
+    <span class="key">"@type"</span>: <span class="str">"GeoCoordinates"</span>,
+    <span class="key">"latitude"</span>: <span class="str">"26.91246"</span>,
+    <span class="key">"longitude"</span>: <span class="str">"75.78727"</span>
+    <span class="key">/* Replace with your exact office coordinates — 5 decimal places minimum */</span>
+  },
+  <span class="key">"telephone"</span>: <span class="str">"+91-XXXXXXXXXX"</span>,
+  <span class="key">"email"</span>: <span class="str">"hello@boostronixx.com"</span>,
+  <span class="key">"openingHoursSpecification"</span>: [
+    {
+      <span class="key">"@type"</span>: <span class="str">"OpeningHoursSpecification"</span>,
+      <span class="key">"dayOfWeek"</span>: [<span class="str">"Monday"</span>, <span class="str">"Tuesday"</span>, <span class="str">"Wednesday"</span>, <span class="str">"Thursday"</span>, <span class="str">"Friday"</span>],
+      <span class="key">"opens"</span>: <span class="str">"09:30"</span>,
+      <span class="key">"closes"</span>: <span class="str">"18:30"</span>
+    }
+  ],
+  <span class="key">"priceRange"</span>: <span class="str">"₹₹"</span>,
+  <span class="key">"currenciesAccepted"</span>: <span class="str">"INR"</span>,
+  <span class="key">"knowsAbout"</span>: [<span class="str">"SEO"</span>, <span class="str">"Brand Consulting"</span>, <span class="str">"Digital Marketing"</span>, <span class="str">"Performance Marketing"</span>, <span class="str">"Social Media Marketing"</span>, <span class="str">"Website Design"</span>, <span class="str">"UI/UX Design"</span>],
+  <span class="key">"sameAs"</span>: [
+    <span class="str">"https://www.linkedin.com/company/boostronixx"</span>,
+    <span class="str">"https://www.instagram.com/boostronixx/"</span>,
+    <span class="str">"https://www.facebook.com/boostronixx"</span>,
+    <span class="str">"https://www.youtube.com/@boostronixx"</span>
+    <span class="key">/* Add GBP URL when confirmed */</span>
+  ],
+  <span class="key">"foundingDate"</span>: <span class="str">"2021"</span>,
+  <span class="key">"numberOfEmployees"</span>: {
+    <span class="key">"@type"</span>: <span class="str">"QuantitativeValue"</span>,
+    <span class="key">"minValue"</span>: <span class="val">5</span>,
+    <span class="key">"maxValue"</span>: <span class="val">25</span>
+  }
+}
+<span class="key">&lt;/script&gt;</span>
+    </div>
+    <div style="margin-top:12px;font-size:13px;color:var(--muted);">
+      ⚠ Fill in <code>streetAddress</code>, <code>postalCode</code>, <code>telephone</code>, <code>email</code>, and exact <code>geo</code> coordinates before publishing. Use <a href="https://search.google.com/test/rich-results" style="color:#a5b4fc;">Google Rich Results Test</a> to validate.
+    </div>
+  </section>
+
+  <!-- Citation Audit -->
+  <section>
+    <div class="section-title"><div class="section-icon">📋</div> Citation Audit — Tier 1 & India-Specific</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Citations are declining for traditional map pack rankings but <strong>3 of top 5 AI visibility factors are citation-related</strong> (Whitespark 2026). For India-based agencies, local directory presence is critical for Bing / ChatGPT discovery.</p>
+    <div class="citation-grid">
+      <div class="citation-card">
+        <div class="cname">Google Business Profile</div>
+        <div class="ctype">Tier 1 — Critical</div>
+        <span class="status partial">⚠ Unverified</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Bing Places</div>
+        <div class="ctype">Tier 1 — Powers ChatGPT/Copilot</div>
+        <span class="status missing">✗ Likely not claimed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Apple Business Connect</div>
+        <div class="ctype">Tier 1 — Usage doubled to 27%</div>
+        <span class="status missing">✗ Likely not claimed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Justdial</div>
+        <div class="ctype">India Tier 1 — Dominant local</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Sulekha</div>
+        <div class="ctype">India Tier 1 — Strong local SEO</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">IndiaMart</div>
+        <div class="ctype">India B2B Tier 1</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Clutch.co</div>
+        <div class="ctype">Agency Tier 1 — AI citation source</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">GoodFirms</div>
+        <div class="ctype">Agency Tier 1 — India market</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">TopDevelopers.co</div>
+        <div class="ctype">Agency directory</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Trustpilot</div>
+        <div class="ctype">Review / citation — ChatGPT source</div>
+        <span class="status missing">✗ Not confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">Facebook Business</div>
+        <div class="ctype">Social citation</div>
+        <span class="status good">✓ Profile confirmed</span>
+      </div>
+      <div class="citation-card">
+        <div class="cname">LinkedIn Company</div>
+        <div class="ctype">Professional citation</div>
+        <span class="status good">✓ Profile confirmed</span>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:8px;">Data Aggregator Submission (India)</h4>
+      <p style="font-size:14px;color:var(--muted);">Submit to Data Axle and Foursquare for downstream distribution to dozens of secondary directories. This multiplies citation reach without manual submission to each directory individually.</p>
+    </div>
+  </section>
+
+  <!-- Local Keyword Opportunities -->
+  <section>
+    <div class="section-title"><div class="section-icon">🔍</div> Local Keyword Opportunities — Jaipur</div>
+    <div class="card" style="overflow-x:auto;">
+      <table class="kw-table">
+        <thead>
+          <tr>
+            <th>Keyword</th>
+            <th>Intent</th>
+            <th>Competition</th>
+            <th>Page to Target</th>
+            <th>Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>digital marketing agency in Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>Homepage + /services/digital-marketing/</td>
+            <td><span class="status partial">⚠ No city in title</span></td>
+          </tr>
+          <tr>
+            <td><strong>branding agency in Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>Homepage / New landing page</td>
+            <td><span class="status missing">✗ No dedicated page</span></td>
+          </tr>
+          <tr>
+            <td><strong>SEO company in Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/seo-services/</td>
+            <td><span class="status good">✓ Well optimised</span></td>
+          </tr>
+          <tr>
+            <td><strong>performance marketing agency Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/performance-marketing/</td>
+            <td><span class="status missing">✗ No city in title/H1</span></td>
+          </tr>
+          <tr>
+            <td><strong>social media marketing company Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/social-media-marketing/</td>
+            <td><span class="status good">✓ City present</span></td>
+          </tr>
+          <tr>
+            <td><strong>website design company Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/website-design/</td>
+            <td><span class="status good">✓ City present</span></td>
+          </tr>
+          <tr>
+            <td><strong>UI UX design agency Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/ui-ux-design/</td>
+            <td><span class="status missing">✗ No city in title/H1</span></td>
+          </tr>
+          <tr>
+            <td><strong>brand consulting agency Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/brand-consulting/</td>
+            <td><span class="status missing">✗ No city in title/H1</span></td>
+          </tr>
+          <tr>
+            <td><strong>best digital marketing agency Jaipur</strong></td>
+            <td><span class="status low">Local Navigational</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div></div></td>
+            <td>Homepage + Review building</td>
+            <td><span class="status partial">⚠ Needs reviews + map pack</span></td>
+          </tr>
+          <tr>
+            <td><strong>real estate digital marketing Jaipur</strong></td>
+            <td><span class="status low">Industry + Local</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>New industry landing page</td>
+            <td><span class="status missing">✗ No industry page</span></td>
+          </tr>
+          <tr>
+            <td><strong>Google Ads agency Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>New dedicated page</td>
+            <td><span class="status missing">✗ No dedicated page</span></td>
+          </tr>
+          <tr>
+            <td><strong>local SEO services Jaipur</strong></td>
+            <td><span class="status low">Local Commercial</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>/services/seo-services/ (add section)</td>
+            <td><span class="status partial">⚠ Mentioned but no dedicated section</span></td>
+          </tr>
+          <tr>
+            <td><strong>startup branding agency Jaipur</strong></td>
+            <td><span class="status low">Long-tail Local</span></td>
+            <td><div class="diff"><div class="diff-dot on"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div><div class="diff-dot"></div></div></td>
+            <td>Blog / Landing page</td>
+            <td><span class="status missing">✗ Not targeted</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- City Landing Page Opportunities -->
+  <section>
+    <div class="section-title"><div class="section-icon">🏙️</div> City Landing Page Opportunities</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Dedicated service pages are the <strong>#1 local organic ranking factor</strong> (Whitespark 2026). Creating city-specific landing pages for each core service creates a hub-and-spoke local authority structure.</p>
+    <div class="card">
+      <h4 style="margin-bottom:12px;color:#a5b4fc;">Recommended Page Structure</h4>
+      <div style="font-family:monospace;font-size:13px;color:var(--muted);line-height:2.2;">
+        <div style="color:#a5b4fc;">boostronixx.com/</div>
+        <div style="padding-left:20px;">├─ <span style="color:var(--accent3);">jaipur/</span> <span style="color:var(--muted);font-size:12px;">(City Hub — "Digital Marketing Agency in Jaipur")</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">seo-services/</span> <span style="color:var(--muted);font-size:12px;">(→ currently at /services/seo-services/ — good)</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">digital-marketing/</span> <span style="color:var(--muted);font-size:12px;">(add Jaipur targeting)</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">brand-consulting/</span> <span style="color:var(--muted);font-size:12px;">(add Jaipur targeting)</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">performance-marketing/</span> <span style="color:var(--muted);font-size:12px;">(add Jaipur targeting)</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">website-design/</span> <span style="color:var(--muted);font-size:12px;">(→ currently at /services/website-design/ — good)</span></div>
+        <div style="padding-left:40px;">└─ <span style="color:#fdba74;">ui-ux-design/</span> <span style="color:var(--muted);font-size:12px;">(add Jaipur targeting)</span></div>
+        <div style="padding-left:20px;margin-top:8px;">├─ <span style="color:var(--accent3);">industries/</span> <span style="color:var(--muted);font-size:12px;">(Industry Hub — new)</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">real-estate/</span> <span style="color:var(--muted);font-size:12px;">("Digital Marketing for Real Estate Brands in Jaipur")</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">jewellery/</span> <span style="color:var(--muted);font-size:12px;">("Branding Agency for Jewellery Brands")</span></div>
+        <div style="padding-left:40px;">├─ <span style="color:#fdba74;">education/</span> <span style="color:var(--muted);font-size:12px;">("Digital Marketing for Education / EdTech")</span></div>
+        <div style="padding-left:40px;">└─ <span style="color:#fdba74;">d2c-brands/</span> <span style="color:var(--muted);font-size:12px;">("D2C Growth Marketing Agency")</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:0;">
+      <h4 style="margin-bottom:8px;color:#fde68a;">⚠ Doorway Page Warning</h4>
+      <p style="font-size:14px;color:var(--muted);">Use the <strong>Swap Test</strong> (RicketyRoo): if you can replace "Jaipur" with any other city and the page still makes sense, it's a doorway page risk. Each page must have ≥60% unique content — local case studies, Jaipur-specific FAQs, local area mentions (Malviya Nagar, Mansarovar, Vaishali Nagar), local testimonials. An HVAC company lost 80% rankings + 63% traffic in March 2024 for doorway page patterns.</p>
+    </div>
+  </section>
+
+  <!-- Map Pack Strategy -->
+  <section>
+    <div class="section-title"><div class="section-icon">🗺️</div> Map Pack Ranking Strategy</div>
+    <div class="card-grid">
+      <div class="card">
+        <h4 style="margin-bottom:10px;color:#a5b4fc;">Proximity Factor (55.2% of variance)</h4>
+        <p style="font-size:13px;color:var(--muted);">You cannot control proximity — Google shows businesses near the searcher. For a SAB in Jaipur, ensure your GBP service area covers Jaipur + key neighbourhoods: Mansarovar, Malviya Nagar, C-Scheme, Vaishali Nagar, Tonk Road, Ajmer Road, Jagatpura.</p>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:10px;color:#a5b4fc;">GBP Primary Category (Factor #1)</h4>
+        <p style="font-size:13px;color:var(--muted);">Set primary category to <strong>"Digital Marketing Agency"</strong>. Add secondary: "Marketing Agency", "Advertising Agency", "Internet Marketing Service", "Search Engine Optimization Service".</p>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:10px;color:#a5b4fc;">Review Velocity (Factor #3)</h4>
+        <p style="font-size:13px;color:var(--muted);">Build review generation into your client offboarding process. Target: 10 Google reviews in first 60 days. Then maintain 1+ new review every 18 days minimum. Respond to all reviews within 48 hours.</p>
+      </div>
+      <div class="card">
+        <h4 style="margin-bottom:10px;color:#a5b4fc;">AI Local Pack (2025–2026)</h4>
+        <p style="font-size:13px;color:var(--muted);">AI-powered mobile local packs now show only 1–2 businesses (Sterling Sky), down 32% fewer shown. Getting into that pack requires strong GBP signals + reviews + schema. Bing Places = ChatGPT local source.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Visibility (Local) -->
+  <section>
+    <div class="section-title"><div class="section-icon">🤖</div> AI Search Visibility — Local Signals</div>
+    <div class="ai-card">
+      <h4>ChatGPT Local Recommendations (15.9% conversion rate vs 1.76% Google organic)</h4>
+      <p>ChatGPT does NOT access Google Business Profile directly. It sources local business data from: <strong>Bing Places</strong> (primary), Yelp, TripAdvisor, BBB, Reddit, Clutch.co, and GoodFirms. BoostronixX currently has no detectable presence on any of these ChatGPT source platforms except social profiles, meaning the brand is invisible to ChatGPT local recommendations.</p>
+    </div>
+    <div class="ai-card">
+      <h4>Google AI Overviews — Local (68% of local searches show AI Overviews)</h4>
+      <p>AI Overviews are powered by the same ranking signals as organic search. Adding LocalBusiness schema, building local citations, and improving E-E-A-T signals on service pages all increase the chance of being cited in AI Overviews for "best digital marketing agency in Jaipur" type queries.</p>
+    </div>
+    <div class="ai-card">
+      <h4>Bing Places → Microsoft Ecosystem (critical)</h4>
+      <p>Bing Places feeds ChatGPT, Copilot, Alexa, and Bing local search. Claiming and fully optimising the Bing Places listing is a <strong>high-leverage, low-effort</strong> action that unlocks AI visibility across the entire Microsoft ecosystem with a one-time setup.</p>
+    </div>
+  </section>
+
+  <!-- Prioritized Action Plan -->
+  <section>
+    <div class="section-title"><div class="section-icon">🚀</div> Top 10 Prioritized Actions</div>
+
+    <div class="action-item p-critical">
+      <div class="action-num">1</div>
+      <div class="action-content">
+        <h4>Add Phone Number & Email to Footer (All Pages)</h4>
+        <p>The most critical NAP gap. Add a visible phone number with <code>tel:</code> link and email address to the WordPress footer on every page. This is a foundational local SEO and trust signal — a digital agency with no contact details in the footer loses both rankings and conversions.</p>
+        <div class="action-meta"><span class="tag">⏱ 30 minutes</span><span class="tag status critical">Critical</span><span class="tag">Yoast / footer.php</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-critical">
+      <div class="action-num">2</div>
+      <div class="action-content">
+        <h4>Add LocalBusiness JSON-LD Schema to Homepage</h4>
+        <p>Paste the ready-to-use ProfessionalService schema from this report into WordPress via Yoast SEO → Schema tab, or add via <code>wp_head</code> hook in functions.php. Fill in the phone, email, street address, and exact geo coordinates first.</p>
+        <div class="action-meta"><span class="tag">⏱ 1 hour</span><span class="tag status critical">Critical</span><span class="tag">Yoast Schema / functions.php</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-critical">
+      <div class="action-num">3</div>
+      <div class="action-content">
+        <h4>Claim & Optimise Bing Places Listing</h4>
+        <p>Go to bingplaces.com and claim the listing. Add full NAP, category "Digital Marketing Agency", service area (Jaipur + Rajasthan), description, hours, and photos. This single action unlocks visibility on ChatGPT, Copilot, and Alexa — all AI search surfaces sourced from Bing.</p>
+        <div class="action-meta"><span class="tag">⏱ 45 minutes</span><span class="tag status critical">Critical</span><span class="tag">bingplaces.com</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-critical">
+      <div class="action-num">4</div>
+      <div class="action-content">
+        <h4>Verify & Fully Optimise Google Business Profile</h4>
+        <p>Verify GBP ownership. Set primary category to "Digital Marketing Agency". Add 4 secondary categories. Write a keyword-rich description (750 chars max). Upload 10+ photos. Set service area to Jaipur + specific neighbourhoods. Add all services with descriptions. Link to a mid-tier page (not homepage — diversity risk). Begin weekly GBP posts.</p>
+        <div class="action-meta"><span class="tag">⏱ 2 hours + ongoing</span><span class="tag status critical">Critical</span><span class="tag">GBP dashboard</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-high">
+      <div class="action-num">5</div>
+      <div class="action-content">
+        <h4>Build 10 Google Reviews in 60 Days</h4>
+        <p>Email all past/current clients a review request with a direct link to your GBP review form. Add a review request to your project completion process. Target 10 Google reviews (magic threshold) within 60 days, then maintain minimum 1 new review every 18 days. Respond to all reviews promptly.</p>
+        <div class="action-meta"><span class="tag">⏱ Ongoing</span><span class="tag status high">High</span><span class="tag">GBP + Email outreach</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-high">
+      <div class="action-num">6</div>
+      <div class="action-content">
+        <h4>Add "Jaipur" to Title Tags & H1s for 4 Weak Service Pages</h4>
+        <p>Pages missing city targeting: Brand Consulting, Digital Marketing, Performance Marketing, UI/UX Design. Update their Yoast SEO title tags to follow the pattern: "[Service] Agency in Jaipur | BoostronixX". Update H1s similarly. These are the 4 service pages most likely to lose local pack potential.</p>
+        <div class="action-meta"><span class="tag">⏱ 30 minutes</span><span class="tag status high">High</span><span class="tag">Yoast SEO</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-high">
+      <div class="action-num">7</div>
+      <div class="action-content">
+        <h4>Claim Apple Business Connect</h4>
+        <p>Go to register.apple.com/business (Apple Business Connect). Claim and verify your business. Usage doubled to 27% (BrightLocal 2026). Appears on Apple Maps, Siri, Safari local search — a growing local search surface with low competition for Indian agencies.</p>
+        <div class="action-meta"><span class="tag">⏱ 30 minutes</span><span class="tag status high">High</span><span class="tag">register.apple.com/business</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-high">
+      <div class="action-num">8</div>
+      <div class="action-content">
+        <h4>Submit to Justdial, Sulekha, Clutch.co & GoodFirms</h4>
+        <p>These are the top citation sources for Indian digital agencies. Justdial and Sulekha dominate India local SEO. Clutch and GoodFirms are the top AI-cited sources for agency recommendations. Consistent NAP across all listings is essential — use phone and address exactly as set in GBP.</p>
+        <div class="action-meta"><span class="tag">⏱ 2–3 hours</span><span class="tag status high">High</span><span class="tag">4 directories</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-medium">
+      <div class="action-num">9</div>
+      <div class="action-content">
+        <h4>Add aggregateRating Schema to Homepage (After 5+ Google Reviews)</h4>
+        <p>Once you have 5+ Google reviews, add aggregateRating markup to the homepage schema using your actual rating and review count. This enables star rating rich snippets in organic results — typically 20–30% CTR improvement.</p>
+        <div class="action-meta"><span class="tag">⏱ 30 minutes (after reviews)</span><span class="tag status medium">Medium</span><span class="tag">Yoast Schema</span></div>
+      </div>
+    </div>
+
+    <div class="action-item p-medium">
+      <div class="action-num">10</div>
+      <div class="action-content">
+        <h4>Create Industry-Specific Landing Pages (Real Estate, Jewellery, Education)</h4>
+        <p>BoostronixX explicitly targets Real Estate, Jewellery, EdTech, and D2C brands but has no dedicated landing pages for these industries. Creating /industries/real-estate/, /industries/jewellery/, etc. with Jaipur-specific case studies unlocks high-intent, low-competition long-tail keywords like "real estate digital marketing agency Jaipur".</p>
+        <div class="action-meta"><span class="tag">⏱ 1–2 weeks</span><span class="tag status medium">Medium</span><span class="tag">New pages + schema</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section>
+    <div class="section-title"><div class="section-icon">⚠️</div> Analysis Limitations</div>
+    <div class="disclaimer">
+      <p><strong>What this analysis could NOT assess:</strong></p>
+      <ul style="padding-left:20px;margin-top:10px;line-height:2.2;">
+        <li><strong>Live GBP data</strong> — actual review count, star rating, GBP post activity, photo count, Q&A status. Requires access to GBP dashboard or DataForSEO Local Business API.</li>
+        <li><strong>Geo-grid rank tracking</strong> — actual local pack position for target keywords across Jaipur neighbourhoods. Requires tools like BrightLocal, Whitespark, or DataForSEO geo-grid API.</li>
+        <li><strong>Real-time map pack position</strong> — where BoostronixX currently appears (or doesn't) for "digital marketing agency Jaipur" etc. Requires live SERP check with Jaipur geolocation.</li>
+        <li><strong>Citation audit completeness</strong> — whether Justdial, Sulekha, Clutch etc. listings already exist. Requires manual checking or a citation audit tool (BrightLocal, Whitespark).</li>
+        <li><strong>Domain Authority / backlink profile</strong> — local link equity and referring domain count. Requires Ahrefs, Moz, or Semrush.</li>
+        <li><strong>GBP Insights data</strong> — search impressions, direction requests, call clicks from GBP. Requires GBP dashboard access.</li>
+        <li><strong>ChatGPT / Perplexity brand mention tracking</strong> — whether BoostronixX is currently cited in AI responses for Jaipur agency queries. Requires manual AI prompt testing or tools like BrandMentions AI.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<div style="background:var(--card);border-top:1px solid var(--border);padding:24px 0;margin-top:40px;">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div style="font-size:13px;color:var(--muted);">BoostronixX Local SEO Report · Generated May 2026 · boostronixx.com</div>
+    <div style="font-size:13px;color:var(--muted);">Local SEO Score: <strong style="color:#f97316;">31/100</strong> · Target: Jaipur, Rajasthan</div>
+  </div>
+</div>
+
+</body>
+</html>
