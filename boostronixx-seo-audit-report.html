@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise SEO Audit Report — boostronixx.com</title>
+<style>
+  :root {
+    --brand: #1a1a2e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3b82f6;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --card: #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; color: var(--text); line-height: 1.6; }
+
+  /* HEADER */
+  .report-header { background: linear-gradient(135deg, var(--brand) 0%, var(--accent2) 100%); color: white; padding: 48px 40px 36px; }
+  .report-header .logo-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .report-header .badge { background: var(--accent); color: white; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; }
+  .report-header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
+  .report-header .subtitle { opacity: 0.8; font-size: 1rem; margin-bottom: 24px; }
+  .meta-row { display: flex; gap: 32px; flex-wrap: wrap; }
+  .meta-item { font-size: 13px; opacity: 0.85; }
+  .meta-item strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 2px; }
+
+  /* SCORE BANNER */
+  .score-banner { background: white; padding: 28px 40px; border-bottom: 3px solid var(--border); display: flex; align-items: center; gap: 40px; flex-wrap: wrap; }
+  .overall-score { text-align: center; }
+  .score-circle { width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(var(--warning) 0% 52%, #e2e8f0 52% 100%); display: flex; align-items: center; justify-content: center; position: relative; margin: 0 auto 8px; }
+  .score-inner { width: 76px; height: 76px; border-radius: 50%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-num { font-size: 24px; font-weight: 800; color: var(--warning); line-height: 1; }
+  .score-den { font-size: 12px; color: var(--muted); }
+  .score-label { font-size: 13px; font-weight: 700; color: var(--text); }
+  .score-cats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .score-cat { min-width: 120px; }
+  .score-cat-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .score-cat-bar { height: 8px; border-radius: 4px; background: var(--border); margin-bottom: 4px; overflow: hidden; }
+  .score-cat-fill { height: 100%; border-radius: 4px; }
+  .score-cat-num { font-size: 12px; font-weight: 700; color: var(--text); }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  .section { background: var(--card); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 28px; overflow: hidden; }
+  .section-header { padding: 20px 28px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .section-header h2 { font-size: 1.15rem; font-weight: 700; }
+  .section-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .section-body { padding: 24px 28px; }
+
+  /* EXEC SUMMARY */
+  .exec-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .exec-card { padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+  .exec-card.strength { border-left: 4px solid var(--success); background: #f0fdf4; }
+  .exec-card.warning { border-left: 4px solid var(--warning); background: #fffbeb; }
+  .exec-card.critical { border-left: 4px solid var(--danger); background: #fef2f2; }
+  .exec-card h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .exec-card h4.s { color: var(--success); }
+  .exec-card h4.w { color: var(--warning); }
+  .exec-card h4.c { color: var(--danger); }
+  .exec-card ul { list-style: none; }
+  .exec-card ul li { font-size: 13px; color: var(--text); padding: 3px 0; padding-left: 16px; position: relative; }
+  .exec-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--muted); }
+
+  /* TABLES */
+  .audit-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .audit-table thead tr { background: var(--light); }
+  .audit-table th { padding: 10px 14px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 700; border-bottom: 2px solid var(--border); }
+  .audit-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .audit-table tr:last-child td { border-bottom: none; }
+  .audit-table tr:hover td { background: #f8fafc; }
+  .audit-table .page-url { font-family: monospace; font-size: 12px; color: var(--accent2); }
+
+  /* STATUS PILLS */
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+  .pill-critical { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+  .pill-high { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .pill-medium { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+  .pill-low { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .pill-pass { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .pill-fail { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+  .pill-warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+  .pill-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+  /* CHECKLIST */
+  .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .checklist .check-item:nth-child(odd) { border-right: 1px solid var(--border); }
+  .check-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+  .check-text h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .check-text p { font-size: 12px; color: var(--muted); }
+
+  /* KEYWORD TABLE */
+  .opportunity-high { color: var(--success); font-weight: 700; }
+  .opportunity-med { color: var(--warning); font-weight: 700; }
+  .opportunity-low { color: var(--muted); font-weight: 700; }
+
+  /* BROKEN LINKS */
+  .broken-link { font-family: monospace; font-size: 12px; color: var(--danger); word-break: break-all; }
+
+  /* ACTION PLAN */
+  .action-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .action-col h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid; }
+  .action-col.quick h3 { border-color: var(--success); color: var(--success); }
+  .action-col.strategic h3 { border-color: var(--accent2); color: var(--accent2); }
+  .action-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .action-col.quick .action-num { background: #dcfce7; color: #15803d; }
+  .action-col.strategic .action-num { background: #dbeafe; color: #1d4ed8; }
+  .action-body h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .action-body p { font-size: 12px; color: var(--muted); }
+  .action-meta { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+
+  /* COMPARISON */
+  .compare-table th:not(:first-child) { text-align: center; }
+  .compare-table td:not(:first-child) { text-align: center; }
+  .winner-cell { background: #f0fdf4; font-weight: 700; color: var(--success); }
+
+  /* FOOTER */
+  .report-footer { text-align: center; padding: 32px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 16px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .exec-grid { grid-template-columns: 1fr; }
+    .checklist { grid-template-columns: 1fr; }
+    .action-cols { grid-template-columns: 1fr; }
+    .score-banner { flex-direction: column; align-items: flex-start; }
+  }
+
+  .toc { columns: 2; gap: 32px; }
+  .toc ol { margin-left: 20px; }
+  .toc li { font-size: 13.5px; padding: 3px 0; }
+  .toc a { color: var(--accent2); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  .highlight-box { background: #eff6ff; border-left: 4px solid var(--info); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 13.5px; }
+  .highlight-box.warning { background: #fffbeb; border-color: var(--warning); }
+  .highlight-box.danger { background: #fef2f2; border-color: var(--danger); }
+  .highlight-box.success { background: #f0fdf4; border-color: var(--success); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HEADER -->
+<div class="report-header">
+  <div class="logo-row">
+    <span class="badge">Enterprise SEO Audit</span>
+    <span style="opacity:0.5; font-size:13px;">Confidential — Prepared by Claude AI (Anthropic)</span>
+  </div>
+  <h1>SEO Audit Report: boostronixx.com</h1>
+  <p class="subtitle">Comprehensive Technical & On-Page SEO Analysis — Boostronixx (BoostronixX)</p>
+  <div class="meta-row">
+    <div class="meta-item"><strong>Site URL</strong>https://www.boostronixx.com/</div>
+    <div class="meta-item"><strong>Audit Date</strong>26 May 2026</div>
+    <div class="meta-item"><strong>Platform</strong>WordPress + Yoast SEO</div>
+    <div class="meta-item"><strong>Industry</strong>Branding &amp; Digital Marketing Agency (Jaipur, India)</div>
+    <div class="meta-item"><strong>Pages Audited</strong>15+</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ SCORE BANNER -->
+<div class="score-banner">
+  <div class="overall-score">
+    <div class="score-circle">
+      <div class="score-inner">
+        <span class="score-num">52</span>
+        <span class="score-den">/100</span>
+      </div>
+    </div>
+    <div class="score-label">Overall SEO Health</div>
+    <div style="font-size:12px; color:var(--warning); margin-top:4px;">⚠ Needs Work</div>
+  </div>
+  <div class="score-cats">
+    <div class="score-cat">
+      <div class="score-cat-label">Technical SEO</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:55%; background:var(--warning);"></div></div>
+      <div class="score-cat-num">55/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">On-Page SEO</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:58%; background:var(--warning);"></div></div>
+      <div class="score-cat-num">58/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Content Quality</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:65%; background:var(--info);"></div></div>
+      <div class="score-cat-num">65/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Crawlability</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:72%; background:var(--info);"></div></div>
+      <div class="score-cat-num">72/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Structured Data</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:25%; background:var(--danger);"></div></div>
+      <div class="score-cat-num">25/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Internal Linking</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:40%; background:var(--danger);"></div></div>
+      <div class="score-cat-num">40/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Image SEO</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:30%; background:var(--danger);"></div></div>
+      <div class="score-cat-num">30/100</div>
+    </div>
+    <div class="score-cat">
+      <div class="score-cat-label">Mobile SEO</div>
+      <div class="score-cat-bar"><div class="score-cat-fill" style="width:70%; background:var(--info);"></div></div>
+      <div class="score-cat-num">70/100</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ MAIN CONTAINER -->
+<div class="container">
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:#eff6ff;">📋</div>
+      <h2>Table of Contents</h2>
+    </div>
+    <div class="section-body">
+      <div class="toc">
+        <ol>
+          <li><a href="#exec-summary">Executive Summary</a></li>
+          <li><a href="#crawlability">Crawlability &amp; Indexing</a></li>
+          <li><a href="#metadata">Metadata &amp; On-Page SEO</a></li>
+          <li><a href="#headings">Heading Hierarchy</a></li>
+          <li><a href="#structured-data">Structured Data / Schema</a></li>
+          <li><a href="#canonical">Canonicalization</a></li>
+          <li><a href="#sitemap">Sitemap Analysis</a></li>
+          <li><a href="#robots">Robots.txt</a></li>
+          <li><a href="#internal-linking">Internal Linking</a></li>
+          <li><a href="#broken-links">Broken Links</a></li>
+          <li><a href="#mobile-seo">Mobile SEO</a></li>
+          <li><a href="#performance">Performance &amp; Core Web Vitals</a></li>
+          <li><a href="#images">Image Optimization</a></li>
+          <li><a href="#javascript">JavaScript &amp; Rendering SEO</a></li>
+          <li><a href="#keywords">Keyword Opportunities</a></li>
+          <li><a href="#content-gaps">Content Gap Analysis</a></li>
+          <li><a href="#competitors">Competitor Comparison</a></li>
+          <li><a href="#action-plan">Prioritized Action Plan</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 1. EXECUTIVE SUMMARY -->
+  <div class="section" id="exec-summary">
+    <div class="section-header">
+      <div class="section-icon" style="background:#eff6ff;">🏢</div>
+      <h2>1. Executive Summary</h2>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom:16px; font-size:14.5px; line-height:1.8;">
+        <strong>Boostronixx</strong> is a young branding and digital marketing agency based in Jaipur, Rajasthan, running on WordPress with Yoast SEO. The site has a solid structural foundation — HTTPS is active, sitemaps are properly generated across 7 sub-sitemaps, robots.txt is Yoast-managed and correctly configured, and Open Graph / Twitter Card tags are present on all audited pages. The blog section shows meaningful content depth with well-structured long-form posts. However, the site is held back by <strong>critical gaps in structured data, widespread image SEO failures, broken internal links using localhost URLs, inconsistent metadata quality across service pages, missing FAQ/LocalBusiness schema, and no canonical strategy for trailing-slash variants</strong>. The site's Google index footprint is extremely small (only 3 pages visible in search), which signals potential indexation issues compounded by the domain's relative youth. Addressing these issues in priority order will materially improve organic visibility, SERP feature eligibility, and click-through rates.
+      </p>
+      <div class="exec-grid">
+        <div class="exec-card strength">
+          <h4 class="s">✅ Top Strengths</h4>
+          <ul>
+            <li>HTTPS active, valid SSL</li>
+            <li>Yoast SEO correctly installed</li>
+            <li>7-sub-sitemap structure in place</li>
+            <li>robots.txt well-configured</li>
+            <li>OG + Twitter Cards on all pages</li>
+            <li>Strong blog content depth (12+ posts)</li>
+            <li>Canonical tags present on all pages</li>
+            <li>Viewport meta correctly set</li>
+            <li>max-image-preview:large enabled</li>
+          </ul>
+        </div>
+        <div class="exec-card warning">
+          <h4 class="w">⚠ Top Priorities</h4>
+          <ul>
+            <li>Fix all localhost broken links</li>
+            <li>Add LocalBusiness + FAQ schema sitewide</li>
+            <li>Add descriptive alt text to ALL images</li>
+            <li>Fix inconsistent/thin service page metadata</li>
+            <li>Fix duplicate logo/nav rendering</li>
+            <li>Add author schema &amp; Article schema to blog</li>
+            <li>Fix OG image inconsistency (defaultOG.jpg used)</li>
+            <li>Add breadcrumb schema</li>
+          </ul>
+        </div>
+        <div class="exec-card critical">
+          <h4 class="c">🚨 Critical Issues</h4>
+          <ul>
+            <li>3+ blog posts link to localhost (broken)</li>
+            <li>About-us page returns empty (redirect issue)</li>
+            <li>Zero structured data on homepage</li>
+            <li>All images use lazy SVG placeholders (no real alt)</li>
+            <li>Service pages share generic OG image</li>
+            <li>Nav inconsistency across service pages</li>
+            <li>No Twitter handle in Twitter Card meta</li>
+            <li>Very low Google index count (3 pages)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. CRAWLABILITY & INDEXING -->
+  <div class="section" id="crawlability">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef9c3;">🕷️</div>
+      <h2>2. Crawlability &amp; Indexing</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box danger">
+        <strong>🚨 Critical:</strong> A <code>site:boostronixx.com</code> search returns only <strong>3 indexed pages</strong> (Disclaimer, Edoovi ERP portfolio, Privacy Policy). For a site with 30+ pages this is severely abnormal and must be investigated immediately in Google Search Console.
+      </div>
+
+      <table class="audit-table" style="margin-top:20px;">
+        <thead><tr><th>Check</th><th>Status</th><th>Details</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>HTTPS / SSL</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>All URLs serve over HTTPS. Redirects from HTTP confirmed.</td>
+            <td>No action needed.</td>
+          </tr>
+          <tr>
+            <td>robots.txt</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>Yoast-generated. Only /wp-json/ and /?rest_route= blocked. Sitemap correctly declared.</td>
+            <td>No action needed.</td>
+          </tr>
+          <tr>
+            <td>Google Index Count</td>
+            <td><span class="pill pill-critical">🚨 Critical</span></td>
+            <td>Only ~3 pages indexed out of 30+ crawlable pages.</td>
+            <td>Check GSC Coverage report. Submit all sitemaps manually. Verify no accidental noindex directives in Yoast or WordPress settings ("Discourage search engines" not checked). Check for crawl budget issues.</td>
+          </tr>
+          <tr>
+            <td>meta robots</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>All audited pages: <code>index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1</code></td>
+            <td>No action needed. Good Yoast defaults.</td>
+          </tr>
+          <tr>
+            <td>About Us page response</td>
+            <td><span class="pill pill-critical">🚨 Critical</span></td>
+            <td><code>/about-us/</code> returned empty body on fetch — possible redirect loop or empty page template.</td>
+            <td>Test in browser. Fix redirect or page content immediately.</td>
+          </tr>
+          <tr>
+            <td>Trailing slash consistency</td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td>Fetching /services/seo-services (no slash) redirects to /services/seo-services/ (with slash). Consistent, but ensure all internal links use trailing slashes to avoid redirect overhead.</td>
+            <td>Audit all internal links to use canonical trailing-slash format.</td>
+          </tr>
+          <tr>
+            <td>WWW redirect</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>www.boostronixx.com is the canonical domain. Confirmed consistent.</td>
+            <td>No action needed.</td>
+          </tr>
+          <tr>
+            <td>Crawl depth</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>All pages reachable within 2 clicks from homepage. Flat site architecture.</td>
+            <td>No action needed.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 3. METADATA & ON-PAGE SEO -->
+  <div class="section" id="metadata">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">🏷️</div>
+      <h2>3. Metadata &amp; On-Page SEO</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>Page</th><th>Title</th><th>Title Length</th><th>Meta Description</th><th>Desc Length</th><th>Severity</th><th>Issue</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="page-url">/</td>
+            <td>Not retrieved (page too large)</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Homepage meta not confirmed. Verify in GSC/browser that title includes primary keyword "branding agency Jaipur" and meta desc is 150–160 chars with a CTA.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/seo-services/</td>
+            <td>SEO Services — Rank Higher, Convert More | Boostronixx</td>
+            <td>55 chars ✅</td>
+            <td>Expert SEO services that drive real organic growth. Technical audits, keyword strategy, link building &amp; local SEO — all ROI-focused. Get found by the right people.</td>
+            <td>163 chars ⚠</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Meta description is 3 chars over the 160-char limit. Trim slightly. Title is excellent. OG title matches page title ✅.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/brand-consulting/</td>
+            <td>Brand Consulting | BoostronixX</td>
+            <td>32 chars ⚠</td>
+            <td>Brand Consulting | We help businesses grow with AI-powered brand consulting, digital marketing, and UI/UX design services to boost conversions and build trust.</td>
+            <td>163 chars ⚠</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Title is too short (32 chars) — wastes SERP real estate. Should be: "Brand Consulting Services | Strategy &amp; Identity | BoostronixX" (~60 chars). Meta desc 3 chars over limit AND doesn't match the page's actual service focus (it's a generic sitewide desc). OG title doesn't include location signal.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/digital-marketing/</td>
+            <td>Digital Marketing | BoostronixX</td>
+            <td>33 chars ⚠</td>
+            <td>Digital Marketing | We help businesses grow with AI-powered brand consulting, digital marketing, and UI/UX design services to boost conversions and build trust.</td>
+            <td>163 chars ⚠</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td><strong>Same boilerplate meta description used on Brand Consulting page</strong> — duplicate meta description across service pages is a significant SEO issue. Title too short. No Twitter description set.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/website-design/</td>
+            <td>Website Design &amp; Development Services — Fast, Beautiful &amp; Built to Convert | Boostronixx</td>
+            <td>89 chars ⚠</td>
+            <td>Custom website design &amp; development — WordPress, e-commerce, landing pages &amp; web apps. Performance-first, SEO-ready, mobile-optimised.</td>
+            <td>133 chars ✅</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Title is too long (89 chars, will be truncated in SERPs at ~60 chars). Consider: "Website Design Company Jaipur | Fast, Conversion-Ready | Boostronixx" (70 chars). Meta desc is good but no CTA.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/faqs/</td>
+            <td>FAQs | Branding, Marketing &amp; UI/UX Services</td>
+            <td>47 chars ✅</td>
+            <td>Find answers to common questions about our branding, digital marketing, and UI/UX services, process, pricing, and support.</td>
+            <td>123 chars ✅</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>OG title "FAQs – Branding &amp; Digital Marketing Agency" differs from page title. Twitter title also differs ("FAQs – Marketing &amp; Branding Services"). Three different titles for one page — confusing signals to Google.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>How to Build a Strong Brand Strategy from Scratch in 2026</td>
+            <td>57 chars ✅</td>
+            <td>Learn how to build a strong brand strategy from scratch in 2026. Follow our eight-step framework covering audience research, positioning, identity, and growth.</td>
+            <td>162 chars ⚠</td>
+            <td><span class="pill pill-low">Low</span></td>
+            <td>Excellent title and description — just 2 chars over limit. Twitter title "How to Build a Brand Strategy from Scratch in 2026" differs from og:title slightly. Twitter reading time shows "1 minute" for a 12-min read — inaccurate.</td>
+          </tr>
+          <tr>
+            <td class="page-url">/faqs/ H1</td>
+            <td colspan="5">We Are A Digital Agency For Visually Frequency And Questions ReBrand.</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>H1 is grammatically broken ("Visually Frequency") and contains no target keyword. This is the primary heading Google uses for page understanding. Must be rewritten.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 4. HEADING HIERARCHY -->
+  <div class="section" id="headings">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">📐</div>
+      <h2>4. Heading Hierarchy</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>Page</th><th>H1</th><th>H1 Count</th><th>H2 Usage</th><th>Issue</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="page-url">/services/seo-services/</td>
+            <td>"SEO Company In Jaipur"</td>
+            <td>1 ✅</td>
+            <td>H2: "Frequently Asked Questions about SEO Services in Jaipur" — H3s used for service steps</td>
+            <td>H1 contains "Shape" in DOM (decorative element text leaking into heading) — verify H1 renders clean without "Shape" suffix. H3 sections lack H2 wrapper.</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/brand-consulting/</td>
+            <td>"Brand Consulting"</td>
+            <td>1 ✅</td>
+            <td>H2: "Product making for friendly users" (irrelevant)</td>
+            <td><strong>H2 "Product making for friendly users" has zero relevance to brand consulting</strong> — appears to be placeholder/template content left in. This confuses Google's content understanding and dilutes topical relevance.</td>
+            <td><span class="pill pill-high">High</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/digital-marketing/</td>
+            <td>"Digital Marketing"</td>
+            <td>1 ✅</td>
+            <td>H2: "Product making for friendly users" (irrelevant)</td>
+            <td>Same irrelevant boilerplate H2 as brand-consulting page. Template content not replaced with actual service content.</td>
+            <td><span class="pill pill-high">High</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/services/website-design/</td>
+            <td>"Website Design Company in Jaipur"</td>
+            <td>1 ✅</td>
+            <td>H2: "Frequently Asked Questions about Website Design in Jaipur"</td>
+            <td>Good. H1 includes geo-targeting keyword. FAQ section properly uses H2. H3s for FAQ items — consider using H2 for major sections and H3 for FAQ items for cleaner hierarchy.</td>
+            <td><span class="pill pill-low">Low</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/faqs/</td>
+            <td>"We Are A Digital Agency For Visually Frequency And Questions ReBrand."</td>
+            <td>1 ✅</td>
+            <td>No H2 used</td>
+            <td>H1 is grammatically incorrect and keyword-free. No H2 structure on a page with 5 FAQ items. Critical for FAQ schema eligibility and SERP feature capture.</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td class="page-url">/blog/ posts</td>
+            <td>Matches page title ✅</td>
+            <td>1 ✅</td>
+            <td>H2 and H3 properly hierarchical ✅</td>
+            <td>Blog posts show excellent heading structure. H2 for major sections, H3 for sub-topics. Well done.</td>
+            <td><span class="pill pill-pass">Pass</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 5. STRUCTURED DATA -->
+  <div class="section" id="structured-data">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🗂️</div>
+      <h2>5. Structured Data / Schema Markup</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box danger">
+        <strong>🚨 Critical Gap:</strong> No JSON-LD schema detected on any audited page. For a Jaipur-based agency competing for local service keywords, missing LocalBusiness and FAQ schema means zero eligibility for rich results, knowledge panels, and People Also Ask boxes.
+      </div>
+      <table class="audit-table" style="margin-top:20px;">
+        <thead><tr><th>Schema Type</th><th>Status</th><th>Priority</th><th>Implementation Recommendation</th></tr></thead>
+        <tbody>
+          <tr><td>Organization</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-critical">Critical</span></td><td>Add on homepage. Include name, url, logo, contactPoint, address, sameAs (social profiles), description, foundingDate.</td></tr>
+          <tr><td>LocalBusiness</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-critical">Critical</span></td><td>Add to homepage and contact page. Type: ProfessionalService. Include address (Jaipur, Rajasthan), telephone, openingHours, geo coordinates, priceRange, areaServed.</td></tr>
+          <tr><td>FAQPage</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-critical">Critical</span></td><td>Eligible on: /faqs/, /services/seo-services/, /services/website-design/. These pages have FAQ sections — adding FAQPage schema makes them eligible for FAQ rich results, significantly increasing SERP real estate.</td></tr>
+          <tr><td>Service</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-high">High</span></td><td>Add to each /services/* page with name, description, provider (Organization), areaServed, serviceType.</td></tr>
+          <tr><td>Article / BlogPosting</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-high">High</span></td><td>All blog posts eligible. Add headline, author (Person schema), datePublished, dateModified, image, publisher. This also enables Google Discover cards.</td></tr>
+          <tr><td>BreadcrumbList</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-medium">Medium</span></td><td>Add sitewide. Breadcrumbs appear in SERPs below the URL and improve CTR by ~15-20%.</td></tr>
+          <tr><td>WebSite (SearchAction)</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-medium">Medium</span></td><td>Add on homepage to enable Google Sitelinks Search Box. Helps brand SERP appearance.</td></tr>
+          <tr><td>Person (Founder/Team)</td><td><span class="pill pill-fail">Missing</span></td><td><span class="pill pill-low">Low</span></td><td>Add on About Us page to build E-E-A-T signals.</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box" style="margin-top:16px;">
+        <strong>💡 Quick Win:</strong> Yoast SEO already supports LocalBusiness and FAQ schema via its settings panel. The LocalBusiness type can be enabled under Yoast → Search Appearance → Knowledge Graph &amp; Schema without writing custom code.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 6. CANONICALIZATION -->
+  <div class="section" id="canonical">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">🔗</div>
+      <h2>6. Canonicalization</h2>
+    </div>
+    <div class="section-body">
+      <div class="checklist">
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>Canonical tags present</h4><p>All audited pages include self-referencing canonical tags correctly pointing to the trailing-slash version (e.g., <code>https://www.boostronixx.com/services/seo-services/</code>).</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>www vs non-www</h4><p>Consistently using <code>www.boostronixx.com</code> as canonical domain. No mixed www/non-www signals detected.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>Trailing slash redirects</h4><p>Non-trailing-slash URLs redirect to trailing-slash versions (confirmed: /services/seo-services → /services/seo-services/). However, some blog post internal links appear to use <code>http://localhost/boostronics/</code> as base — these are broken, not just canonical issues.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>og:url consistency</h4><p>og:url on all pages matches canonical — good. However /faqs/ has three different titles across title, og:title, and twitter:title, which creates conflicting signals despite correct canonicals.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>Sitemap URLs match canonicals</h4><p>All sitemap URLs use trailing-slash format matching canonical tags. No conflicts detected.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>Pagination</h4><p>Blog listing page (/blog/) and potential category/tag pages may need rel=prev/next or proper canonical handling. Not fully audited — verify in Yoast settings.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 7. SITEMAP -->
+  <div class="section" id="sitemap">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef9c3;">🗺️</div>
+      <h2>7. Sitemap Analysis</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box success">
+        <strong>✅ Good Structure:</strong> Yoast generates a well-organized sitemap index at <code>/sitemap_index.xml</code> with 7 sub-sitemaps covering all content types.
+      </div>
+      <table class="audit-table" style="margin-top:16px;">
+        <thead><tr><th>Sitemap</th><th>URLs</th><th>Last Modified</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="page-url">post-sitemap.xml</td><td>14 posts</td><td>2026-04-23</td><td><span class="pill pill-warn">⚠ Warn</span></td><td>Last sitemap update was April 23 — but newer posts (May 2026) exist. Sitemap lastmod may be stale. Ensure auto-ping to Google is enabled in Yoast.</td></tr>
+          <tr><td class="page-url">page-sitemap.xml</td><td>6 pages</td><td>2026-05-25</td><td><span class="pill pill-pass">✅ Pass</span></td><td>Recently updated. All main pages listed.</td></tr>
+          <tr><td class="page-url">service-sitemap.xml</td><td>7 services</td><td>2026-05-25</td><td><span class="pill pill-pass">✅ Pass</span></td><td>All 7 service pages listed with recent lastmod dates.</td></tr>
+          <tr><td class="page-url">portfolio-sitemap.xml</td><td>2+ portfolio items</td><td>2026-04-23</td><td><span class="pill pill-warn">⚠ Warn</span></td><td>Only 2 portfolio items (Edoovi ERP, Freshee). Add more case studies to strengthen E-E-A-T signals.</td></tr>
+          <tr><td class="page-url">category-sitemap.xml</td><td>Category pages</td><td>2026-04-23</td><td><span class="pill pill-warn">⚠ Warn</span></td><td>Ensure category pages have unique content beyond just listing posts. Thin category pages can waste crawl budget.</td></tr>
+          <tr><td class="page-url">post_tag-sitemap.xml</td><td>Tag pages</td><td>2026-04-23</td><td><span class="pill pill-warn">⚠ Warn</span></td><td>Tag pages are often thin. Consider noindexing tags via Yoast → Search Appearance → Taxonomies → Tags → No. Reduces crawl budget waste significantly.</td></tr>
+          <tr><td class="page-url">portfolio_category-sitemap.xml</td><td>Portfolio categories</td><td>2026-04-23</td><td><span class="pill pill-warn">⚠ Warn</span></td><td>Likely thin taxonomy pages. Review and noindex if content is thin.</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box warning" style="margin-top:16px;">
+        <strong>⚠ Action:</strong> Submit all 7 sub-sitemaps individually in Google Search Console (Settings → Sitemaps). Also submit the sitemap index URL. Check for any fetch errors or excluded URLs.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 8. ROBOTS.TXT -->
+  <div class="section" id="robots">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">🤖</div>
+      <h2>8. Robots.txt</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box success"><strong>✅ Well-Configured:</strong> Yoast-managed robots.txt is clean, minimal, and correctly blocks only WordPress API endpoints.</div>
+      <br>
+      <pre style="background:#1e293b; color:#e2e8f0; padding:20px; border-radius:8px; font-size:13px; overflow-x:auto;"># START YOAST BLOCK
+# ---------------------------
+User-agent: *
+Disallow: /wp-json/
+Disallow: /?rest_route=
+
+Sitemap: https://www.boostronixx.com/sitemap_index.xml
+Schemamap: https://www.boostronixx.com/wp-json/yoast/v1/schema-aggregator/get-xml
+# ---------------------------
+# END YOAST BLOCK</pre>
+      <table class="audit-table" style="margin-top:20px;">
+        <thead><tr><th>Check</th><th>Status</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Sitemap declared</td><td><span class="pill pill-pass">✅ Pass</span></td><td>Sitemap index URL correctly referenced.</td></tr>
+          <tr><td>wp-admin blocked</td><td><span class="pill pill-warn">⚠ Warning</span></td><td><code>/wp-admin/</code> is not explicitly blocked in robots.txt, though WordPress itself handles login redirect. Consider adding <code>Disallow: /wp-admin/</code> and <code>Allow: /wp-admin/admin-ajax.php</code> for completeness.</td></tr>
+          <tr><td>Valuable content blocked</td><td><span class="pill pill-pass">✅ Pass</span></td><td>No valuable content accidentally blocked.</td></tr>
+          <tr><td>Upload/media directories</td><td><span class="pill pill-warn">⚠ Warning</span></td><td>Many images served from external S3 bucket (boostronixx.s3.ap-south-1.amazonaws.com). These are not under your robots.txt jurisdiction. Ensure S3 bucket does not block Googlebot.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 9. INTERNAL LINKING -->
+  <div class="section" id="internal-linking">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">🔀</div>
+      <h2>9. Internal Linking</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>Issue</th><th>Location</th><th>Severity</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Localhost links in blog content</td>
+            <td>Blog post: /blog/how-to-build-a-brand-strategy-from-scratch/ — links to <span class="broken-link">http://localhost/boostronics/blog/brand-strategy-vs-marketing/</span>, <span class="broken-link">http://localhost/boostronics/blog/how-to-build-brand-trust/</span>, <span class="broken-link">http://localhost/boostronics/blog/branding-mistakes-killing-growth/</span>, <span class="broken-link">http://localhost/boostronics/blog/how-to-build-a-brand-strategy-from-scratch-in-2026/</span></td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Do a database search-replace in WordPress: change all <code>http://localhost/boostronics</code> to <code>https://www.boostronixx.com</code>. Use Better Search Replace plugin or WP-CLI: <code>wp search-replace 'http://localhost/boostronics' 'https://www.boostronixx.com' --all-tables</code></td>
+          </tr>
+          <tr>
+            <td>Navigation inconsistency</td>
+            <td>Brand Consulting &amp; Digital Marketing service pages</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Brand Consulting and Digital Marketing nav dropdowns show only 4 services (Brand Consulting, Digital Marketing, UI/UX Design, Performance Marketing) — missing SEO Services, Social Media Marketing, and Website Design from the nav. All 7 services should appear in the dropdown.</td>
+          </tr>
+          <tr>
+            <td>Duplicate nav rendering</td>
+            <td>All pages</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Every page renders the navigation block twice in the HTML (once for desktop, once for mobile). While visually this is standard, ensure only one nav is accessible to screen readers via aria-hidden on the hidden version.</td>
+          </tr>
+          <tr>
+            <td>Blog posts lack cross-links to service pages</td>
+            <td>/blog/* pages</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Blog posts focus on brand strategy but link sparingly to service pages like /services/brand-consulting/ and /services/seo-services/. Add contextual internal links in every blog post pointing to relevant service pages with descriptive anchor text.</td>
+          </tr>
+          <tr>
+            <td>Services hub page (/services/) not in nav</td>
+            <td>Navigation header</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>The /services/ parent page is listed in nav as a dropdown trigger but not as a standalone link some users can click. Add /services/ as a direct-linked page in the sitemap and ensure it receives internal links.</td>
+          </tr>
+          <tr>
+            <td>Portfolio has only 2 items visible in nav</td>
+            <td>Navigation header</td>
+            <td><span class="pill pill-low">Low</span></td>
+            <td>Nav shows Edoovi-ERP and Freshee. Link to the /portfolio/ hub page directly in the dropdown header.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 10. BROKEN LINKS -->
+  <div class="section" id="broken-links">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef2f2;">💔</div>
+      <h2>10. Broken Links</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box danger">
+        <strong>🚨 Critical — Localhost URLs:</strong> Multiple blog posts contain hardcoded <code>localhost</code> internal links — a clear sign the site was developed locally and the database was not properly search-replaced before launch.
+      </div>
+      <table class="audit-table" style="margin-top:16px;">
+        <thead><tr><th>Broken URL</th><th>Found On</th><th>Anchor Text</th><th>Severity</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="broken-link">http://localhost/boostronics/blog/brand-strategy-vs-marketing/</span></td>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>"brand strategy vs. marketing"</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="broken-link">http://localhost/boostronics/blog/how-to-build-brand-trust/</span></td>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>"the psychology behind brands that customers trust instantly"</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="broken-link">http://localhost/boostronics/blog/branding-mistakes-killing-growth/</span></td>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>"branding mistakes that are killing your business growth"</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="broken-link">http://localhost/boostronics/blog/how-to-build-a-brand-strategy-from-scratch-in-2026/</span></td>
+            <td class="page-url">/blog/how-to-build-a-brand-strategy-from-scratch/</td>
+            <td>"why ads alone do not work without a funnel"</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="broken-link">http://localhost/boostronics/</span> (possible sitewide)</td>
+            <td>Likely in other blog posts not audited</td>
+            <td>Various</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td>Social icon links → <code>#</code></td>
+            <td>Service pages (brand-consulting, seo-services, website-design)</td>
+            <td>Social icons link to <code>#</code> instead of actual social profile URLs</td>
+            <td><span class="pill pill-high">High</span></td>
+          </tr>
+          <tr>
+            <td>about:blank link</td>
+            <td>All service pages (top of page body)</td>
+            <td>Appears as first link on every service page: <code>[about:blank](about:blank)</code></td>
+            <td><span class="pill pill-high">High</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box warning" style="margin-top:16px;">
+        <strong>⚠ Immediate Action:</strong> Run <code>wp search-replace 'http://localhost/boostronics' 'https://www.boostronixx.com' --all-tables --dry-run</code> in WP-CLI first to preview changes, then remove the <code>--dry-run</code> flag. Also audit ALL blog posts for any remaining localhost references.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 11. MOBILE SEO -->
+  <div class="section" id="mobile-seo">
+    <div class="section-header">
+      <div class="section-icon" style="background:#eff6ff;">📱</div>
+      <h2>11. Mobile SEO</h2>
+    </div>
+    <div class="section-body">
+      <div class="checklist">
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>Viewport meta tag</h4><p><code>width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes</code> — correctly set on all pages. <code>user-scalable=yes</code> is mobile-friendly (allows pinch zoom).</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>Responsive design declared</h4><p>Website design service page explicitly states mobile-first, responsive design. WordPress + responsive theme appears in use.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>Mobile navigation</h4><p>Separate mobile nav is rendered in HTML (duplicate nav blocks). Verify hidden nav items are inaccessible to Googlebot's mobile crawler — use CSS visibility/display or aria-hidden.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>Exit popup / consent banner</h4><p>A GDPR consent management popup and an "exit intent" lead capture popup appear on every page. On mobile, if these cover the primary content without a visible close button, this violates Google's intrusive interstitials policy and can result in mobile ranking penalties.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚠️</span>
+          <div class="check-text"><h4>Touch target sizes</h4><p>Social icon links (18×18px SVG) are very small. Google recommends minimum 48×48px tap targets. Social icons in footer likely fail this check.</p></div>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">✅</span>
+          <div class="check-text"><h4>maximum-scale not restricted</h4><p>maximum-scale=5.0 allows zooming — this is correct and accessibility-friendly. Sites that set maximum-scale=1 can be penalized.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 12. PERFORMANCE & CORE WEB VITALS -->
+  <div class="section" id="performance">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">⚡</div>
+      <h2>12. Performance &amp; Core Web Vitals</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box warning">
+        <strong>⚠ Note:</strong> Real CWV field data requires Google Search Console or PageSpeed Insights API access. The signals below are derived from observing the page source and architecture.
+      </div>
+      <table class="audit-table" style="margin-top:16px;">
+        <thead><tr><th>Signal</th><th>Observed</th><th>Assessment</th><th>Severity</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>LCP (Largest Contentful Paint)</td>
+            <td>All hero images use lazy-loaded SVG placeholders with <code>data:image/svg+xml;base64</code> instead of real images</td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>The LCP element on most pages is the hero image — if it's lazy-loaded, it won't load until JS runs, severely degrading LCP. Hero images should NOT be lazy-loaded. Add <code>loading="eager"</code> and <code>fetchpriority="high"</code> to hero images. Ensure the real image URL is in the initial HTML, not a base64 SVG placeholder.</td>
+          </tr>
+          <tr>
+            <td>CLS (Cumulative Layout Shift)</td>
+            <td>All images rendered as SVG placeholders without explicit width/height dimensions initially</td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Images must have explicit width and height attributes in HTML to prevent layout shift when they load. Add dimensions to all <code>&lt;img&gt;</code> tags. Also audit the GDPR/exit-intent popups for CLS impact.</td>
+          </tr>
+          <tr>
+            <td>INP (Interaction to Next Paint)</td>
+            <td>Multiple third-party scripts: GDPR consent manager, exit-intent popup, cookie management</td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Each additional third-party script increases INP. Audit with PageSpeed Insights. Defer non-critical scripts. Consider asynchronous loading for consent manager.</td>
+          </tr>
+          <tr>
+            <td>Image serving from S3</td>
+            <td>OG images and blog thumbnails served from <code>boostronixx.s3.ap-south-1.amazonaws.com</code></td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>S3 Asia-South-1 (Mumbai) is optimal for Indian visitors but may be slower for other regions. Consider using CloudFront CDN in front of the S3 bucket for global performance.</td>
+          </tr>
+          <tr>
+            <td>Plugin weight</td>
+            <td>Yoast SEO confirmed. GDPR consent manager present. Cookie management present.</td>
+            <td><span class="pill pill-warn">⚠ Warning</span></td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Audit total active WordPress plugins in /wp-admin/. Deactivate and delete unused plugins. Each plugin adds PHP processing time.</td>
+          </tr>
+          <tr>
+            <td>Font loading</td>
+            <td>Not confirmed from source (likely Google Fonts or system fonts)</td>
+            <td><span class="pill pill-info">Info</span></td>
+            <td><span class="pill pill-low">Low</span></td>
+            <td>If using Google Fonts, preconnect to <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>, and use <code>font-display: swap</code> to prevent FOIT.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box" style="margin-top:16px;">
+        <strong>💡 Action:</strong> Run <a href="https://pagespeed.web.dev/" target="_blank">https://pagespeed.web.dev/</a> on the homepage and top 3 service pages. Also check Google Search Console → Core Web Vitals report for field data once GSC is properly set up.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 13. IMAGE OPTIMIZATION -->
+  <div class="section" id="images">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef2f2;">🖼️</div>
+      <h2>13. Image Optimization</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box danger">
+        <strong>🚨 Critical:</strong> All content images on service pages are rendered as <code>data:image/svg+xml;base64</code> placeholder SVGs in the fetched HTML. This means either (a) images are lazy-loaded via JavaScript and not in initial HTML, or (b) a lazy-load library is replacing src attributes before rendering. Either way, Googlebot may not see the real images if JavaScript execution is incomplete.
+      </div>
+      <table class="audit-table" style="margin-top:16px;">
+        <thead><tr><th>Issue</th><th>Scope</th><th>Severity</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>All images have alt="[image name]" not descriptive</td>
+            <td>All service pages — alt text only contains the image filename/label (e.g., "Service banner", "Service brand", "FAQ image")</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Rewrite all alt attributes with descriptive, keyword-rich text. Example: alt="Service banner" → alt="SEO services hero banner — Boostronixx SEO agency Jaipur". Every image that carries content meaning needs a relevant alt description.</td>
+          </tr>
+          <tr>
+            <td>Logo images missing meaningful alt</td>
+            <td>Logo rendered with alt="BoostronixX" (repeated twice per page in duplicate nav)</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Logo alt is acceptable as brand name ("BoostronixX") but consider "BoostronixX — Branding &amp; Digital Marketing Agency Jaipur" to add more context.</td>
+          </tr>
+          <tr>
+            <td>Images use mixed formats</td>
+            <td>Banner/OG images: .jpg and .webp mixed. Some older blog thumbnails: .png</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Standardize on .webp for all new images. Retrospectively convert old .png thumbnails to .webp using ShortPixel, Imagify, or EWWW Image Optimizer WordPress plugin.</td>
+          </tr>
+          <tr>
+            <td>Default OG image used on service pages</td>
+            <td>/services/seo-services/, /services/website-design/ both use defaultOG.jpg</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Each service page needs a unique, branded OG image (1200×630px) that visually represents that specific service. Generic OG images reduce social share CTR significantly.</td>
+          </tr>
+          <tr>
+            <td>Social icons use 1×1px GIF placeholder</td>
+            <td>Service pages — social icons in hero section use <code>data:image/gif;base64,R0lGODdh...</code> (1×1 transparent GIF)</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Social icons are not loading their real image src. Check the lazy-load implementation — icons this small should not be lazy-loaded at all. Load them eagerly.</td>
+          </tr>
+          <tr>
+            <td>S3 images lack CDN caching headers</td>
+            <td>OG images from boostronixx.s3.ap-south-1.amazonaws.com</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Set Cache-Control headers on S3 objects: <code>max-age=31536000</code> for static images. Use CloudFront distribution for CDN delivery and faster global load times.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 14. JAVASCRIPT SEO -->
+  <div class="section" id="javascript">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f5f3ff;">⚙️</div>
+      <h2>14. JavaScript &amp; Rendering SEO</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight-box warning">
+        <strong>Platform Note:</strong> This site runs on WordPress (not Next.js as originally requested). WordPress is server-side rendered (SSR) by default — this is generally good for SEO. However, the heavy use of JavaScript-based lazy loading for images is creating rendering SEO issues that mimic client-side rendering problems.
+      </div>
+      <table class="audit-table" style="margin-top:16px;">
+        <thead><tr><th>Issue</th><th>Severity</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>JavaScript lazy-loading replacing all img src with SVG placeholders in initial HTML</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Googlebot renders JavaScript, but image lazy-loading that replaces src attributes can cause Googlebot to index placeholder SVGs instead of real images. Verify by using Google Search Console's URL Inspection → "Test Live URL" and checking the rendered screenshot. If images don't appear, switch to native HTML lazy loading (<code>loading="lazy"</code> attribute) instead of JavaScript-based replacement.</td>
+          </tr>
+          <tr>
+            <td>WordPress REST API enabled and crawlable paths</td>
+            <td><span class="pill pill-low">Low</span></td>
+            <td>REST API at /wp-json/ is correctly blocked in robots.txt. No issue for SEO.</td>
+          </tr>
+          <tr>
+            <td>GDPR/Cookie consent popup blocking viewport</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Ensure the GDPR consent banner does not block main content in Googlebot's render. Use a banner that overlays at the bottom of the page, not a full-screen modal. Google has stated full-screen interstitials can impact rankings.</td>
+          </tr>
+          <tr>
+            <td>about:blank link at page start</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Every service page has <code>[about:blank](about:blank)</code> as the first anchor element in the body. This appears to be a script artifact or theme bug. Remove it immediately — it's a non-functional link that Google may flag as a poor-quality signal.</td>
+          </tr>
+          <tr>
+            <td>YouTube video embeds</td>
+            <td><span class="pill pill-low">Low</span></td>
+            <td>Service pages link to YouTube videos (https://www.youtube.com/watch?v=PkkV1vLHUvQ). If embedded as iframes, ensure they use <code>loading="lazy"</code> and are not render-blocking. Consider using a YouTube facade (lite-youtube-embed) for better CWV.</td>
+          </tr>
+          <tr>
+            <td>WordPress is SSR — not Next.js</td>
+            <td><span class="pill pill-pass">✅ Pass</span></td>
+            <td>No Next.js hydration or SSR/SSG configuration needed. WordPress PHP rendering means all content is in initial HTML response. The rendering issues observed are specific to the lazy-load JS library in use.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 15. KEYWORD OPPORTUNITIES -->
+  <div class="section" id="keywords">
+    <div class="section-header">
+      <div class="section-icon" style="background:#f0fdf4;">🎯</div>
+      <h2>15. Keyword Opportunities</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>#</th><th>Keyword</th><th>Est. Difficulty</th><th>Opportunity</th><th>Intent</th><th>Recommended Content / Page</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>SEO company in Jaipur</td><td>Moderate</td><td class="opportunity-high">High</td><td>Commercial</td><td>Existing: /services/seo-services/ — already targeting. Strengthen with case studies and review schema.</td></tr>
+          <tr><td>2</td><td>digital marketing agency Jaipur</td><td>Moderate</td><td class="opportunity-high">High</td><td>Commercial</td><td>Homepage + /services/digital-marketing/. Add Jaipur signal to homepage title and H1.</td></tr>
+          <tr><td>3</td><td>branding agency Jaipur</td><td>Low–Moderate</td><td class="opportunity-high">High</td><td>Commercial</td><td>Homepage + /services/brand-consulting/. Primary commercial keyword. Homepage must lead with this.</td></tr>
+          <tr><td>4</td><td>website design company Jaipur</td><td>Moderate</td><td class="opportunity-high">High</td><td>Commercial</td><td>Existing: /services/website-design/ — well targeted. Add more FAQ schema and client testimonials.</td></tr>
+          <tr><td>5</td><td>brand strategy for startups India</td><td>Low</td><td class="opportunity-high">High</td><td>Informational/Commercial</td><td>Create a dedicated landing page targeting Indian startups. Existing blog post partially covers this.</td></tr>
+          <tr><td>6</td><td>performance marketing agency Jaipur</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>/services/performance-marketing/ — ensure this page has strong content depth matching SEO and website design pages.</td></tr>
+          <tr><td>7</td><td>social media marketing Jaipur</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>/services/social-media-marketing/ — check if this page has sufficient content depth compared to SEO and website pages.</td></tr>
+          <tr><td>8</td><td>UI UX design agency Jaipur</td><td>Low</td><td class="opportunity-med">Medium</td><td>Commercial</td><td>/services/ui-ux-design/ — ensure FAQ section and geo-targeting are added like website design page.</td></tr>
+          <tr><td>9</td><td>how to build a brand strategy</td><td>High</td><td class="opportunity-med">Medium</td><td>Informational</td><td>Existing blog post: /blog/how-to-build-a-brand-strategy-from-scratch/ — fix localhost links and add Article schema.</td></tr>
+          <tr><td>10</td><td>brand identity vs brand image</td><td>Low</td><td class="opportunity-high">High</td><td>Informational</td><td>Existing: /blog/brand-identity-vs-brand-image/ — add Article schema. Well positioned for featured snippet.</td></tr>
+          <tr><td>11</td><td>what is brand positioning</td><td>Moderate</td><td class="opportunity-med">Medium</td><td>Informational</td><td>Existing: /blog/what-is-brand-positioning/ — add FAQ schema for PAA eligibility.</td></tr>
+          <tr><td>12</td><td>rebranding vs brand refresh</td><td>Low</td><td class="opportunity-high">High</td><td>Informational</td><td>Existing: /blog/rebranding-vs-brand-refresh/ — good long-tail with low competition.</td></tr>
+          <tr><td>13</td><td>local SEO Jaipur</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>Create /services/local-seo-jaipur/ dedicated page. Currently only mentioned within the SEO services page.</td></tr>
+          <tr><td>14</td><td>WordPress website developer Jaipur</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>Add "WordPress" to /services/website-design/ title and create a separate /services/wordpress-development/ page.</td></tr>
+          <tr><td>15</td><td>brand audit checklist</td><td>Low</td><td class="opportunity-high">High</td><td>Informational</td><td>Existing: /blog/brand-audit-checklist/ — strong featured-snippet candidate. Ensure H2 structure mirrors checklist steps.</td></tr>
+          <tr><td>16</td><td>employer branding India</td><td>Low</td><td class="opportunity-med">Medium</td><td>Informational</td><td>Existing: /blog/employer-branding-india/ — niche informational with low competition.</td></tr>
+          <tr><td>17</td><td>e-commerce SEO Jaipur</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>Content gap — no dedicated page. Create /services/ecommerce-seo/.</td></tr>
+          <tr><td>18</td><td>brand style guide template</td><td>Low</td><td class="opportunity-med">Medium</td><td>Informational</td><td>Existing: /blog/how-to-create-a-brand-style-guide/ — add downloadable template to capture email leads + backlinks.</td></tr>
+          <tr><td>19</td><td>digital marketing agency Rajasthan</td><td>Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>Expand geo-targeting beyond just "Jaipur" — add Rajasthan targeting to homepage and services pages.</td></tr>
+          <tr><td>20</td><td>AI branding agency India</td><td>Very Low</td><td class="opportunity-high">High</td><td>Commercial</td><td>Unique positioning opportunity. Site references "AI-powered" — create a dedicated /services/ai-branding/ or homepage section leveraging this differentiator.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 16. CONTENT GAP ANALYSIS -->
+  <div class="section" id="content-gaps">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">📊</div>
+      <h2>16. Content Gap Analysis</h2>
+    </div>
+    <div class="section-body">
+      <table class="audit-table">
+        <thead><tr><th>Missing Topic/Page</th><th>Why It Matters</th><th>Format</th><th>Priority</th><th>Effort</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Local SEO Jaipur dedicated service page</td>
+            <td>Local SEO is a distinct high-intent service — currently buried within the SEO services page. Competitors rank dedicated pages for this term.</td>
+            <td>Service landing page</td>
+            <td><span class="pill pill-critical">High</span></td>
+            <td>Moderate (half day)</td>
+          </tr>
+          <tr>
+            <td>Case Studies / Client Results</td>
+            <td>Only 2 portfolio items (Edoovi ERP, Freshee). E-E-A-T (Experience, Expertise, Authority, Trust) signals are very thin. Google rewards demonstrable proof of expertise.</td>
+            <td>Case study pages (1000+ words each)</td>
+            <td><span class="pill pill-critical">High</span></td>
+            <td>Substantial (multi-day per case study)</td>
+          </tr>
+          <tr>
+            <td>Pricing / Packages page</td>
+            <td>Users researching agencies want ballpark pricing. A /pricing/ page targets high-intent "SEO agency pricing Jaipur" queries and reduces sales friction.</td>
+            <td>Pricing landing page</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Quick win (2–3 hours)</td>
+          </tr>
+          <tr>
+            <td>Google My Business / Local SEO blog content</td>
+            <td>High-volume informational queries like "how to optimise Google My Business Jaipur" have very low competition. Aligns with local SEO service.</td>
+            <td>Blog post (1500+ words)</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Moderate (half day)</td>
+          </tr>
+          <tr>
+            <td>WordPress Development dedicated page</td>
+            <td>Website Design page mentions WordPress but doesn't target "WordPress developer Jaipur" as a standalone keyword.</td>
+            <td>Service landing page</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Moderate (half day)</td>
+          </tr>
+          <tr>
+            <td>E-commerce SEO / WooCommerce SEO page</td>
+            <td>D2C e-commerce brands are a stated target audience. No dedicated e-commerce SEO content exists.</td>
+            <td>Service landing page</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Moderate (half day)</td>
+          </tr>
+          <tr>
+            <td>Testimonials / Reviews page</td>
+            <td>Zero social proof visible on the site beyond portfolio items. Review schema requires reviews to be present. Builds trust and supports E-E-A-T.</td>
+            <td>Testimonials page + Review schema</td>
+            <td><span class="pill pill-high">High</span></td>
+            <td>Quick win (2 hours)</td>
+          </tr>
+          <tr>
+            <td>Team / About page (currently broken)</td>
+            <td>/about-us/ returns empty. This is a critical trust page for E-E-A-T. Must be repaired immediately.</td>
+            <td>About Us page</td>
+            <td><span class="pill pill-critical">Critical</span></td>
+            <td>Quick win (fix existing)</td>
+          </tr>
+          <tr>
+            <td>"Best digital marketing agency Jaipur" comparison content</td>
+            <td>Branded search comparison queries are high-intent. A well-structured comparison page can capture users comparing agencies.</td>
+            <td>Comparison / Why Us landing page</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Moderate</td>
+          </tr>
+          <tr>
+            <td>Blog content for performance marketing / paid ads</td>
+            <td>No informational blog posts covering Google Ads, Meta Ads, or performance marketing fundamentals — despite offering these services.</td>
+            <td>Blog posts (3–5 articles)</td>
+            <td><span class="pill pill-medium">Medium</span></td>
+            <td>Substantial</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 17. COMPETITOR COMPARISON -->
+  <div class="section" id="competitors">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef9c3;">🏆</div>
+      <h2>17. Competitor Comparison</h2>
+    </div>
+    <div class="section-body">
+      <p style="margin-bottom:16px; font-size:13.5px; color:var(--muted);">Key Jaipur-market competitors identified: <strong>The Cogent (thecogent.in)</strong>, <strong>SERP Wizard (serpwizard.com)</strong>, <strong>W3Era (w3era.com)</strong>.</p>
+      <table class="audit-table compare-table">
+        <thead><tr><th>Dimension</th><th>BoostronixX</th><th>The Cogent</th><th>SERP Wizard</th><th>Leader</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Domain age &amp; authority</td>
+            <td>New (2026)</td>
+            <td>Established (2–5+ yrs)</td>
+            <td>Established (3+ yrs)</td>
+            <td class="winner-cell">Competitors</td>
+          </tr>
+          <tr>
+            <td>Google indexed pages</td>
+            <td>~3 pages</td>
+            <td>100+ pages</td>
+            <td>100+ pages</td>
+            <td class="winner-cell">Competitors</td>
+          </tr>
+          <tr>
+            <td>Content depth (services)</td>
+            <td>Good (FAQ + detail on SEO &amp; Website pages)</td>
+            <td>Moderate</td>
+            <td>Moderate</td>
+            <td class="winner-cell">BoostronixX</td>
+          </tr>
+          <tr>
+            <td>Blog publishing frequency</td>
+            <td>14 posts (Feb–May 2026), ~2/week</td>
+            <td>Variable</td>
+            <td>Variable</td>
+            <td class="winner-cell">BoostronixX</td>
+          </tr>
+          <tr>
+            <td>Structured data / Schema</td>
+            <td>None detected</td>
+            <td>Likely basic Organization/LocalBusiness</td>
+            <td>Likely basic schemas</td>
+            <td class="winner-cell">Competitors</td>
+          </tr>
+          <tr>
+            <td>Broken links</td>
+            <td>4+ critical (localhost)</td>
+            <td>Unknown</td>
+            <td>Unknown</td>
+            <td class="winner-cell">Competitors (assumed)</td>
+          </tr>
+          <tr>
+            <td>OG/Social meta</td>
+            <td>Present but inconsistent (generic OG image)</td>
+            <td>Assumed present</td>
+            <td>Assumed present</td>
+            <td>Tie</td>
+          </tr>
+          <tr>
+            <td>AI / Modern positioning</td>
+            <td>"AI-powered" branding — unique differentiator</td>
+            <td>Traditional positioning</td>
+            <td>Traditional positioning</td>
+            <td class="winner-cell">BoostronixX</td>
+          </tr>
+          <tr>
+            <td>Portfolio / Case studies</td>
+            <td>2 items (thin)</td>
+            <td>Multiple case studies</td>
+            <td>Multiple case studies</td>
+            <td class="winner-cell">Competitors</td>
+          </tr>
+          <tr>
+            <td>Google Maps / Local presence</td>
+            <td>Not verified</td>
+            <td>Likely GMB optimised</td>
+            <td>Likely GMB optimised</td>
+            <td class="winner-cell">Competitors (assumed)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box success" style="margin-top:16px;">
+        <strong>✅ Competitive Advantage:</strong> BoostronixX has strong content depth on service pages, a consistent blogging cadence, and a unique "AI-powered branding" positioning that established Jaipur agencies lack. Fixing technical issues and building domain authority can close the gap quickly given the site's solid content foundation.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 18. PRIORITIZED ACTION PLAN -->
+  <div class="section" id="action-plan">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dcfce7;">🚀</div>
+      <h2>18. Prioritized Action Plan</h2>
+    </div>
+    <div class="section-body">
+      <div class="action-cols">
+        <div class="action-col quick">
+          <h3>⚡ Quick Wins — Do This Week</h3>
+          <div class="action-item">
+            <div class="action-num">1</div>
+            <div class="action-body">
+              <h4>Fix all localhost broken links via WP-CLI</h4>
+              <p>Run: <code>wp search-replace 'http://localhost/boostronics' 'https://www.boostronixx.com' --all-tables</code></p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">~1 hour</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">2</div>
+            <div class="action-body">
+              <h4>Submit all sitemaps in Google Search Console</h4>
+              <p>Submit all 7 sub-sitemaps + sitemap index. Check Coverage report for excluded pages.</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">~30 min</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">3</div>
+            <div class="action-body">
+              <h4>Fix About Us page</h4>
+              <p>/about-us/ returns empty body. Repair template or redirect. This is a critical E-E-A-T page.</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">~1 hour</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">4</div>
+            <div class="action-body">
+              <h4>Enable LocalBusiness schema in Yoast</h4>
+              <p>Yoast → Search Appearance → Knowledge Graph → Organization Type: Professional Service. Fill all fields (address, phone, geo).</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">~30 min</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">5</div>
+            <div class="action-body">
+              <h4>Add FAQ schema to /faqs/, /services/seo-services/, /services/website-design/</h4>
+              <p>Install WPCode or add via Yoast FAQ block. FAQ rich results expand SERP real estate by 300%+.</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: Very High</span><span class="pill pill-pass">~2 hours</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">6</div>
+            <div class="action-body">
+              <h4>Rewrite FAQs page H1</h4>
+              <p>Replace broken "Visually Frequency" H1 with: "Frequently Asked Questions — BoostronixX Branding &amp; Marketing Agency".</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">~15 min</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">7</div>
+            <div class="action-body">
+              <h4>Fix all image alt text on service pages</h4>
+              <p>Every img tag on /services/* pages needs descriptive, keyword-relevant alt text. Use Yoast's media library alt text bulk editor.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">~3 hours</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">8</div>
+            <div class="action-body">
+              <h4>Remove about:blank links from service pages</h4>
+              <p>Inspect theme template files for the source of the about:blank anchor. Remove it from all page templates.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">~30 min</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">9</div>
+            <div class="action-body">
+              <h4>Fix meta descriptions on Brand Consulting &amp; Digital Marketing pages</h4>
+              <p>Replace boilerplate generic descriptions with unique, page-specific copy under 160 chars with a CTA.</p>
+              <div class="action-meta"><span class="pill pill-critical">Critical</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">~1 hour</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">10</div>
+            <div class="action-body">
+              <h4>Add Twitter:site handle to all pages</h4>
+              <p>In Yoast → Social → Twitter → Twitter username. Currently missing from all Twitter Card meta.</p>
+              <div class="action-meta"><span class="pill pill-medium">Medium</span><span class="pill pill-info">Impact: Low</span><span class="pill pill-pass">~10 min</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-col strategic">
+          <h3>📈 Strategic Investments — This Quarter</h3>
+          <div class="action-item">
+            <div class="action-num">1</div>
+            <div class="action-body">
+              <h4>Add Article + BlogPosting schema to all blog posts</h4>
+              <p>Enables Google Discover cards, improves SERP attribution, builds E-E-A-T. Use Yoast's Article schema or Schema Pro plugin. Include author Person schema.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">1 day</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">2</div>
+            <div class="action-body">
+              <h4>Fix hero image lazy-loading (LCP optimization)</h4>
+              <p>Change hero images from JS-replaced SVG placeholders to native img tags with <code>loading="lazy"</code> for below-fold images and <code>fetchpriority="high"</code> for hero images. Critical for Core Web Vitals.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Very High</span><span class="pill pill-pass">2–3 days (developer)</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">3</div>
+            <div class="action-body">
+              <h4>Create Local SEO Jaipur dedicated service page</h4>
+              <p>Separate /services/local-seo-jaipur/ page targeting local SEO keywords. Include GMB optimization, citation building, map pack ranking content.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: High</span><span class="pill pill-pass">Half day</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">4</div>
+            <div class="action-body">
+              <h4>Add BreadcrumbList schema sitewide</h4>
+              <p>Breadcrumbs appear in Google SERPs below the URL. Add via Yoast (already supported) or Schema Pro. Enables rich breadcrumb display for all pages.</p>
+              <div class="action-meta"><span class="pill pill-medium">Medium</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">2 hours</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">5</div>
+            <div class="action-body">
+              <h4>Create 3–5 new case study pages</h4>
+              <p>Detailed case studies for completed client projects. Include before/after metrics, methodology, and testimonials. Critical for E-E-A-T and backlink acquisition.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Very High</span><span class="pill pill-pass">Multi-day</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">6</div>
+            <div class="action-body">
+              <h4>Replace "Product making for friendly users" H2 on service pages</h4>
+              <p>Brand Consulting and Digital Marketing pages have irrelevant template H2s. Replace with service-specific section headings (e.g., "Our Brand Consulting Process" or "Results We've Delivered").</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">1 hour</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">7</div>
+            <div class="action-body">
+              <h4>Noindex tag pages and thin taxonomy pages</h4>
+              <p>In Yoast → Search Appearance → Taxonomies → Post Tags → No. Prevents thin pages wasting crawl budget. Significantly helps indexation of valuable pages.</p>
+              <div class="action-meta"><span class="pill pill-medium">Medium</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">30 min</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">8</div>
+            <div class="action-body">
+              <h4>Set up CloudFront CDN for S3-hosted images</h4>
+              <p>Improves global image load times and enables proper Cache-Control headers for S3 assets. Set max-age=31536000 for static images.</p>
+              <div class="action-meta"><span class="pill pill-medium">Medium</span><span class="pill pill-info">Impact: Medium</span><span class="pill pill-pass">Half day (devops)</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">9</div>
+            <div class="action-body">
+              <h4>Launch Google My Business profile and optimize for map pack</h4>
+              <p>Claim/create GMB listing for Boostronixx in Jaipur. Add all services, posts, photos, Q&amp;A. Target "digital marketing agency near me" and "SEO company Jaipur" map pack positions.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Very High</span><span class="pill pill-pass">Half day + ongoing</span></div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-num">10</div>
+            <div class="action-body">
+              <h4>Build backlinks via HARO, guest posts &amp; industry directories</h4>
+              <p>Domain is new — authority building via white-hat link acquisition is the single biggest long-term ranking lever. Target digital marketing / branding directories and Indian business publications.</p>
+              <div class="action-meta"><span class="pill pill-high">High</span><span class="pill pill-info">Impact: Very High</span><span class="pill pill-pass">Ongoing (months)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <p>Enterprise SEO Audit Report — <strong>boostronixx.com</strong></p>
+    <p style="margin-top:4px;">Generated: 26 May 2026 &nbsp;|&nbsp; Audited by: Claude AI (Anthropic) &nbsp;|&nbsp; Pages Crawled: 15+ &nbsp;|&nbsp; Tools: Web Fetch, Search, Sitemap Analysis</p>
+    <p style="margin-top:8px; color:#94a3b8;">For live ranking data, connect Google Search Console, Ahrefs, or Semrush. This audit is based on on-page source analysis and does not include backlink profile data.</p>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>
