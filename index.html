@@ -29,95 +29,171 @@
   </script>
 </head>
 
-<body class="bg-black text-white font-inter min-h-screen overflow-hidden relative flex items-center justify-center">
+<body class="bg-black text-white font-inter min-h-screen relative overflow-hidden">
 
   <!-- Background Glow -->
   <div class="absolute top-[-180px] left-[-120px] h-[420px] w-[420px] rounded-full bg-cyan-500/20 blur-3xl"></div>
 
   <div class="absolute bottom-[-180px] right-[-120px] h-[420px] w-[420px] rounded-full bg-purple-600/20 blur-3xl"></div>
 
-  <main class="relative z-10 w-full max-w-5xl px-6">
+  <main class="relative z-10 px-6 py-14">
 
-    <section
-      class="rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl p-8 md:p-16 shadow-2xl text-center"
-    >
+    <div class="mx-auto max-w-6xl">
 
-      <!-- Badge -->
-      <div
-        class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-semibold text-zinc-300"
-      >
-        🚀 BoostronixX SEO Intelligence
-      </div>
-
-      <!-- Heading -->
-      <h1
-        class="mt-8 text-4xl md:text-6xl font-extrabold leading-tight tracking-[-0.04em]"
-      >
-        Website
-        <span
-          class="bg-gradient-to-r from-white to-cyan-300 bg-clip-text text-transparent"
-        >
-          SEO Reports
-        </span>
-      </h1>
-
-      <!-- Description -->
-      <p
-        class="mx-auto mt-6 max-w-2xl text-base md:text-lg leading-8 text-zinc-400"
-      >
-        Access complete SEO analysis, technical audit insights,
-        and E-E-A-T content evaluation reports for BoostronixX.
-      </p>
-
-      <!-- Buttons -->
-      <div
-        class="mt-12 flex flex-col md:flex-row items-center justify-center gap-5"
+      <!-- Header Card -->
+      <section
+        class="rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl p-8 md:p-14 text-center shadow-2xl"
       >
 
-        <a
-          href="./boostronixx-seo-audit-report.html"
-          class="group w-full md:w-auto min-w-[290px] rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 px-7 py-5 text-base font-bold transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(37,99,235,0.45)]"
+        <!-- Badge -->
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-semibold text-zinc-300"
         >
-          <span class="flex items-center justify-center gap-3">
-            📈 SEO Audit Report
-          </span>
-        </a>
+          🚀 BoostronixX SEO Intelligence
+        </div>
 
-        <a
-          href="./boostronixx-content-eeat-report.html"
-          class="group w-full md:w-auto min-w-[290px] rounded-2xl border border-white/10 bg-white/5 px-7 py-5 text-base font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-white/10"
+        <!-- Heading -->
+        <h1
+          class="mt-8 text-4xl md:text-6xl font-extrabold leading-tight tracking-[-0.04em]"
         >
-          <span class="flex items-center justify-center gap-3">
-            📝 Content E-E-A-T Report
+          Website
+          <span
+            class="bg-gradient-to-r from-white to-cyan-300 bg-clip-text text-transparent"
+          >
+            SEO Reports
           </span>
-        </a>
+        </h1>
 
-        <a
-          href="./boostronixx-local-seo-report.html"
-          class="group w-full md:w-auto min-w-[290px] rounded-2xl border border-white/10 bg-white/5 px-7 py-5 text-base font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-white/10"
+        <!-- Description -->
+        <p
+          class="mx-auto mt-6 max-w-3xl text-base md:text-lg leading-8 text-zinc-400"
         >
-          <span class="flex items-center justify-center gap-3">
-            📝 Local SEO Report
-          </span>
-        </a>
+          Access complete SEO analysis, technical audit insights,
+          local SEO reports, content E-E-A-T evaluation,
+          and strategic cluster mapping for BoostronixX.
+        </p>
 
-        <a
-          href="./boostronixx-cluster-map.html"
-          class="group w-full md:w-auto min-w-[290px] rounded-2xl border border-white/10 bg-white/5 px-7 py-5 text-base font-bold text-white transition duration-300 hover:-translate-y-1 hover:bg-white/10"
-        >
-          <span class="flex items-center justify-center gap-3">
-            📝 Cluster Map
-          </span>
-        </a>
+      </section>
 
-      </div>
+      <!-- Reports Grid -->
+      <section class="mt-10">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+          <!-- Card -->
+          <a
+            href="./boostronixx-seo-audit-report.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-3xl border border-white/10 bg-gradient-to-br from-sky-500/20 to-blue-600/10 backdrop-blur-xl p-7 transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30 hover:shadow-[0_20px_60px_rgba(37,99,235,0.25)]"
+          >
+            <div class="text-4xl">📈</div>
+
+            <h2 class="mt-6 text-2xl font-bold">
+              SEO Audit Report
+            </h2>
+
+            <p class="mt-3 text-sm leading-7 text-zinc-400">
+              Complete technical SEO analysis with performance,
+              structure, indexing, metadata, and optimization insights.
+            </p>
+
+            <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-cyan-300">
+              Open Report
+              <span class="transition group-hover:translate-x-1">
+                →
+              </span>
+            </div>
+          </a>
+
+          <!-- Card -->
+          <a
+            href="./boostronixx-content-eeat-report.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-7 transition duration-300 hover:-translate-y-2 hover:bg-white/10"
+          >
+            <div class="text-4xl">📝</div>
+
+            <h2 class="mt-6 text-2xl font-bold">
+              Content E-E-A-T Report
+            </h2>
+
+            <p class="mt-3 text-sm leading-7 text-zinc-400">
+              Detailed content quality evaluation based on
+              experience, expertise, authority, and trust signals.
+            </p>
+
+            <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-zinc-200">
+              Open Report
+              <span class="transition group-hover:translate-x-1">
+                →
+              </span>
+            </div>
+          </a>
+
+          <!-- Card -->
+          <a
+            href="./boostronixx-local-seo-report.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-7 transition duration-300 hover:-translate-y-2 hover:bg-white/10"
+          >
+            <div class="text-4xl">📍</div>
+
+            <h2 class="mt-6 text-2xl font-bold">
+              Local SEO Report
+            </h2>
+
+            <p class="mt-3 text-sm leading-7 text-zinc-400">
+              Local visibility analysis including maps,
+              citations, business listings, and geo-ranking factors.
+            </p>
+
+            <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-zinc-200">
+              Open Report
+              <span class="transition group-hover:translate-x-1">
+                →
+              </span>
+            </div>
+          </a>
+
+          <!-- Card -->
+          <a
+            href="./boostronixx-cluster-map.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-7 transition duration-300 hover:-translate-y-2 hover:bg-white/10"
+          >
+            <div class="text-4xl">🧠</div>
+
+            <h2 class="mt-6 text-2xl font-bold">
+              Cluster Map
+            </h2>
+
+            <p class="mt-3 text-sm leading-7 text-zinc-400">
+              Strategic topic cluster visualization for
+              semantic SEO planning and content architecture.
+            </p>
+
+            <div class="mt-8 flex items-center gap-2 text-sm font-semibold text-zinc-200">
+              Open Report
+              <span class="transition group-hover:translate-x-1">
+                →
+              </span>
+            </div>
+          </a>
+
+        </div>
+
+      </section>
 
       <!-- Footer -->
-      <div class="mt-12 text-sm text-zinc-500">
+      <footer class="mt-12 text-center text-sm text-zinc-500">
         © 2026 BoostronixX • Premium SEO Reporting Dashboard
-      </div>
+      </footer>
 
-    </section>
+    </div>
 
   </main>
 
