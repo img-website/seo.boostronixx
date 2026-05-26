@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoostronixX — Semantic Keyword Cluster Map</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card2: #21253a;
+    --border: #2e3250;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+  /* Header */
+  .header { background: linear-gradient(135deg,#1a1d27,#0f1117); border-bottom:1px solid var(--border); padding:28px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .header h1 { font-size:22px; font-weight:700; background:linear-gradient(135deg,#6c63ff,#43e97b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .header .sub { font-size:13px; color:var(--muted); margin-top:3px; }
+  .stats { display:flex; gap:24px; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat .n { font-size:22px; font-weight:800; }
+  .stat .l { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+
+  /* Main layout */
+  .layout { display:grid; grid-template-columns:280px 1fr; height:calc(100vh - 90px); }
+  .sidebar { background:var(--card); border-right:1px solid var(--border); overflow-y:auto; padding:16px; }
+  .main { overflow:auto; padding:24px; }
+
+  /* Cluster nav */
+  .cluster-btn { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; border-radius:8px; border:none; background:transparent; color:var(--text); cursor:pointer; text-align:left; margin-bottom:4px; transition:background .15s; font-size:13px; }
+  .cluster-btn:hover { background:rgba(255,255,255,0.05); }
+  .cluster-btn.active { background:rgba(108,99,255,0.15); border:1px solid rgba(108,99,255,0.3); }
+  .cluster-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .cluster-name { font-weight:600; }
+  .cluster-count { margin-left:auto; background:var(--card2); border-radius:99px; padding:1px 7px; font-size:11px; color:var(--muted); }
+
+  /* Pillar card */
+  .pillar-card { border-radius:12px; padding:20px; margin-bottom:20px; border:2px solid; }
+  .pillar-card h2 { font-size:18px; font-weight:700; margin-bottom:4px; }
+  .pillar-card .kw { font-size:13px; opacity:.7; margin-bottom:12px; }
+  .pillar-meta { display:flex; gap:10px; flex-wrap:wrap; }
+  .pill { padding:3px 10px; border-radius:99px; font-size:12px; font-weight:600; }
+
+  /* Spoke grid */
+  .spoke-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-bottom:24px; }
+  .spoke-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; cursor:pointer; transition:transform .15s,box-shadow .15s; position:relative; overflow:hidden; }
+  .spoke-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; }
+  .spoke-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  .spoke-card h4 { font-size:14px; font-weight:600; margin-bottom:4px; }
+  .spoke-card .sk { font-size:12px; color:var(--muted); }
+  .spoke-card .url { font-size:11px; color:#6c63ff; margin-top:6px; font-family:monospace; }
+  .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; margin-top:8px; }
+  .badge.new { background:rgba(108,99,255,0.2); color:#a5b4fc; }
+  .badge.optimise { background:rgba(234,179,8,0.2); color:#fde68a; }
+  .badge.good { background:rgba(34,197,94,0.2); color:#86efac; }
+
+  /* Blog section */
+  .blog-title { font-size:15px; font-weight:700; margin:20px 0 12px; padding-top:16px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .blog-list { display:flex; flex-direction:column; gap:8px; }
+  .blog-item { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px 16px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .blog-item h5 { font-size:13px; font-weight:600; margin-bottom:3px; }
+  .blog-item .bk { font-size:12px; color:var(--muted); }
+  .intent-tag { padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+  .intent-tag.info { background:rgba(59,130,246,0.15); color:#93c5fd; }
+  .intent-tag.comm { background:rgba(249,115,22,0.15); color:#fdba74; }
+  .intent-tag.niche { background:rgba(168,85,247,0.15); color:#d8b4fe; }
+
+  /* Link matrix */
+  .link-section { margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+  .link-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:12px; }
+  .link-from { color:#a5b4fc; font-family:monospace; width:200px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .link-arrow { color:var(--muted); }
+  .link-to { color:#86efac; font-family:monospace; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .link-anchor { color:var(--muted); font-style:italic; margin-left:auto; flex-shrink:0; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .link-type { padding:1px 6px; border-radius:3px; font-size:10px; font-weight:700; flex-shrink:0; }
+  .link-type.mandatory { background:rgba(239,68,68,0.15); color:#fca5a5; }
+  .link-type.recommended { background:rgba(234,179,8,0.15); color:#fde68a; }
+
+  /* Overview map */
+  .map-container { width:100%; overflow:auto; }
+  #cluster-svg { min-width:900px; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:4px; margin-bottom:20px; background:var(--card); padding:4px; border-radius:10px; width:fit-content; }
+  .tab { padding:8px 16px; border-radius:8px; border:none; cursor:pointer; font-size:13px; font-weight:600; background:transparent; color:var(--muted); transition:all .15s; }
+  .tab.active { background:var(--card2); color:var(--text); }
+
+  /* Phase plan */
+  .phase { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .phase h4 { font-size:14px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .phase ul { padding-left:18px; }
+  .phase li { font-size:13px; color:var(--muted); line-height:2; }
+  .phase li strong { color:var(--text); }
+
+  @media(max-width:700px) {
+    .layout { grid-template-columns:1fr; }
+    .sidebar { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>BoostronixX — Semantic Keyword Cluster Map</h1>
+    <div class="sub">boostronixx.com · Jaipur, Rajasthan · May 2026</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n" style="color:#6c63ff;">6</div><div class="l">Clusters</div></div>
+    <div class="stat"><div class="n" style="color:#43e97b;">38</div><div class="l">Total Pages</div></div>
+    <div class="stat"><div class="n" style="color:#f7b731;">35</div><div class="l">Blog Posts</div></div>
+    <div class="stat"><div class="n" style="color:#ff6584;">94</div><div class="l">Internal Links</div></div>
+    <div class="stat"><div class="n" style="color:#56ccf2;">68K</div><div class="l">Est. Words</div></div>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:0 4px;">Topic Clusters</div>
+    <button class="cluster-btn active" onclick="showCluster(0)">
+      <div class="cluster-dot" style="background:#6c63ff;"></div>
+      <span class="cluster-name">Branding Agency</span>
+      <span class="cluster-count">6+6</span>
+    </button>
+    <button class="cluster-btn" onclick="showCluster(1)">
+      <div class="cluster-dot" style="background:#43e97b;"></div>
+      <span class="cluster-name">SEO Agency</span>
+      <span class="cluster-count">6+7</span>
+    </button>
+    <button class="cluster-btn" onclick="showCluster(2)">
+      <div class="cluster-dot" style="background:#f7b731;"></div>
+      <span class="cluster-name">Website Design</span>
+      <span class="cluster-count">6+6</span>
+    </button>
+    <button class="cluster-btn" onclick="showCluster(3)">
+      <div class="cluster-dot" style="background:#ff6584;"></div>
+      <span class="cluster-name">Digital Marketing</span>
+      <span class="cluster-count">6+6</span>
+    </button>
+    <button class="cluster-btn" onclick="showCluster(4)">
+      <div class="cluster-dot" style="background:#56ccf2;"></div>
+      <span class="cluster-name">AI Automation</span>
+      <span class="cluster-count">5+6</span>
+    </button>
+    <button class="cluster-btn" onclick="showCluster(5)">
+      <div class="cluster-dot" style="background:#ff9f43;"></div>
+      <span class="cluster-name">Jaipur Verticals</span>
+      <span class="cluster-count">5+6</span>
+    </button>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:0 4px;">Silo Metrics</div>
+      <div style="font-size:13px;padding:8px 4px;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Existing pages</span><span style="color:#f7b731;font-weight:600;">11</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">New pages needed</span><span style="color:#6c63ff;font-weight:600;">27</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Blog posts to write</span><span style="color:#43e97b;font-weight:600;">35</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Canonical risks</span><span style="color:#ff6584;font-weight:600;">4</span></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;padding:0 4px;">View</div>
+      <button class="tab active" onclick="setView('clusters')" id="tab-clusters" style="width:100%;margin-bottom:4px;text-align:left;border-radius:8px;padding:8px 12px;background:var(--card2);color:var(--text);border:none;cursor:pointer;font-size:13px;">📦 Clusters</button>
+      <button class="tab" onclick="setView('map')" id="tab-map" style="width:100%;margin-bottom:4px;text-align:left;border-radius:8px;padding:8px 12px;background:transparent;color:var(--muted);border:none;cursor:pointer;font-size:13px;">🗺 Overview Map</button>
+      <button class="tab" onclick="setView('links')" id="tab-links" style="width:100%;margin-bottom:4px;text-align:left;border-radius:8px;padding:8px 12px;background:transparent;color:var(--muted);border:none;cursor:pointer;font-size:13px;">🔗 Link Matrix</button>
+      <button class="tab" onclick="setView('phases')" id="tab-phases" style="width:100%;text-align:left;border-radius:8px;padding:8px 12px;background:transparent;color:var(--muted);border:none;cursor:pointer;font-size:13px;">🚀 Phase Plan</button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="main-content"></div>
+</div>
+
+<script>
+const CLUSTERS = [
+  {
+    id: 0,
+    name: "Branding Agency",
+    color: "#6c63ff",
+    pillar: {
+      title: "Branding Agency in Jaipur",
+      keyword: "branding agency in Jaipur",
+      url: "/branding-agency-jaipur/",
+      volume: "1K–5K/mo",
+      template: "City Hub + Service Pillar",
+      wordCount: "2,500–3,500",
+      status: "new"
+    },
+    spokes: [
+      { title: "Brand Strategy Services Jaipur", keyword: "brand strategy agency Jaipur", url: "/services/brand-consulting/", status: "optimise" },
+      { title: "Brand Identity Design Jaipur", keyword: "brand identity design Jaipur", url: "/services/brand-identity-design/", status: "new" },
+      { title: "Logo Design Agency Jaipur", keyword: "logo design agency Jaipur", url: "/services/logo-design/", status: "new" },
+      { title: "Startup Branding Agency Jaipur", keyword: "startup branding Jaipur", url: "/industries/startups/", status: "new" },
+      { title: "Rebranding Agency India", keyword: "rebranding agency India", url: "/services/rebranding/", status: "new" },
+      { title: "Brand Positioning Services", keyword: "brand positioning services India", url: "/services/brand-positioning/", status: "new" }
+    ],
+    blogs: [
+      { title: "What is Brand Strategy? A Complete Guide for Indian Businesses", keyword: "what is brand strategy", intent: "info" },
+      { title: "How to Build a Brand Identity from Scratch", keyword: "how to build brand identity", intent: "info" },
+      { title: "Logo Design vs Brand Identity: What's the Difference?", keyword: "logo design vs brand identity", intent: "info" },
+      { title: "How Much Does Branding Cost in India? 2026 Pricing Guide", keyword: "branding cost India", intent: "comm" },
+      { title: "10 Rebranding Mistakes Indian Businesses Make", keyword: "rebranding mistakes India", intent: "info" },
+      { title: "Real Estate Branding: How Jaipur Property Developers Can Stand Out", keyword: "real estate branding Jaipur", intent: "niche" }
+    ]
+  },
+  {
+    id: 1,
+    name: "SEO Agency",
+    color: "#43e97b",
+    pillar: {
+      title: "SEO Company in Jaipur",
+      keyword: "SEO company in Jaipur",
+      url: "/services/seo-services/",
+      volume: "1K–5K/mo",
+      template: "Service Pillar (expand existing)",
+      wordCount: "3,000–4,000",
+      status: "optimise"
+    },
+    spokes: [
+      { title: "Local SEO Services Jaipur", keyword: "local SEO services Jaipur", url: "/services/local-seo-jaipur/", status: "new" },
+      { title: "Technical SEO Services India", keyword: "technical SEO services India", url: "/services/technical-seo/", status: "new" },
+      { title: "E-commerce SEO Services", keyword: "ecommerce SEO India", url: "/services/ecommerce-seo/", status: "new" },
+      { title: "SEO Audit Services", keyword: "SEO audit services India", url: "/services/seo-audit/", status: "new" },
+      { title: "Content Marketing Agency Jaipur", keyword: "content marketing agency Jaipur", url: "/services/content-marketing/", status: "new" },
+      { title: "Link Building Services India", keyword: "link building services India", url: "/services/link-building/", status: "new" }
+    ],
+    blogs: [
+      { title: "How Long Does SEO Take to Show Results in India?", keyword: "how long does SEO take India", intent: "info" },
+      { title: "Local SEO Checklist for Jaipur Businesses (2026)", keyword: "local SEO checklist Jaipur", intent: "info" },
+      { title: "What is Technical SEO? A Plain-English Guide", keyword: "what is technical SEO", intent: "info" },
+      { title: "Google's Core Web Vitals: What Indian Businesses Need to Know", keyword: "core web vitals India", intent: "info" },
+      { title: "How to Do Keyword Research for a Jaipur Business", keyword: "keyword research Jaipur", intent: "info" },
+      { title: "SEO vs Google Ads: Which is Better for Indian Businesses?", keyword: "SEO vs Google Ads India", intent: "comm" },
+      { title: "On-Page SEO Checklist: 25 Factors That Actually Matter", keyword: "on-page SEO checklist", intent: "info" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Website Design",
+    color: "#f7b731",
+    pillar: {
+      title: "Website Design Company in Jaipur",
+      keyword: "website design company in Jaipur",
+      url: "/services/website-design/",
+      volume: "1K–5K/mo",
+      template: "Service Pillar (expand existing)",
+      wordCount: "3,000–3,500",
+      status: "optimise"
+    },
+    spokes: [
+      { title: "WordPress Development Agency Jaipur", keyword: "WordPress development Jaipur", url: "/services/wordpress-development/", status: "new" },
+      { title: "E-commerce Website Design India", keyword: "ecommerce website design India", url: "/services/ecommerce-website-design/", status: "new" },
+      { title: "Landing Page Design Services", keyword: "landing page design India", url: "/services/landing-page-design/", status: "new" },
+      { title: "UI/UX Design Agency Jaipur", keyword: "UI UX design agency Jaipur", url: "/services/ui-ux-design/", status: "optimise" },
+      { title: "Website Redesign Services", keyword: "website redesign agency India", url: "/services/website-redesign/", status: "new" },
+      { title: "Mobile App UI Design Jaipur", keyword: "mobile app UI design Jaipur", url: "/services/mobile-app-design/", status: "new" }
+    ],
+    blogs: [
+      { title: "How Much Does a Website Cost in India? 2026 Pricing Guide", keyword: "website cost India 2026", intent: "comm" },
+      { title: "WordPress vs Custom Development: Which is Right for You?", keyword: "WordPress vs custom development", intent: "comm" },
+      { title: "10 Website Design Trends Indian Businesses Should Follow in 2026", keyword: "website design trends India 2026", intent: "info" },
+      { title: "What is UI/UX Design and Why Does It Matter for Conversions?", keyword: "what is UI UX design", intent: "info" },
+      { title: "How to Choose a Web Design Agency in Jaipur", keyword: "how to choose web design agency Jaipur", intent: "comm" },
+      { title: "Landing Page Optimisation: How to Convert More Website Visitors", keyword: "landing page optimisation India", intent: "info" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Digital Marketing",
+    color: "#ff6584",
+    pillar: {
+      title: "Digital Marketing Agency in Jaipur",
+      keyword: "digital marketing agency in Jaipur",
+      url: "/services/digital-marketing/",
+      volume: "5K+/mo",
+      template: "Service Pillar (rewrite + expand)",
+      wordCount: "3,000–4,000",
+      status: "optimise"
+    },
+    spokes: [
+      { title: "Performance Marketing Agency Jaipur", keyword: "performance marketing agency Jaipur", url: "/services/performance-marketing/", status: "optimise" },
+      { title: "Google Ads Agency Jaipur", keyword: "Google Ads agency Jaipur", url: "/services/google-ads/", status: "new" },
+      { title: "Meta Ads Agency India", keyword: "Meta ads agency India", url: "/services/meta-ads/", status: "new" },
+      { title: "Social Media Marketing Jaipur", keyword: "social media marketing company Jaipur", url: "/services/social-media-marketing/", status: "optimise" },
+      { title: "Email Marketing Services India", keyword: "email marketing services India", url: "/services/email-marketing/", status: "new" },
+      { title: "WhatsApp Marketing Agency India", keyword: "WhatsApp marketing agency India", url: "/services/whatsapp-marketing/", status: "new" }
+    ],
+    blogs: [
+      { title: "Google Ads vs Meta Ads: Which Works Better for Indian Businesses?", keyword: "Google Ads vs Meta Ads India", intent: "comm" },
+      { title: "How to Set Up a Performance Marketing Campaign in India", keyword: "performance marketing campaign India", intent: "info" },
+      { title: "What is ROAS and How Do You Improve It?", keyword: "what is ROAS", intent: "info" },
+      { title: "Social Media Marketing Strategy for Indian D2C Brands", keyword: "social media marketing D2C India", intent: "info" },
+      { title: "How to Generate Leads with Meta Ads in Jaipur", keyword: "Meta Ads lead generation Jaipur", intent: "info" },
+      { title: "WhatsApp Marketing for Indian Businesses: Complete 2026 Guide", keyword: "WhatsApp marketing India 2026", intent: "info" }
+    ]
+  },
+  {
+    id: 4,
+    name: "AI Automation",
+    color: "#56ccf2",
+    pillar: {
+      title: "AI Automation Agency India",
+      keyword: "AI automation agency India",
+      url: "/services/ai-automation/",
+      volume: "500–2K/mo (fast growing)",
+      template: "Service Pillar — NEW",
+      wordCount: "3,000–4,000",
+      status: "new"
+    },
+    spokes: [
+      { title: "AI Marketing Automation Services", keyword: "AI marketing automation India", url: "/services/ai-marketing-automation/", status: "new" },
+      { title: "WhatsApp Chatbot for Business India", keyword: "WhatsApp chatbot for business India", url: "/services/whatsapp-chatbot/", status: "new" },
+      { title: "AI SEO Services India", keyword: "AI SEO services India", url: "/services/ai-seo/", status: "new" },
+      { title: "Marketing Automation for D2C Brands", keyword: "marketing automation D2C India", url: "/services/marketing-automation-d2c/", status: "new" },
+      { title: "AI Lead Generation Services India", keyword: "AI lead generation India", url: "/services/ai-lead-generation/", status: "new" }
+    ],
+    blogs: [
+      { title: "What is an AI Automation Agency? (And Do You Need One?)", keyword: "what is AI automation agency", intent: "info" },
+      { title: "How AI is Changing Digital Marketing in India: 2026 Guide", keyword: "AI digital marketing India 2026", intent: "info" },
+      { title: "WhatsApp Chatbot for Business: Complete Setup Guide India", keyword: "WhatsApp chatbot setup India", intent: "info" },
+      { title: "AI Tools for Indian Marketing Agencies: Top 10 in 2026", keyword: "AI tools marketing India 2026", intent: "comm" },
+      { title: "How to Automate Your Lead Generation with AI in India", keyword: "automate lead generation AI India", intent: "info" },
+      { title: "AI vs Human Marketing: What to Automate and What to Keep", keyword: "AI vs human marketing India", intent: "info" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Jaipur Verticals",
+    color: "#ff9f43",
+    pillar: {
+      title: "Digital Marketing Agency in Jaipur",
+      keyword: "digital marketing agency Jaipur",
+      url: "/jaipur-digital-marketing-agency/",
+      volume: "1K–5K/mo",
+      template: "City Hub — NEW",
+      wordCount: "2,500–3,500",
+      status: "new"
+    },
+    spokes: [
+      { title: "Real Estate Digital Marketing Jaipur", keyword: "real estate digital marketing Jaipur", url: "/industries/real-estate/", status: "new" },
+      { title: "Jewellery Brand Marketing India", keyword: "jewellery brand marketing India", url: "/industries/jewellery/", status: "new" },
+      { title: "EdTech Digital Marketing India", keyword: "EdTech digital marketing India", url: "/industries/education-edtech/", status: "new" },
+      { title: "D2C Brand Growth Agency India", keyword: "D2C brand growth agency India", url: "/industries/d2c-brands/", status: "new" },
+      { title: "Startup Marketing Agency Jaipur", keyword: "startup marketing agency Jaipur", url: "/industries/startups/", status: "new" }
+    ],
+    blogs: [
+      { title: "Real Estate Digital Marketing: How Jaipur Developers Get More Leads", keyword: "real estate digital marketing Jaipur", intent: "niche" },
+      { title: "How Jaipur Jewellery Brands Can Win Online", keyword: "jewellery brand marketing India", intent: "niche" },
+      { title: "EdTech Marketing in India: Strategies That Actually Work", keyword: "EdTech marketing India", intent: "niche" },
+      { title: "D2C Brand Building: How Indian Founders Can Scale Fast", keyword: "D2C brand building India", intent: "info" },
+      { title: "Best Digital Marketing Agencies in Jaipur: An Honest Comparison", keyword: "best digital marketing agency Jaipur", intent: "comm" },
+      { title: "How to Choose the Right Marketing Agency in Jaipur", keyword: "choose marketing agency Jaipur", intent: "comm" }
+    ]
+  }
+];
+
+const CROSS_LINKS = [
+  { from: "/services/seo-services/", to: "/services/local-seo-jaipur/", anchor: "local SEO services in Jaipur", type: "mandatory" },
+  { from: "/services/digital-marketing/", to: "/services/google-ads/", anchor: "Google Ads management", type: "mandatory" },
+  { from: "/services/digital-marketing/", to: "/services/ai-marketing-automation/", anchor: "AI marketing automation", type: "recommended" },
+  { from: "/services/brand-consulting/", to: "/services/website-design/", anchor: "website design Jaipur", type: "recommended" },
+  { from: "/services/ai-automation/", to: "/services/seo-services/", anchor: "AI-powered SEO", type: "recommended" },
+  { from: "/industries/real-estate/", to: "/services/performance-marketing/", anchor: "performance marketing for real estate", type: "recommended" },
+  { from: "/industries/real-estate/", to: "/services/seo-services/", anchor: "real estate SEO Jaipur", type: "recommended" },
+  { from: "/industries/d2c-brands/", to: "/services/social-media-marketing/", anchor: "D2C social media marketing", type: "recommended" },
+  { from: "/services/website-design/", to: "/services/seo-services/", anchor: "SEO-friendly website design", type: "recommended" },
+  { from: "/services/seo-services/", to: "/services/content-marketing/", anchor: "content marketing", type: "mandatory" },
+  { from: "/jaipur-digital-marketing-agency/", to: "/services/digital-marketing/", anchor: "digital marketing services", type: "mandatory" },
+  { from: "/jaipur-digital-marketing-agency/", to: "/services/seo-services/", anchor: "SEO company in Jaipur", type: "mandatory" },
+  { from: "/services/ai-automation/", to: "/services/whatsapp-chatbot/", anchor: "WhatsApp chatbot", type: "mandatory" },
+  { from: "/services/performance-marketing/", to: "/services/google-ads/", anchor: "Google Ads agency", type: "recommended" },
+  { from: "/services/performance-marketing/", to: "/services/meta-ads/", anchor: "Meta Ads campaigns", type: "recommended" },
+];
+
+let currentCluster = 0;
+let currentView = 'clusters';
+
+function setView(v) {
+  currentView = v;
+  ['clusters','map','links','phases'].forEach(id => {
+    const btn = document.getElementById('tab-' + id);
+    if (btn) {
+      btn.style.background = id === v ? 'var(--card2)' : 'transparent';
+      btn.style.color = id === v ? 'var(--text)' : 'var(--muted)';
+    }
+  });
+  render();
+}
+
+function showCluster(idx) {
+  currentCluster = idx;
+  document.querySelectorAll('.cluster-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+  if (currentView !== 'clusters') { setView('clusters'); return; }
+  render();
+}
+
+function statusBadge(s) {
+  if (s === 'new') return '<span class="badge new">✦ New</span>';
+  if (s === 'optimise') return '<span class="badge optimise">↑ Optimise</span>';
+  if (s === 'good') return '<span class="badge good">✓ Good</span>';
+  return '';
+}
+
+function intentLabel(i) {
+  const map = { info: 'Informational', comm: 'Commercial', niche: 'Niche' };
+  return map[i] || i;
+}
+
+function renderClusters() {
+  const c = CLUSTERS[currentCluster];
+  return `
+    <div class="pillar-card" style="background:${c.color}18;border-color:${c.color}66;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:${c.color};text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">⬟ Pillar Page</div>
+          <h2 style="color:${c.color};">${c.pillar.title}</h2>
+          <div class="kw">🎯 Primary: <strong>${c.pillar.keyword}</strong></div>
+        </div>
+        ${statusBadge(c.pillar.status)}
+      </div>
+      <div class="pillar-meta">
+        <span class="pill" style="background:${c.color}22;color:${c.color};">📄 ${c.pillar.template}</span>
+        <span class="pill" style="background:rgba(255,255,255,0.05);color:var(--muted);">📊 ${c.pillar.volume}</span>
+        <span class="pill" style="background:rgba(255,255,255,0.05);color:var(--muted);">✍️ ${c.pillar.wordCount} words</span>
+        <span class="pill" style="background:rgba(255,255,255,0.05);color:var(--muted);font-family:monospace;">🔗 ${c.pillar.url}</span>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Spoke Pages (${c.spokes.length})</div>
+    <div class="spoke-grid">
+      ${c.spokes.map(s => `
+        <div class="spoke-card" style="border-left-color:${c.color};">
+          <div class="spoke-card" style="border:none;padding:0;background:transparent;">
+            <h4>${s.title}</h4>
+            <div class="sk">🎯 ${s.keyword}</div>
+            <div class="url">${s.url}</div>
+            ${statusBadge(s.status)}
+          </div>
+          <div class="spoke-card::before" style="background:${c.color};"></div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="blog-title">📝 Supporting Blog Posts (${c.blogs.length})</div>
+    <div class="blog-list">
+      ${c.blogs.map(b => `
+        <div class="blog-item">
+          <div>
+            <h5>${b.title}</h5>
+            <div class="bk">🎯 ${b.keyword}</div>
+          </div>
+          <span class="intent-tag ${b.intent}">${intentLabel(b.intent)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderMap() {
+  const W = 960, H = 600;
+  const cx = W / 2, cy = H / 2 - 20;
+  const R = 200;
+  const angles = CLUSTERS.map((_, i) => (i / CLUSTERS.length) * 2 * Math.PI - Math.PI / 2);
+  const positions = CLUSTERS.map((c, i) => ({
+    x: cx + R * Math.cos(angles[i]),
+    y: cy + R * Math.sin(angles[i]),
+    c
+  }));
+
+  const lines = positions.map((p, i) => {
+    const next = positions[(i + 1) % positions.length];
+    return `<line x1="${p.x}" y1="${p.y}" x2="${next.x}" y2="${next.y}" stroke="${p.c.color}33" stroke-width="1" stroke-dasharray="4 4"/>`;
+  }).join('');
+
+  const centerLines = positions.map(p =>
+    `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="${p.c.color}44" stroke-width="1.5"/>`
+  ).join('');
+
+  const nodes = positions.map(p => {
+    const r = 50;
+    return `
+      <g class="cluster-node" style="cursor:pointer;" onclick="showCluster(${p.c.id})">
+        <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${p.c.color}18" stroke="${p.c.color}88" stroke-width="1.5"/>
+        <circle cx="${p.x}" cy="${p.y}" r="${r + 8}" fill="none" stroke="${p.c.color}22" stroke-width="1"/>
+        <text x="${p.x}" y="${p.y - 8}" text-anchor="middle" fill="${p.c.color}" font-size="20">
+          ${['🏷️','🔍','💻','📣','🤖','🏙️'][p.c.id]}
+        </text>
+        <text x="${p.x}" y="${p.y + 10}" text-anchor="middle" fill="${p.c.color}" font-size="11" font-weight="700">
+          ${p.c.name.split(' ').map((w, li) => `<tspan x="${p.x}" dy="${li === 0 ? 0 : 14}">${w}</tspan>`).join('')}
+        </text>
+      </g>
+    `;
+  }).join('');
+
+  const centerNode = `
+    <circle cx="${cx}" cy="${cy}" r="52" fill="#1a1d27" stroke="#6c63ff88" stroke-width="2"/>
+    <circle cx="${cx}" cy="${cy}" r="60" fill="none" stroke="#6c63ff22" stroke-width="1.5"/>
+    <text x="${cx}" y="${cy - 10}" text-anchor="middle" fill="#6c63ff" font-size="11" font-weight="800">BOOSTRONIXX</text>
+    <text x="${cx}" y="${cy + 6}" text-anchor="middle" fill="#94a3b8" font-size="9">boostronixx.com</text>
+    <text x="${cx}" y="${cy + 20}" text-anchor="middle" fill="#94a3b8" font-size="9">Jaipur, India</text>
+  `;
+
+  const legend = CLUSTERS.map((c, i) => `
+    <rect x="20" y="${480 + i * 20}" width="10" height="10" rx="2" fill="${c.color}"/>
+    <text x="36" y="${489 + i * 20}" fill="#94a3b8" font-size="11">${c.name}</text>
+  `).join('');
+
+  const totalStats = `
+    <text x="${W - 20}" y="490" text-anchor="end" fill="#94a3b8" font-size="11">6 Clusters · 38 Pages · 35 Blog Posts</text>
+    <text x="${W - 20}" y="506" text-anchor="end" fill="#94a3b8" font-size="11">94 Internal Links · ~68,000 Words</text>
+  `;
+
+  return `
+    <div class="map-container">
+      <svg id="cluster-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;background:var(--bg);border-radius:12px;border:1px solid var(--border);">
+        <defs>
+          <radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#1a1d27"/>
+            <stop offset="100%" stop-color="#0f1117"/>
+          </radialGradient>
+        </defs>
+        <rect width="${W}" height="${H}" fill="url(#bg-grad)" rx="12"/>
+        <text x="${W/2}" y="32" text-anchor="middle" fill="#6c63ff" font-size="14" font-weight="700">BoostronixX — Topical Authority Cluster Map</text>
+        <text x="${W/2}" y="50" text-anchor="middle" fill="#94a3b8" font-size="11">Click any cluster to explore spokes and blog posts</text>
+        ${lines}
+        ${centerLines}
+        ${nodes}
+        ${centerNode}
+        ${legend}
+        ${totalStats}
+      </svg>
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:var(--muted);text-align:center;">Click any cluster node above to jump to its detail view.</div>
+  `;
+}
+
+function renderLinks() {
+  const allLinks = CLUSTERS.flatMap(c => {
+    return [
+      ...c.spokes.map(s => ({ from: s.url, to: c.pillar.url, anchor: c.pillar.keyword + ' →pillar', type: 'mandatory', color: c.color })),
+      ...c.spokes.map(s => ({ from: c.pillar.url, to: s.url, anchor: s.keyword + ' ←pillar', type: 'mandatory', color: c.color })),
+    ];
+  });
+
+  return `
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">Internal Link Matrix</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">All mandatory pillar ↔ spoke links + recommended cross-cluster links. Every spoke must link to its pillar AND receive a link from it.</div>
+
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:#fca5a5;">🔴 Mandatory Links (Pillar ↔ Spokes)</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:20px;max-height:280px;overflow-y:auto;">
+      <div style="font-size:11px;color:var(--muted);display:flex;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">
+        <div style="width:200px;">From</div><div style="width:20px;"></div><div style="flex:1;">To</div><div style="width:60px;">Type</div>
+      </div>
+      ${CLUSTERS.flatMap(c => c.spokes.map(s => `
+        <div class="link-row">
+          <div class="link-from" style="color:${c.color};">${s.url}</div>
+          <div class="link-arrow">→</div>
+          <div class="link-to">${c.pillar.url}</div>
+          <span class="link-type mandatory">Mandatory</span>
+        </div>
+        <div class="link-row">
+          <div class="link-from" style="color:${c.color};">${c.pillar.url}</div>
+          <div class="link-arrow">→</div>
+          <div class="link-to">${s.url}</div>
+          <span class="link-type mandatory">Mandatory</span>
+        </div>
+      `)).join('')}
+    </div>
+
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:#fde68a;">🟡 Cross-Cluster Recommended Links</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;max-height:280px;overflow-y:auto;">
+      <div style="font-size:11px;color:var(--muted);display:flex;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">
+        <div style="width:200px;">From</div><div style="width:20px;"></div><div style="flex:1;">To</div><div style="width:200px;">Anchor</div><div style="width:80px;">Type</div>
+      </div>
+      ${CROSS_LINKS.map(l => `
+        <div class="link-row">
+          <div class="link-from">${l.from}</div>
+          <div class="link-arrow">→</div>
+          <div class="link-to">${l.to}</div>
+          <div class="link-anchor">"${l.anchor}"</div>
+          <span class="link-type ${l.type}">${l.type === 'mandatory' ? 'Mandatory' : 'Recommended'}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="margin-top:16px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--muted);">
+      <strong style="color:var(--text);">Linking rules:</strong> Every spoke must have minimum 3 incoming internal links. Anchor text must use target keyword or close variant (never "click here"). Link from within body content, not just navigation. Every blog post links to 1 pillar + 1–2 spokes within same cluster.
+    </div>
+  `;
+}
+
+function renderPhases() {
+  return `
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">Implementation Phase Plan</div>
+    <div class="phase" style="border-left:3px solid #ef4444;">
+      <h4>🔴 Phase 1 — Quick Wins <span style="font-size:12px;color:var(--muted);font-weight:400;">(Weeks 1–2, ~40 hours)</span></h4>
+      <ul>
+        <li><strong>Optimise existing 7 service pages</strong> — add Jaipur to title/H1/schema for Brand Consulting, Digital Marketing, Performance Marketing, UI/UX Design</li>
+        <li><strong>Write /services/local-seo-jaipur/</strong> — highest local pack potential, existing pillar ready</li>
+        <li><strong>Write /services/google-ads/</strong> — high commercial intent, weak competition gap in Jaipur</li>
+        <li><strong>Create /jaipur-digital-marketing-agency/</strong> — city hub page, consolidates all local authority</li>
+        <li><strong>Add LocalBusiness + Service schema</strong> to all service pages (use schema from Local SEO report)</li>
+        <li><strong>Publish 2 blogs:</strong> "SEO vs Google Ads India" + "Local SEO Checklist Jaipur 2026"</li>
+      </ul>
+    </div>
+    <div class="phase" style="border-left:3px solid #f97316;">
+      <h4>🟠 Phase 2 — Core Cluster Build <span style="font-size:12px;color:var(--muted);font-weight:400;">(Weeks 3–6, ~80 hours)</span></h4>
+      <ul>
+        <li><strong>Create /services/ai-automation/ pillar</strong> — new growth topic, low competition, strong differentiation</li>
+        <li><strong>Write 3 AI cluster spokes:</strong> ai-marketing-automation/, whatsapp-chatbot/, ai-lead-generation/</li>
+        <li><strong>Create /industries/real-estate/</strong> + <strong>/industries/d2c-brands/</strong> — high-value targeting from homepage claims</li>
+        <li><strong>Expand /services/seo-services/</strong> from ~1,500 to 3,000+ words with FAQ schema</li>
+        <li><strong>Write /services/content-marketing/</strong> + /services/technical-seo/</li>
+        <li><strong>Publish 4 informational blogs</strong> (1 per cluster — AI, SEO, Web Design, Jaipur Verticals)</li>
+        <li><strong>Internal linking pass</strong> — add cross-cluster links per matrix above</li>
+      </ul>
+    </div>
+    <div class="phase" style="border-left:3px solid #eab308;">
+      <h4>🟡 Phase 3 — Authority Build <span style="font-size:12px;color:var(--muted);font-weight:400;">(Weeks 7–12, ~120 hours)</span></h4>
+      <ul>
+        <li><strong>Complete all industry pages:</strong> Jewellery, EdTech, Startups</li>
+        <li><strong>Complete AI cluster spokes:</strong> ai-seo/, marketing-automation-d2c/</li>
+        <li><strong>Complete web design cluster:</strong> wordpress-development/, ecommerce-website-design/, landing-page-design/</li>
+        <li><strong>Publish remaining blogs at 2 per week cadence</strong></li>
+        <li><strong>Build Clutch.co and GoodFirms profiles</strong> — target 5+ reviews on each for AI citation</li>
+        <li><strong>Digital PR:</strong> target "best of" agency lists in Jaipur/India for AI Overviews inclusion</li>
+        <li><strong>Create llms.txt</strong> at boostronixx.com/llms.txt for AI crawler entity clarity</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">Content Production Summary</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;text-align:center;">
+        <div><div style="font-size:24px;font-weight:800;color:#6c63ff;">27</div><div style="font-size:12px;color:var(--muted);">New pages</div></div>
+        <div><div style="font-size:24px;font-weight:800;color:#43e97b;">11</div><div style="font-size:12px;color:var(--muted);">Optimise existing</div></div>
+        <div><div style="font-size:24px;font-weight:800;color:#f7b731;">35</div><div style="font-size:12px;color:var(--muted);">Blog posts</div></div>
+        <div><div style="font-size:24px;font-weight:800;color:#ff6584;">68K</div><div style="font-size:12px;color:var(--muted);">Total words</div></div>
+        <div><div style="font-size:24px;font-weight:800;color:#56ccf2;">12</div><div style="font-size:12px;color:var(--muted);">Weeks to complete</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  const main = document.getElementById('main-content');
+  if (currentView === 'clusters') main.innerHTML = renderClusters();
+  else if (currentView === 'map') main.innerHTML = renderMap();
+  else if (currentView === 'links') main.innerHTML = renderLinks();
+  else if (currentView === 'phases') main.innerHTML = renderPhases();
+}
+
+// Fix spoke card border-left colors with JS since CSS ::before doesn't interpolate vars
+function fixSpokeBorders() {
+  document.querySelectorAll('.spoke-card').forEach(el => {
+    el.style.borderLeftWidth = '3px';
+    el.style.borderLeftStyle = 'solid';
+  });
+}
+
+render();
+setTimeout(fixSpokeBorders, 100);
+</script>
+</body>
+</html>
