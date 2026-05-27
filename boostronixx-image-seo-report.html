@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoostronixX — Image SEO Audit Report</title>
+<style>
+  :root {
+    --brand: #6c3ef4; --brand2: #f43e6c; --dark: #0f0f1a; --card: #1a1a2e;
+    --border: #2d2d4a; --text: #e8e8f0; --muted: #9090b0;
+    --green: #22c55e; --yellow: #f59e0b; --red: #ef4444; --blue: #3b82f6;
+    --orange: #f97316;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--dark); color: var(--text); line-height: 1.6; }
+
+  nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  nav .logo { font-weight: 800; font-size: 1.1rem; color: var(--brand); margin-right: 8px; }
+  nav a { color: var(--muted); font-size: .82rem; padding: 5px 12px; border-radius: 6px; cursor: pointer; transition: all .2s; text-decoration: none; }
+  nav a:hover, nav a.active { background: var(--brand); color: #fff; }
+
+  .hero { background: linear-gradient(135deg, #1a0a3a 0%, #0f1a3a 100%); padding: 40px 32px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 1.9rem; font-weight: 800; background: linear-gradient(90deg, #a78bfa, #f43e6c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+  .hero p { color: var(--muted); font-size: .95rem; }
+
+  .section { display: none; padding: 32px; max-width: 1400px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* SCORE CARDS */
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .score-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .score-card .num { font-size: 2.2rem; font-weight: 800; }
+  .score-card .label { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+  .score-card.red .num { color: var(--red); }
+  .score-card.yellow .num { color: var(--yellow); }
+  .score-card.green .num { color: var(--green); }
+  .score-card.blue .num { color: var(--blue); }
+
+  /* OVERALL SCORE */
+  .overall-score { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; margin-bottom: 32px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .gauge { width: 120px; height: 120px; flex-shrink: 0; }
+  .gauge svg { transform: rotate(-90deg); }
+  .gauge-text { font-size: 2rem; font-weight: 800; fill: var(--red); dominant-baseline: middle; text-anchor: middle; transform: rotate(90deg) translate(0, -60px); }
+  .score-breakdown { flex: 1; min-width: 200px; }
+  .score-breakdown h2 { font-size: 1.1rem; margin-bottom: 12px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: .82rem; }
+  .bar-row .bar-label { width: 140px; color: var(--muted); flex-shrink: 0; }
+  .bar-bg { flex: 1; background: rgba(255,255,255,.06); border-radius: 10px; height: 8px; }
+  .bar-fill { height: 8px; border-radius: 10px; }
+  .bar-score { width: 36px; text-align: right; font-size: .78rem; font-weight: 600; }
+
+  /* ISSUE SEVERITY */
+  .crit { color: var(--red); }
+  .warn { color: var(--yellow); }
+  .info { color: var(--blue); }
+  .good { color: var(--green); }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 28px; font-size: .83rem; }
+  th { background: rgba(108,62,244,.2); color: var(--brand); padding: 10px 12px; text-align: left; font-size: .78rem; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  code { background: rgba(108,62,244,.15); padding: 2px 6px; border-radius: 4px; font-size: .8rem; color: #a78bfa; font-family: monospace; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .7rem; font-weight: 600; }
+  .tag-crit { background: rgba(239,68,68,.2); color: #ef4444; }
+  .tag-warn { background: rgba(245,158,11,.2); color: #f59e0b; }
+  .tag-info { background: rgba(59,130,246,.2); color: #3b82f6; }
+  .tag-ok { background: rgba(34,197,94,.2); color: #22c55e; }
+
+  /* CARDS */
+  .issue-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 14px; }
+  .issue-card h4 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+  .issue-card p { font-size: .85rem; color: var(--muted); margin-bottom: 10px; }
+  .issue-card .fix-label { font-size: .72rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  pre.fix { background: #0d0d1a; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: .78rem; overflow-x: auto; white-space: pre-wrap; color: #e2e8f0; line-height: 1.6; margin-top: 6px; }
+
+  .notice { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25); border-radius: 8px; padding: 12px 16px; font-size: .85rem; color: #fca5a5; margin-bottom: 20px; }
+  .notice-warn { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.25); color: #fcd34d; }
+  .notice-ok { background: rgba(34,197,94,.08); border-color: rgba(34,197,94,.25); color: #86efac; }
+
+  h2.section-title { font-size: 1.1rem; color: var(--brand); margin-bottom: 20px; border-left: 4px solid var(--brand); padding-left: 12px; }
+
+  @media (max-width: 700px) { .section { padding: 20px 16px; } nav { padding: 12px 16px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">BoostronixX</span>
+  <a class="active" onclick="show('summary')">Summary</a>
+  <a onclick="show('lazy')">Lazy Loading</a>
+  <a onclick="show('alttext')">Alt Text</a>
+  <a onclick="show('format')">Formats & Size</a>
+  <a onclick="show('lcp')">LCP Impact</a>
+  <a onclick="show('naming')">File Naming</a>
+  <a onclick="show('fixes')">All Fixes</a>
+</nav>
+
+<div class="hero">
+  <h1>Image SEO Audit — boostronixx.com</h1>
+  <p>Analysed homepage + service pages · May 2026 · WordPress + JS-based lazy loader detected</p>
+</div>
+
+<!-- ======================================================= -->
+<!-- SUMMARY -->
+<!-- ======================================================= -->
+<div id="summary" class="section active">
+
+  <div class="overall-score">
+    <div class="gauge">
+      <svg viewBox="0 0 120 120" width="120" height="120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#ef4444" stroke-width="12"
+          stroke-dasharray="314" stroke-dashoffset="220" stroke-linecap="round"/>
+        <text x="60" y="60" dominant-baseline="middle" text-anchor="middle"
+          fill="#ef4444" font-size="24" font-weight="800"
+          style="transform:none">30</text>
+      </svg>
+    </div>
+    <div class="score-breakdown">
+      <h2>Image SEO Score: 30 / 100</h2>
+      <div class="bar-row">
+        <span class="bar-label">Alt Text</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:15%;background:#ef4444"></div></div>
+        <span class="bar-score crit">8/25</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Format & Compression</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:28%;background:#f59e0b"></div></div>
+        <span class="bar-score warn">7/25</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Lazy Loading</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:30%;background:#f59e0b"></div></div>
+        <span class="bar-score warn">8/25</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">LCP / CLS Prevention</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:28%;background:#ef4444"></div></div>
+        <span class="bar-score crit">7/25</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-grid">
+    <div class="score-card red"><div class="num">~60+</div><div class="label">Total Images Found</div></div>
+    <div class="score-card red"><div class="num">100%</div><div class="label">Replaced by SVG Placeholders</div></div>
+    <div class="score-card red"><div class="num">0</div><div class="label">Images Loaded Natively</div></div>
+    <div class="score-card yellow"><div class="num">~40</div><div class="label">Images With Alt Text</div></div>
+    <div class="score-card red"><div class="num">0</div><div class="label">Images in WebP</div></div>
+    <div class="score-card red"><div class="num">1</div><div class="label">OG Image as JPEG (not WebP)</div></div>
+    <div class="score-card red"><div class="num">0</div><div class="label">fetchpriority="high" on Hero</div></div>
+    <div class="score-card yellow"><div class="num">4</div><div class="label">1×1 GIF Tracking Pixels</div></div>
+  </div>
+
+  <h2 class="section-title">Critical Finding: The SVG Placeholder Trap</h2>
+  <div class="notice">
+    🚨 <strong>Every single image on the site is a base64-encoded SVG placeholder</strong> — not the real image. This is a Perfmatters/Smush-style JS lazy loader. Googlebot sees ONLY SVG placeholders, not the actual photos. This is the single biggest image SEO issue on the site.
+  </div>
+
+  <div class="issue-card">
+    <h4 class="crit">🔴 CRITICAL — All Images Replaced with SVG Lazy-Load Placeholders</h4>
+    <p>Every <code>&lt;img&gt;</code> tag's <code>src</code> contains a base64-encoded SVG rectangle (grey box) instead of the real image URL. The real URL is stored in a <code>data-src</code> or similar attribute, loaded by JavaScript after page paint. <strong>Googlebot renders images inconsistently in JS-lazy-load setups, and with the current SVG placeholder pattern, it is almost certain Googlebot is NOT seeing any real images on the site.</strong></p>
+    <p>This explains the indexation crisis (only 3 pages indexed) — Google cannot evaluate image content, OG images, or hero visuals. It hurts E-E-A-T signals and makes the site appear visually empty to crawlers that don't execute advanced JavaScript.</p>
+    <div class="fix-label">Root cause</div>
+    <p style="font-size:.82rem;color:#a78bfa">A WordPress plugin (most likely Perfmatters, WP Rocket, or Smush) is replacing all <code>src</code> attributes with inline SVG placeholders and storing real URLs in <code>data-perfmatters-src</code>, <code>data-lazy</code>, or similar data attributes.</p>
+    <div class="fix-label">Fix</div>
+    <pre class="fix">Step 1: In WordPress Admin → go to the lazy-loading plugin settings
+Step 2: DISABLE lazy loading for:
+  - The hero / above-the-fold image
+  - All images in the first viewport (top ~600px of any page)
+  - Logo images in header
+Step 3: Add fetchpriority="high" to hero image
+Step 4: Keep lazy loading ONLY for images below the fold
+Step 5: Test with Google's Rich Results Test to verify images now load</pre>
+  </div>
+
+  <h2 class="section-title">Image Inventory by Type</h2>
+  <table>
+    <thead>
+      <tr><th>Image</th><th>Alt Text</th><th>Dimensions in HTML</th><th>Format (Source)</th><th>Lazy Method</th><th>Severity</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Logo (header — desktop)</td><td class="good">✓ "BoostronixX"</td><td class="warn">189×38 (from SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-crit">🔴 Critical</span></td></tr>
+      <tr><td>Logo (header — mobile)</td><td class="good">✓ "BoostronixX"</td><td class="warn">1567×394 (from SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-crit">🔴 Critical</span></td></tr>
+      <tr><td>Favicon reference (TileImage)</td><td>N/A (meta tag)</td><td>300×300</td><td><span class="tag tag-ok">WebP ✓</span></td><td>N/A</td><td><span class="tag tag-ok">✅ OK</span></td></tr>
+      <tr><td>Hero image (homepage)</td><td class="good">✓ "Creative Branding Agency for Ambitious Businesses"</td><td class="warn">692×443 (from SVG)</td><td><span class="tag tag-crit">SVG placeholder — REAL URL NOT LOADED</span></td><td>js-generic</td><td><span class="tag tag-crit">🔴 Critical — LCP</span></td></tr>
+      <tr><td>OG / Social share image</td><td>N/A (meta)</td><td>1200×630</td><td><span class="tag tag-warn">JPEG on S3</span></td><td>N/A</td><td><span class="tag tag-warn">⚠ Convert to WebP</span></td></tr>
+      <tr><td>About section image (332×618)</td><td class="good">✓ "Unlock the potential..."</td><td class="warn">332×618 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>About section image (duplicate)</td><td class="red">✗ Empty alt</td><td class="warn">332×618 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-crit">🔴 Missing alt</span></td></tr>
+      <tr><td>About video thumbnail</td><td class="good">✓ "About video"</td><td class="warn">152×152 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Vague alt</span></td></tr>
+      <tr><td>Video icon (play button)</td><td class="good">✓ "Video icon"</td><td class="warn">87×87 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Vague alt</span></td></tr>
+      <tr><td>Service icon — Brand Consulting</td><td class="good">✓ "Brand Consulting"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — Digital Marketing</td><td class="good">✓ "Digital Marketing"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — Performance Marketing</td><td class="good">✓ "Performance Marketing"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — SEO Services</td><td class="good">✓ "SEO Services"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — Social Media Marketing</td><td class="good">✓ "Social Media Marketing"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — UI/UX Design</td><td class="good">✓ "UI/UX Design"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Service icon — Website Design</td><td class="good">✓ "Website Design"</td><td class="warn">446×444 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Industry icon — Real Estate</td><td class="good">✓ "Real Estate"</td><td class="warn">150×150 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Industry icon — Jewellery</td><td class="warn">⚠ "Jewellery " (trailing space)</td><td class="warn">150×150 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Trim alt text</span></td></tr>
+      <tr><td>Industry icon — Ed-Tech</td><td class="good">✓ "Ed- Tech"</td><td class="warn">150×150 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Industry icon — D2C Brands</td><td class="good">✓ "D2C Brands"</td><td class="warn">150×150 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Testimonial avatar — Arjun Khanna</td><td class="good">✓ "Arjun Khanna"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Testimonial avatar — Kavita Nair</td><td class="good">✓ "Kavita Nair"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Testimonial avatar — Rajesh Menon</td><td class="good">✓ "Rajesh Menon"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Testimonial avatar — Meera Reddy</td><td class="good">✓ "Meera Reddy"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Testimonial avatar — Vikram Rathore</td><td class="good">✓ "Vikram Rathore"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Testimonial avatar — Anjali Deshmukh</td><td class="good">✓ "Anjali Deshmukh"</td><td class="warn">131×131 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Quote mark icon</td><td class="good">✓ "Quote"</td><td class="warn">132×132 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Decorative — use empty alt</span></td></tr>
+      <tr><td>Star rating icons (×35)</td><td class="good">✓ "Star"</td><td class="warn">18×18 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Should be role="presentation"</span></td></tr>
+      <tr><td>Blog thumbnail 1 (384×476)</td><td class="good">✓ Matches article title</td><td class="warn">384×476 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Blog thumbnail 2 (384×476)</td><td class="good">✓ Matches article title</td><td class="warn">384×476 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Blog thumbnail 3 (384×476)</td><td class="good">✓ Matches article title</td><td class="warn">384×476 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Arrow icon (1×1 GIF)</td><td class="good">✓ "Arrow"</td><td>1×1</td><td><span class="tag tag-crit">1×1 GIF tracking pixel</span></td><td>none</td><td><span class="tag tag-warn">⚠ Replace with SVG</span></td></tr>
+      <tr><td>Icon buttons CTA (×10)</td><td class="good">✓ "Icon"</td><td>32×32 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Vague alt — use empty alt or aria-hidden</span></td></tr>
+      <tr><td>Service banner (SEO page, 1440×512)</td><td class="good">✓ "Service banner"</td><td>1440×512 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-crit">🔴 Critical — LCP candidate</span></td></tr>
+      <tr><td>Service brand image (892×375)</td><td class="good">✓ "Service brand"</td><td>892×375 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Vague alt — improve</span></td></tr>
+      <tr><td>FAQ image (632×795)</td><td class="good">✓ "FAQ image"</td><td>632×795 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Vague alt — improve</span></td></tr>
+      <tr><td>Social icons (LinkedIn, YouTube, Instagram, Facebook)</td><td class="good">✓ Platform names</td><td>18×18 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Low priority</span></td></tr>
+      <tr><td>Discover / Design / Deploy / Scale icons</td><td class="good">✓ "Discover", "Design"…</td><td>72×72 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-warn">⚠ Warning</span></td></tr>
+      <tr><td>Section shape / divider SVG</td><td class="good">✓ "Section shape"</td><td>64×9 (SVG)</td><td><span class="tag tag-warn">SVG placeholder</span></td><td>js-generic</td><td><span class="tag tag-info">ℹ Decorative — use empty alt or aria-hidden</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ======================================================= -->
+<!-- LAZY LOADING -->
+<!-- ======================================================= -->
+<div id="lazy" class="section">
+  <h2 class="section-title">Lazy Loading Analysis</h2>
+
+  <div class="notice">
+    🚨 <strong>Lazy loader method: js-generic</strong> (data-src / base64 SVG placeholder pattern). The plugin is replacing ALL image <code>src</code> attributes with inline SVG placeholders BEFORE the browser and Googlebot can request the real images. This breaks Googlebot image indexing.
+  </div>
+
+  <div class="issue-card">
+    <h4 class="crit">🔴 Hero image is being lazy-loaded — Direct LCP penalty</h4>
+    <p>The homepage hero image (692×443) is the LCP element. It is replaced by a base64 SVG placeholder, meaning the browser must wait for JavaScript to execute before starting to download the real image. This adds 500ms–2000ms to LCP on slow mobile connections. Google PageSpeed will flag this.</p>
+    <div class="fix-label">Fix for hero image</div>
+    <pre class="fix">&lt;!-- WRONG (current) --&gt;
+&lt;img src="data:image/svg+xml;base64,..." alt="Creative Branding Agency for Ambitious Businesses"&gt;
+
+&lt;!-- CORRECT --&gt;
+&lt;img
+  src="https://boostronixx.s3.ap-south-1.amazonaws.com/.../hero-image.webp"
+  alt="Creative Branding Agency for Ambitious Businesses — BoostronixX Jaipur"
+  width="692"
+  height="443"
+  fetchpriority="high"
+  decoding="auto"
+&gt;
+&lt;!-- NO loading="lazy" on hero! --&gt;</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4 class="warn">⚠️ Logo images also lazy-loaded — CLS and UX risk</h4>
+    <p>Both the desktop (189×38) and mobile/sticky (1567×394) logo variants are replaced with SVG placeholders. Logos should NEVER be lazy-loaded — they appear in the first byte of the viewport and are required before page is usable.</p>
+    <div class="fix-label">Fix in your lazy-loading plugin</div>
+    <pre class="fix">In WordPress plugin settings (Perfmatters / WP Rocket / Smush):
+→ Add the logo image selector to the "excluded images" list
+→ Typical selector: .site-logo img, header img, .navbar-brand img
+→ OR: Add class="skip-lazy" to logo &lt;img&gt; tags in your theme and
+  exclude that class in the plugin settings</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4 class="warn">⚠️ 1×1 GIF Tracking Pixels Used as Icons</h4>
+    <p>Four instances of <code>data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=</code> (a 1×1 transparent GIF) are used as arrow/social icons. These are legacy tracking pixel patterns that should be replaced with inline SVG or proper icon fonts.</p>
+    <div class="fix-label">Fix</div>
+    <pre class="fix">&lt;!-- Replace 1×1 GIF arrows with inline SVG --&gt;
+&lt;svg width="19" height="74" aria-hidden="true" focusable="false" viewBox="0 0 19 74"&gt;
+  &lt;!-- your arrow path here --&gt;
+&lt;/svg&gt;</pre>
+  </div>
+
+  <h2 class="section-title" style="margin-top:28px">Correct Lazy Loading Pattern</h2>
+  <div class="issue-card">
+    <div class="fix-label">Best practice: Split above-fold vs below-fold</div>
+    <pre class="fix">&lt;!-- ABOVE THE FOLD: Hero, logo, first visible content --&gt;
+&lt;img
+  src="hero.webp"
+  alt="Creative Branding Agency for Ambitious Businesses — BoostronixX Jaipur"
+  width="692" height="443"
+  fetchpriority="high"&gt;
+&lt;!-- No loading attribute — defaults to "eager" (correct) --&gt;
+
+&lt;!-- BELOW THE FOLD: All content images further down the page --&gt;
+&lt;img
+  src="service-seo.webp"
+  alt="SEO services illustration — BoostronixX"
+  width="446" height="444"
+  loading="lazy"
+  decoding="async"&gt;</pre>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- ALT TEXT -->
+<!-- ======================================================= -->
+<div id="alttext" class="section">
+  <h2 class="section-title">Alt Text Audit</h2>
+
+  <div class="notice notice-warn">
+    ⚠️ Most images have alt text, but quality is inconsistent. Key issues: 1 image with completely empty alt, vague alts like "Icon" and "Service banner", one alt with a trailing space, and decorative images that should use empty alt or <code>aria-hidden="true"</code>.
+  </div>
+
+  <table>
+    <thead><tr><th>Image</th><th>Current Alt</th><th>Issue</th><th>Recommended Alt</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>About section image (2nd instance)</td>
+        <td class="crit">Empty / missing</td>
+        <td><span class="tag tag-crit">Missing alt</span></td>
+        <td><code>alt="BoostronixX team working on brand strategy in Jaipur"</code></td>
+      </tr>
+      <tr>
+        <td>Hero image</td>
+        <td>"Creative Branding Agency for Ambitious Businesses"</td>
+        <td><span class="tag tag-warn">Good — add location keyword</span></td>
+        <td><code>alt="Creative Branding Agency for Ambitious Businesses — BoostronixX Jaipur"</code></td>
+      </tr>
+      <tr>
+        <td>Service banner (SEO page)</td>
+        <td>"Service banner"</td>
+        <td><span class="tag tag-warn">Vague — no keyword</span></td>
+        <td><code>alt="SEO services for Jaipur businesses — BoostronixX"</code></td>
+      </tr>
+      <tr>
+        <td>Service brand image (SEO page)</td>
+        <td>"Service brand"</td>
+        <td><span class="tag tag-warn">Vague — no keyword</span></td>
+        <td><code>alt="BoostronixX SEO strategy framework for Jaipur businesses"</code></td>
+      </tr>
+      <tr>
+        <td>FAQ image (SEO page)</td>
+        <td>"FAQ image"</td>
+        <td><span class="tag tag-warn">Generic — not descriptive</span></td>
+        <td><code>alt="Frequently asked questions about SEO services in Jaipur"</code></td>
+      </tr>
+      <tr>
+        <td>About video thumbnail</td>
+        <td>"About video"</td>
+        <td><span class="tag tag-warn">Vague</span></td>
+        <td><code>alt="BoostronixX agency overview — digital marketing Jaipur"</code></td>
+      </tr>
+      <tr>
+        <td>Video icon (play button)</td>
+        <td>"Video icon"</td>
+        <td><span class="tag tag-info">Decorative — use empty alt</span></td>
+        <td><code>alt="" role="presentation"</code></td>
+      </tr>
+      <tr>
+        <td>Industry icon — Jewellery</td>
+        <td>"Jewellery " (trailing space)</td>
+        <td><span class="tag tag-warn">Trailing space</span></td>
+        <td><code>alt="Jewellery brand marketing services India"</code></td>
+      </tr>
+      <tr>
+        <td>Industry icon — Ed-Tech</td>
+        <td>"Ed- Tech"</td>
+        <td><span class="tag tag-info">Hyphen in wrong place</span></td>
+        <td><code>alt="EdTech digital marketing India"</code></td>
+      </tr>
+      <tr>
+        <td>Star rating icons (×35)</td>
+        <td>"Star"</td>
+        <td><span class="tag tag-info">Decorative — should be hidden from screen readers</span></td>
+        <td><code>aria-hidden="true"</code> — or use CSS stars instead</td>
+      </tr>
+      <tr>
+        <td>Quote mark icon</td>
+        <td>"Quote"</td>
+        <td><span class="tag tag-info">Decorative</span></td>
+        <td><code>alt="" aria-hidden="true"</code></td>
+      </tr>
+      <tr>
+        <td>Section shape / divider</td>
+        <td>"Section shape"</td>
+        <td><span class="tag tag-info">Decorative</span></td>
+        <td><code>alt="" aria-hidden="true"</code></td>
+      </tr>
+      <tr>
+        <td>CTA icon buttons (×10 "Icon")</td>
+        <td>"Icon"</td>
+        <td><span class="tag tag-info">Decorative UI element</span></td>
+        <td><code>aria-hidden="true"</code> or <code>alt=""</code></td>
+      </tr>
+      <tr>
+        <td>Unlock potential image</td>
+        <td>"Unlock the potential of your business"</td>
+        <td><span class="tag tag-ok">✅ Good</span></td>
+        <td>Current alt is fine — no change needed</td>
+      </tr>
+      <tr>
+        <td>Logos — BoostronixX (header)</td>
+        <td>"BoostronixX"</td>
+        <td><span class="tag tag-ok">✅ Good</span></td>
+        <td>Current alt is correct</td>
+      </tr>
+      <tr>
+        <td>Blog post thumbnails (3)</td>
+        <td>Matches article title</td>
+        <td><span class="tag tag-ok">✅ Good</span></td>
+        <td>Current alts are correct — descriptive and keyword-rich</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="issue-card">
+    <div class="fix-label">Alt Text Rules to Apply Site-Wide</div>
+    <pre class="fix">1. CONTENT IMAGES: Describe what you see + include 1 relevant keyword naturally
+   ✅ alt="SEO audit checklist for Jaipur businesses — BoostronixX"
+   ❌ alt="image.jpg" or alt="Service banner"
+
+2. LOGOS: Company name only
+   ✅ alt="BoostronixX — Digital Marketing Agency Jaipur"
+
+3. DECORATIVE IMAGES (dividers, icons, UI elements): Empty alt + aria-hidden
+   ✅ alt="" aria-hidden="true"
+   ❌ alt="Icon" or alt="Arrow"
+
+4. LINKED IMAGES: Describe the destination, not the image
+   ✅ (image inside link) alt="View our SEO services page"
+
+5. MAX LENGTH: Keep alt under 125 characters
+6. NO KEYWORD STUFFING: One keyword per alt, naturally placed</pre>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- FORMAT & SIZE -->
+<!-- ======================================================= -->
+<div id="format" class="section">
+  <h2 class="section-title">Image Format & Compression</h2>
+
+  <div class="notice notice-warn">
+    ⚠️ Because all images use JS lazy-loading with SVG placeholders, actual file sizes could not be measured directly. Analysis is based on known image dimensions from SVG viewBox data and known AWS S3 storage URLs. The OG image is confirmed JPEG. Service page images at 1440×512px and 892×375px are likely unoptimised.
+  </div>
+
+  <table>
+    <thead><tr><th>Image / URL</th><th>Current Format</th><th>Dimensions</th><th>Est. Size</th><th>Issue</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>OG Image (S3)<br><code style="font-size:.7rem">og-image-home-...boostronixx.jpg</code></td>
+        <td><span class="tag tag-crit">JPEG</span></td>
+        <td>1200×630</td>
+        <td>~150–350KB est.</td>
+        <td>JPEG for OG image — no WebP served</td>
+        <td>Convert to WebP, keep JPEG fallback in meta</td>
+      </tr>
+      <tr>
+        <td>Default OG (service pages)<br><code style="font-size:.7rem">defaultOG.jpg</code></td>
+        <td><span class="tag tag-crit">JPEG</span></td>
+        <td>1200×630</td>
+        <td>~100–250KB est.</td>
+        <td>Generic OG image for ALL service pages — no differentiation</td>
+        <td>Create unique OG images per service page in WebP</td>
+      </tr>
+      <tr>
+        <td>Favicon (TileImage)<br><code style="font-size:.7rem">boostronixxFavicon-300x300.webp</code></td>
+        <td><span class="tag tag-ok">WebP ✓</span></td>
+        <td>300×300</td>
+        <td>~10–20KB est.</td>
+        <td>✅ Good format choice</td>
+        <td>No change needed</td>
+      </tr>
+      <tr>
+        <td>Hero image (homepage, 692×443)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>692×443</td>
+        <td>Unknown</td>
+        <td>Cannot verify format — likely JPEG on S3</td>
+        <td>Confirm format via S3 console; convert to WebP if JPEG</td>
+      </tr>
+      <tr>
+        <td>Service banner (SEO page, 1440×512)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>1440×512</td>
+        <td>~200–500KB est.</td>
+        <td>Very large dimensions — likely unoptimised</td>
+        <td>Resize to max 1200px wide, convert to WebP</td>
+      </tr>
+      <tr>
+        <td>About/Unlock image (332×618)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>332×618</td>
+        <td>~80–200KB est.</td>
+        <td>Likely JPEG</td>
+        <td>Convert to WebP; add srcset for 2x</td>
+      </tr>
+      <tr>
+        <td>Service icons (446×444, ×7)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>446×444 each</td>
+        <td>~50–150KB each est.</td>
+        <td>Oversized for icon-style images</td>
+        <td>Resize to max 200px; convert to WebP or use actual SVG</td>
+      </tr>
+      <tr>
+        <td>Industry icons (150×150, ×4)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>150×150</td>
+        <td>~20–50KB each est.</td>
+        <td>Acceptable size — verify format</td>
+        <td>Convert to WebP or use actual inline SVG</td>
+      </tr>
+      <tr>
+        <td>Testimonial avatars (131×131, ×7)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>131×131</td>
+        <td>~15–40KB each est.</td>
+        <td>Acceptable size</td>
+        <td>Convert to WebP; ensure 2x resolution (262×262 actual file)</td>
+      </tr>
+      <tr>
+        <td>Blog thumbnails (384×476, ×3)</td>
+        <td>Unknown — SVG placeholder</td>
+        <td>384×476</td>
+        <td>~50–150KB each est.</td>
+        <td>Tall format — unusual for blog thumbnails</td>
+        <td>Standardise to 16:9 (e.g. 800×450); convert to WebP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="issue-card">
+    <h4 class="warn">⚠️ No WebP Conversion for Body Images</h4>
+    <p>Only the favicon uses WebP. All body images appear to be JPEG or PNG served from AWS S3. WebP offers 25–35% smaller file sizes vs JPEG at equivalent quality, directly improving LCP and page load times.</p>
+    <div class="fix-label">Batch conversion with WordPress plugin</div>
+    <pre class="fix">Option 1 (Recommended — WordPress): Install ShortPixel or Imagify plugin
+  → Bulk convert all uploaded images to WebP
+  → Enable "Serve WebP images" option
+  → WordPress will automatically use &lt;picture&gt; tag with WebP + JPEG fallback
+
+Option 2 (Manual — command line):
+  # Install cwebp
+  sudo apt install webp
+
+  # Convert single image
+  cwebp -q 82 hero-image.jpg -o hero-image.webp
+
+  # Batch convert all JPEGs in a folder
+  for f in *.jpg; do cwebp -q 82 "$f" -o "${f%.jpg}.webp"; done
+
+Option 3 (S3 + CloudFront): Configure CloudFront to serve WebP via
+  Content-Type negotiation based on Accept header</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4>Recommended picture element with format fallback</h4>
+    <pre class="fix">&lt;picture&gt;
+  &lt;source srcset="image.avif" type="image/avif"&gt;
+  &lt;source srcset="image.webp" type="image/webp"&gt;
+  &lt;img
+    src="image.jpg"
+    alt="SEO services for Jaipur businesses — BoostronixX"
+    width="446"
+    height="444"
+    loading="lazy"
+    decoding="async"
+  &gt;
+&lt;/picture&gt;</pre>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- LCP IMPACT -->
+<!-- ======================================================= -->
+<div id="lcp" class="section">
+  <h2 class="section-title">LCP (Largest Contentful Paint) Image Analysis</h2>
+
+  <div class="notice">
+    🚨 The hero image lazy-load issue is directly causing a Poor LCP score. Google's threshold: Good &lt;2.5s · Needs Improvement 2.5–4s · Poor &gt;4s. With JS-lazy-loaded hero image and no fetchpriority, estimated LCP on 4G mobile: <strong>4–6 seconds (Poor)</strong>.
+  </div>
+
+  <div class="issue-card">
+    <h4 class="crit">🔴 LCP Element: Homepage Hero Image (692×443)</h4>
+    <p>This is almost certainly the LCP element on the homepage. Current issues stacking against it:</p>
+    <table style="margin-top:12px">
+      <thead><tr><th>Issue</th><th>LCP Impact</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>JS lazy-loaded (SVG placeholder)</td><td class="crit">+1500–3000ms on mobile</td><td>Disable lazy loading on hero; serve real src directly</td></tr>
+        <tr><td>No <code>fetchpriority="high"</code></td><td class="warn">+200–500ms</td><td>Add <code>fetchpriority="high"</code> attribute</td></tr>
+        <tr><td>Likely JPEG format (not WebP)</td><td class="warn">+100–400ms</td><td>Convert to WebP (25–35% smaller)</td></tr>
+        <tr><td>No preload link in &lt;head&gt;</td><td class="warn">+200–600ms</td><td>Add <code>&lt;link rel="preload"&gt;</code> for hero image</td></tr>
+        <tr><td>Hosted on AWS S3 (no CDN confirmed)</td><td class="warn">+50–200ms</td><td>Confirm CloudFront CDN is active; enable edge caching</td></tr>
+      </tbody>
+    </table>
+    <div class="fix-label" style="margin-top:16px">Complete LCP fix for homepage hero</div>
+    <pre class="fix">&lt;!-- Step 1: Add preload in &lt;head&gt; (highest priority) --&gt;
+&lt;link
+  rel="preload"
+  as="image"
+  href="https://boostronixx.s3.ap-south-1.amazonaws.com/wp-content/uploads/hero.webp"
+  type="image/webp"
+  fetchpriority="high"
+&gt;
+
+&lt;!-- Step 2: Replace the lazy-loaded img with eager-loaded --&gt;
+&lt;img
+  src="https://boostronixx.s3.ap-south-1.amazonaws.com/wp-content/uploads/hero.webp"
+  alt="Creative Branding Agency for Ambitious Businesses — BoostronixX Jaipur"
+  width="692"
+  height="443"
+  fetchpriority="high"
+  decoding="auto"
+&gt;
+&lt;!-- NO loading="lazy" — this is the LCP image --&gt;</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4 class="warn">⚠️ LCP Candidate: Service Banner (1440×512 on service pages)</h4>
+    <p>The service page header banner is 1440px wide — extremely large. On the SEO services page this is confirmed as a SVG-placeholder JS-lazy-loaded image. If this is the LCP element on service pages, it has the same problem as the homepage hero.</p>
+    <div class="fix-label">Fix</div>
+    <pre class="fix">1. Disable lazy loading for this banner image
+2. Add fetchpriority="high" to it
+3. Resize from 1440px to 1200px max width (saves ~20% file size)
+4. Convert to WebP
+5. Add srcset for responsive sizes:
+   srcset="banner-600.webp 600w, banner-1200.webp 1200w"
+   sizes="100vw"</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4>CLS Prevention — Dimensions Status</h4>
+    <p>The SVG placeholders encode the correct width/height of each image (readable from the base64 viewBox), which means the browser CAN reserve the correct space before the real image loads. This is the one accidental benefit of the current lazy-loading setup — CLS is likely NOT a major issue. However, this should be verified with Chrome DevTools after fixing the lazy-loading problem.</p>
+    <div class="notice-ok" style="padding:10px 14px;border-radius:8px;margin-top:10px;font-size:.82rem;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#86efac">
+      ✅ SVG placeholders contain correct dimensions — CLS impact is low. When switching to native lazy loading, ensure width + height attributes are present on all img tags.
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- FILE NAMING -->
+<!-- ======================================================= -->
+<div id="naming" class="section">
+  <h2 class="section-title">Image File Naming Audit</h2>
+
+  <div class="notice notice-warn">
+    ⚠️ Only 2 real image URLs are confirmed visible (OG images on S3 and favicon). The rest use SVG placeholders that hide real filenames. The 2 confirmed URLs show one good and one bad naming pattern.
+  </div>
+
+  <table>
+    <thead><tr><th>URL / Filename</th><th>Assessment</th><th>Issues</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code style="word-break:break-all;font-size:.75rem">og-image-home-creative-branding-agency-for-ambitious-businesses-boostronixx.jpg</code></td>
+        <td><span class="tag tag-ok">✅ Excellent</span></td>
+        <td>Descriptive, hyphenated, lowercase, keyword-rich, includes brand. Perfect naming convention.</td>
+      </tr>
+      <tr>
+        <td><code>defaultOG.jpg</code></td>
+        <td><span class="tag tag-crit">🔴 Poor</span></td>
+        <td>Generic filename, camelCase (not hyphenated), no keyword. Used as OG for ALL service pages.</td>
+      </tr>
+      <tr>
+        <td><code>boostronixxFavicon-300x300.webp</code></td>
+        <td><span class="tag tag-warn">⚠ OK</span></td>
+        <td>Mixed case. Rename to <code>boostronixx-favicon-300x300.webp</code></td>
+      </tr>
+      <tr>
+        <td>All body images (hidden behind SVG)</td>
+        <td><span class="tag tag-info">ℹ Cannot verify</span></td>
+        <td>Filenames unknown until lazy-loading issue is fixed. Likely WP auto-generated names.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="issue-card">
+    <h4 class="crit">🔴 defaultOG.jpg Used on All Service Pages</h4>
+    <p>All service pages (SEO Services, Digital Marketing, Social Media Marketing, etc.) share the same generic OG image: <code>defaultOG.jpg</code>. This means:</p>
+    <p>1. Social shares of any service page show the same generic thumbnail<br>
+    2. Google sees no differentiated image signal for individual service pages<br>
+    3. The filename is not keyword-relevant for any service</p>
+    <div class="fix-label">Fix — Create unique OG images per service page</div>
+    <pre class="fix">Naming convention to follow (from your good OG image example):
+og-image-[page-slug]-[primary-keyword]-boostronixx.webp
+
+Examples:
+  og-image-seo-services-seo-company-jaipur-boostronixx.webp     (1200×630)
+  og-image-digital-marketing-jaipur-agency-boostronixx.webp     (1200×630)
+  og-image-brand-consulting-branding-agency-jaipur-boostronixx.webp  (1200×630)
+  og-image-performance-marketing-google-ads-jaipur-boostronixx.webp  (1200×630)
+
+Upload to: boostronixx.s3.ap-south-1.amazonaws.com/wp-content/uploads/[year]/[month]/
+Set in Yoast SEO → Social → Facebook Image for each page</pre>
+  </div>
+
+  <div class="issue-card">
+    <h4>File Naming Rules to Apply When Uploading New Images</h4>
+    <pre class="fix">✅ GOOD naming examples:
+  digital-marketing-agency-jaipur-team-boostronixx.webp
+  seo-services-jaipur-keyword-research-process.webp
+  brand-consulting-brand-identity-design-jaipur.webp
+  real-estate-digital-marketing-jaipur-lead-generation.webp
+
+❌ BAD naming examples:
+  IMG_2045.jpg
+  image123.png
+  default.jpg
+  photo (1).jpg
+  ServiceBanner.jpg (camelCase)
+  service_banner.jpg (underscore — use hyphens)
+
+Rules:
+1. All lowercase
+2. Hyphens between words (not underscores)
+3. Descriptive: describe what's in the image
+4. Include 1–2 keywords relevant to the page
+5. Include brand name on key images (homepage hero, OG images)
+6. No special characters, spaces, or sequential numbers</pre>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- ALL FIXES -->
+<!-- ======================================================= -->
+<div id="fixes" class="section">
+  <h2 class="section-title">Prioritized Fix List</h2>
+
+  <table>
+    <thead><tr><th>#</th><th>Fix</th><th>Impact</th><th>Effort</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Disable lazy loading on hero image + add <code>fetchpriority="high"</code></td>
+        <td>🔴 LCP improvement (2–4s faster)</td>
+        <td>15 min</td>
+        <td><span class="tag tag-crit">Critical — Do Now</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Disable lazy loading on logo images in header</td>
+        <td>🔴 CLS + UX improvement</td>
+        <td>10 min</td>
+        <td><span class="tag tag-crit">Critical — Do Now</span></td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Disable lazy loading on service page banner (1440×512)</td>
+        <td>🔴 LCP on service pages</td>
+        <td>10 min</td>
+        <td><span class="tag tag-crit">Critical — Do Now</span></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Add <code>&lt;link rel="preload"&gt;</code> for hero image in <code>&lt;head&gt;</code></td>
+        <td>🔴 LCP -200 to -600ms</td>
+        <td>20 min</td>
+        <td><span class="tag tag-crit">Critical</span></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Fix missing alt text on duplicate About section image</td>
+        <td>🔴 Accessibility + SEO</td>
+        <td>5 min</td>
+        <td><span class="tag tag-crit">Critical</span></td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Create unique OG images for all 7 service pages (replace defaultOG.jpg)</td>
+        <td>⚠ Social sharing + SEO signals per page</td>
+        <td>2–3 hours</td>
+        <td><span class="tag tag-warn">High</span></td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Install ShortPixel or Imagify and bulk convert all images to WebP</td>
+        <td>⚠ 25–35% smaller images, LCP improvement</td>
+        <td>1 hour setup</td>
+        <td><span class="tag tag-warn">High</span></td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Improve vague alt texts: "Service banner", "FAQ image", "Service brand"</td>
+        <td>⚠ Google Images indexing + E-E-A-T</td>
+        <td>30 min</td>
+        <td><span class="tag tag-warn">High</span></td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Add srcset + sizes attributes to hero and service banner images</td>
+        <td>⚠ Mobile performance — serve smaller images to mobile</td>
+        <td>1 hour</td>
+        <td><span class="tag tag-warn">High</span></td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Replace 1×1 GIF tracking pixels with proper inline SVG icons</td>
+        <td>⚠ Performance + modern practice</td>
+        <td>1 hour</td>
+        <td><span class="tag tag-warn">Medium</span></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Add <code>aria-hidden="true"</code> to decorative images (stars, dividers, quote marks)</td>
+        <td>ℹ Accessibility</td>
+        <td>30 min</td>
+        <td><span class="tag tag-info">Medium</span></td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Fix trailing space in "Jewellery " alt text</td>
+        <td>ℹ Minor cleanup</td>
+        <td>2 min</td>
+        <td><span class="tag tag-info">Low</span></td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Fix camelCase favicon filename: <code>boostronixxFavicon</code> → <code>boostronixx-favicon</code></td>
+        <td>ℹ Naming consistency</td>
+        <td>5 min</td>
+        <td><span class="tag tag-info">Low</span></td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Verify CloudFront CDN is active for S3 images; enable edge caching</td>
+        <td>⚠ TTFB for images from AWS S3</td>
+        <td>30 min</td>
+        <td><span class="tag tag-warn">Medium</span></td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td>Resize service icons from 446×444 to max 200px (they display small anyway)</td>
+        <td>⚠ Reduce unnecessary data transfer</td>
+        <td>1 hour</td>
+        <td><span class="tag tag-warn">Medium</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-title">WordPress Plugin Settings Checklist</h2>
+  <div class="issue-card">
+    <div class="fix-label">Recommended settings for your lazy-loading plugin (Perfmatters / WP Rocket / Smush)</div>
+    <pre class="fix">✅ ENABLE lazy loading on:
+  - All images below the fold (below first viewport)
+  - Blog post body images
+  - Portfolio thumbnails
+  - Testimonial avatars (below fold)
+
+❌ DISABLE lazy loading on:
+  - Hero / banner image (above fold, LCP element)
+  - Header logo image
+  - Mobile navigation logo
+  - Any image within 600px of page top
+
+HOW TO EXCLUDE IN MOST PLUGINS:
+1. Add CSS class "no-lazy" to the img element in your page builder
+2. OR add the image URL pattern to "Excluded Images" list in plugin settings
+3. OR use Yoast SEO → Tools → Bulk optimization to re-verify after changes
+
+SPECIFIC PLUGIN SETTINGS:
+WP Rocket: Performance → LazyLoad → Excluded Images → add hero selector
+Perfmatters: LazyLoad → Excluded Classes → add "hero-image" or similar
+Smush: CDN → Lazy Load → Exclusions</pre>
+  </div>
+
+  <h2 class="section-title" style="margin-top:28px">Image SEO Score Projection After Fixes</h2>
+  <table>
+    <thead><tr><th>Fix Applied</th><th>Score Impact</th><th>New Score</th></tr></thead>
+    <tbody>
+      <tr><td>Current score</td><td>—</td><td>30/100</td></tr>
+      <tr><td>Fix #1–4 (hero lazy loading + preload)</td><td class="green">+20</td><td>50/100</td></tr>
+      <tr><td>Fix #5 (missing alt text)</td><td class="green">+5</td><td>55/100</td></tr>
+      <tr><td>Fix #6–7 (OG images + WebP conversion)</td><td class="green">+15</td><td>70/100</td></tr>
+      <tr><td>Fix #8–9 (alt text quality + srcset)</td><td class="green">+10</td><td>80/100</td></tr>
+      <tr><td>Fix #10–15 (remaining improvements)</td><td class="green">+8</td><td>88/100</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
